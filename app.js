@@ -7,21 +7,18 @@ const UserRoutes = require('./routes/user');
 const sequelize = new Sequelize(process.env.DB_BDD, process.env.DB_USER, process.env.DB_PASS, {
     host: 'localhost',
     dialect: 'mysql'
-
 });
 const connexion = sequelize.authenticate();
 if (connexion) {
     console.log("✅ Connexion à MySQL");
+    sequelize.sync({ force: true });
+    console.log("All models were synchronized successfully.");
 }
 else {
     console.log("❌ Connexion à MySQL", error);
 }
 
-//console.log("❌ Connexion à MySQL")
-//console.log("✅ Connexion à MySQL");
-
 const app = express();
-
 
 app.use((res, next) => {
 res.setHeader('Access-Control-Allow-Origin', '*');

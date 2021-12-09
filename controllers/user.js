@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 
 const User = require('../models/user');
 
+const regexName = /^[A-Z]{1}[a-z]{2,15}$/gm;
 const regexEmail = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 const regexPassword = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$/gm;
 // password must contain 1 number (0-9), 1 uppercase letters, 1 lowercase letters, 1 non-alpha numeric number, 8-16 characters with no space
@@ -13,6 +14,10 @@ exports.signup = async (req,res,next) => {
     if (emailExist) {
         return res.status(409).json({ message: 'Email has already been used'});
     }
+    const usernameExist = await User.findOne({ where: {username: req.body.username} })
+    if (usernameExist) {
+        return res.status(409).json({ message: 'Username has already been used'});
+    }
     else if (!regexEmail.test(req.body.email) && (!regexPassword.test(req.body.password))) {
         return res.status(400).json({ message: "Email ou Password n'ont pas le format requis"});
     }
@@ -20,6 +25,8 @@ exports.signup = async (req,res,next) => {
         try {
             const hash = await bcrypt.hash(req.body.password, 10)
             const user = await new User({
+                name: req.body.name,
+
                 email: req.body.email,
                 password: hash
             });
