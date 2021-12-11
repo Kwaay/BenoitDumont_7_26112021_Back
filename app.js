@@ -1,37 +1,9 @@
 const express = require('express');
-const { Sequelize } = require('sequelize');
 require('dotenv').config()
 
 const userRoutes = require('./routes/user');
 const postRoutes = require('./routes/post');
 const reactionRoutes = require('./routes/reaction');
-
-
-const sequelize = new Sequelize(process.env.DB_BDD, process.env.DB_USER, process.env.DB_PASS, {
-    host: 'localhost',
-    dialect: 'mysql'
-});
-
-const userModel = require('./models/user')(sequelize,Sequelize.DataTypes);
-const postModel = require('./models/post')(sequelize,Sequelize.DataTypes);
-const reactionModel = require('./models/reaction')(sequelize,Sequelize.DataTypes)
-
-sequelize.authenticate()
-.then(connexion => {
-    console.log("✅ Connexion à MySQL");
-    sequelize.sync()
-    .then(sync => {
-        console.log("All models were synchronized successfully.");
-    })
-        
-    .catch(error => {
-        console.log(error)
-    })
-})
-.catch(error => {
-    console.log("❌ Connexion à MySQL", error);
-});
-
 
 const app = express();
 

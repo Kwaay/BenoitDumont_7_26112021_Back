@@ -1,8 +1,10 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const cryptoJS = require('crypto-js')
+const fetch = require("node-fetch");
+const { User } = require('../models')
 
-const User = require('../models/user');
 
 const regexName = /^[A-Z]{1}[a-z]{2,15}$/gm;
 const regexEmail = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
@@ -23,15 +25,47 @@ exports.signup = async (req,res,next) => {
     }
     else {
         try {
-            const hash = await bcrypt.hash(req.body.password, 10)
-            const user = await new User({
-                name: req.body.name,
+            const hashPassword = await bcrypt.hash(req.body.password, 10)
+            if (req.file) {
+                User.create({
+                    name: req.body.name,
+                    firstname: req.body.firstname,
+                    username: req.body.username,
+                    email: req.body.email,
+                    password: hashPassword,
+                    avatar: req.file
+                });
+            }
+            else {
+                const hashEmail = cryptoJS.MD5(req.body.email).toString().toLowerCase();
+                console.log(hashEmail);
+                fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
+                    method: "GET"
+                })
+                .then(function(value) {
+                    console.log(value);
+                    const gravatarImage = value.url;
+                    User.create({
+                        name: req.body.name,
+                        firstname: req.body.firstname,
+                        username: req.body.username,
+                        email: req.body.email,
+                        password: hashPassword,
+                        avatar: gravatarImage
+                    })
+                    .then(done => {
+                        res.status(201).json({ message:'User Created'});
 
-                email: req.body.email,
-                password: hash
-            });
-            await user.save();
-            res.status(201).json({ message:'User Created'})
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
+                    
+                })
+                .catch(error => { 
+                    res.status(500).json({error})
+                })
+            }
         }
         catch (error) {
             res.status(400).json({error});
