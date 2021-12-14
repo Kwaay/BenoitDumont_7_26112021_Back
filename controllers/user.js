@@ -118,17 +118,7 @@ exports.login = async (req,res,_next) => {
                 return res.status(401).json({ error: 'Failed to login'});
             }
                 res.status(200).json({
-                    userId : user._id,
-                    name: user.name,
-                    firstname: user.firstname,
-                    username: user.username,
-                    email: user.email,
-                    password: user.password,
-                    avatar: user.avatar,
-                    createdAt: user.createdAt,
-                    updatedAt: user.updatedAt
-                },
-                {
+                    user,
                     token: jwt.sign(
                         {userId : user._id},
                         process.env.SECRET_KEY_JWT,
@@ -141,7 +131,7 @@ exports.login = async (req,res,_next) => {
         }*/
     }
 };
-exports.getAllUsers = async (req,res,next) => {
+exports.getAllUsers = async (_req,res,_next) => {
     try {
         const findAllUsers = await User.findAll()
         if(findAllUsers) {
@@ -152,17 +142,114 @@ exports.getAllUsers = async (req,res,next) => {
         res.status(400).json({error});
     }
 }
-exports.createUser = async (req,res,next) => {
-    
+exports.createUser = async (req,res,_next) => {
+    const emailExist = await User.findOne({ where: {email: req.body.email} })
+    if (emailExist) {
+        return res.status(409).json({ message: 'Email has already been used'});
+    }
+    const usernameExist = await User.findOne({ where: {username: req.body.username} })
+    if (usernameExist) {
+        return res.status(409).json({ message: 'Username has already been used'});
+    }
+    if (!regexEmail.test(req.body.email) && (!regexPassword.test(req.body.password))) {
+        return res.status(400).json({ message: "Email or Password doesn't have the correct format"});
+    }
+    try {
+        const hashPassword = await bcrypt.hash(req.body.password, 10)
+        if (req.file) {
+            User.create({
+                name: req.body.name,
+                firstname: req.body.firstname,
+                username: req.body.username,
+                email: req.body.email,
+                password: hashPassword,
+                avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+            });
+        }
+        else {
+            const hashEmail = cryptoJS.MD5(req.body.email).toString().toLowerCase();
+            console.log(hashEmail);
+            fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
+                method: "GET"
+            })
+            .then(function(value) {
+                const gravatarImage = value.url;
+                console.log(gravatarImage);
+                User.create({
+                    name: req.body.name,
+                    firstname: req.body.firstname,
+                    username: req.body.username,
+                    email: req.body.email,
+                    password: hashPassword,
+                    avatar: gravatarImage
+                })
+                .then(done => {
+                    res.status(201).json({ message:'User Created'});
+
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+                
+            })
+            .catch(error => { 
+                res.status(500).json({error})
+            })
+        }
+    }
+    catch (error) {
+        res.status(400).json({error});
+    };
 }
 exports.myUser = async (req,res,next) => {
-    
+    const token = req.headers.authorization.split(' ')[1];
+    if(token) {
+        res.status(200).json({ message: 'OK'})
+    }
+    console.log(token)
 }
 exports.getOneUser = async (req,res,next) => {
-    
+    try {
+        const findOne = await User.findOne({ where: { id: req.params.userId } })
+        if (findOne) {
+            return res.status(200).json(findOne);
+        }
+    }
+    catch (error) {
+        res.status(404).json({error});
+    }
 }
 exports.modifyUser = async (req,res,next) => {
-    
+    /*try {*/
+        if(req.body.hasOwnProperty("email")) {
+            const emailExist = await User.findOne({ where: {id: req.params.userId} })
+            if (emailExist) {
+                return res.status(409).json({ message: 'Email has already been used'});
+            }
+        }
+        
+        let userObject = {}
+        if(req.file) {
+            userObject = {
+                ...JSON.parse(req.body.user),
+                avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+            }
+            const user = await User.findOne({ id: req.params.userId })
+            const filename = User.avatar.split('/images/')[1];
+            await fsp.unlink('./images/' + filename)
+        }
+        else {
+           userObject = { ...req.body }
+        }
+
+        const updateUser = await User.update({...userObject}, { where: { id: req.params.userId } })
+        if (updateUser) {
+            return res.status(200).json({ message : 'User has been modified'})
+        }
+    //}
+    /*catch (error) {
+        res.status(400).json({error})
+    }*/
 }
 exports.deleteUser = async (req,res,next) => {
     
