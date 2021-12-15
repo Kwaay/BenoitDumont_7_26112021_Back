@@ -2,7 +2,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cryptoJS = require('crypto-js')
 const fetch = require("node-fetch");
-const { User } = require('../models')
+const { User } = require('../models');
+const sequelize = require('../models');
 require('dotenv').config()
 
 
@@ -157,7 +158,7 @@ exports.createUser = async (req,res,_next) => {
     try {
         const hashPassword = await bcrypt.hash(req.body.password, 10)
         if (req.file) {
-            User.create({
+            const userCreation = User.create({
                 name: req.body.name,
                 firstname: req.body.firstname,
                 username: req.body.username,
@@ -165,6 +166,9 @@ exports.createUser = async (req,res,_next) => {
                 password: hashPassword,
                 avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
             });
+            if (userCreation) {
+                return res.status(201).json({ message:'User Created'});
+            }
         }
         else {
             const hashEmail = cryptoJS.MD5(req.body.email).toString().toLowerCase();
@@ -201,14 +205,14 @@ exports.createUser = async (req,res,_next) => {
         res.status(400).json({error});
     };
 }
-exports.myUser = async (req,res,next) => {
+exports.myUser = async (req,res,_next) => {
     const token = req.headers.authorization.split(' ')[1];
     if(token) {
         res.status(200).json({ message: 'OK'})
     }
     console.log(token)
 }
-exports.getOneUser = async (req,res,next) => {
+exports.getOneUser = async (req,res,_next) => {
     try {
         const findOne = await User.findOne({ where: { id: req.params.userId } })
         if (findOne) {
@@ -219,37 +223,35 @@ exports.getOneUser = async (req,res,next) => {
         res.status(404).json({error});
     }
 }
-exports.modifyUser = async (req,res,next) => {
-    /*try {*/
+exports.modifyUser = async (req,res,_next) => {
+    try {
         if(req.body.hasOwnProperty("email")) {
             const emailExist = await User.findOne({ where: {id: req.params.userId} })
             if (emailExist) {
                 return res.status(409).json({ message: 'Email has already been used'});
             }
         }
-        
         let userObject = {}
         if(req.file) {
             userObject = {
                 ...JSON.parse(req.body.user),
                 avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
             }
-            const user = await User.findOne({ id: req.params.userId })
             const filename = User.avatar.split('/images/')[1];
             await fsp.unlink('./images/' + filename)
         }
         else {
            userObject = { ...req.body }
         }
-
+            // si le lien dans la table contient gravatar.? > empty et si l'image est dans le dossier images fs.unlink
         const updateUser = await User.update({...userObject}, { where: { id: req.params.userId } })
         if (updateUser) {
             return res.status(200).json({ message : 'User has been modified'})
         }
-    //}
-    /*catch (error) {
+    }
+    catch (error) {
         res.status(400).json({error})
-    }*/
+    }
 }
 exports.deleteUser = async (req,res,next) => {
     
