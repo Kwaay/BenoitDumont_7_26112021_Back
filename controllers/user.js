@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const cryptoJS = require('crypto-js')
 const fetch = require("node-fetch");
 const { User } = require('../models');
-const sequelize = require('../models');
 const fsp = require('fs/promises');
 require('dotenv').config()
 
@@ -110,7 +109,7 @@ exports.login = async (req,res,_next) => {
         if (!regexEmail.test(req.body.email)) {
             return res.status(400).json({ error: "Email doesn't have the correct format" });
         }
-        //try {
+        try {
             const user = await User.findOne({ where: {email: req.body.email} })
             if (!user) {
                 return res.status(404).json({ error: 'User not found'});
@@ -127,10 +126,10 @@ exports.login = async (req,res,_next) => {
                         {expiresIn: '24h'}
                     )  
                 });
-        //}
-        /*catch (error) {
+        }
+        catch (error) {
             res.status(500).json({error})
-        }*/
+        }
     }
 };
 exports.getAllUsers = async (_req,res,_next) => {
@@ -208,10 +207,18 @@ exports.createUser = async (req,res,_next) => {
 }
 exports.myUser = async (req,res,_next) => {
     const token = req.headers.authorization.split(' ')[1];
-    if(token) {
-        res.status(200).json({ message: 'OK'})
-    }
     console.log(token)
+    const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
+    console.log(decodedToken)
+    const tokenUserId = decodedToken.userId
+    console.log(decodedToken.userId)
+    const user = await User.findOne({ where: {id: tokenUserId}})
+    console.log(user)
+    if (user.id === tokenUserId) {
+        return res.status(200).json({
+            user
+        })
+    }
 }
 exports.getOneUser = async (req,res,_next) => {
     try {
@@ -254,6 +261,15 @@ exports.modifyUser = async (req,res,_next) => {
         res.status(400).json({error})
     }
 }
-exports.deleteUser = async (req,res,next) => {
-    
+exports.deleteUser = async (req,res,_next) => {
+    const user = await User.findOne({ where: {id: req.params.userId} })
+    .catch (() => {
+        res.status(404).json({ message: 'User not found'})
+    });
+    const filename = user.avatar.split('/images/')[1];
+    await fsp.unlink('./images/' + filename)
+    const deleteUser = await User.destroy({ where: { id: req.params.userId }})
+    if(deleteUser) {
+        return res.status(200).json({ message : 'User has been deleted'}) 
+    }
 }
