@@ -4,6 +4,7 @@ const cryptoJS = require('crypto-js')
 const fetch = require("node-fetch");
 const { User } = require('../models');
 const sequelize = require('../models');
+const fsp = require('fs/promises');
 require('dotenv').config()
 
 
@@ -225,25 +226,25 @@ exports.getOneUser = async (req,res,_next) => {
 }
 exports.modifyUser = async (req,res,_next) => {
     try {
-        if(req.body.hasOwnProperty("email")) {
-            const emailExist = await User.findOne({ where: {id: req.params.userId} })
-            if (emailExist) {
-                return res.status(409).json({ message: 'Email has already been used'});
+        const userFind = await User.findOne({ where: { id: req.params.userId } })
+        if (req.body.hasOwnProperty("email")) {
+            if (userFind) {
+                return res.status(409).json({ message: "Email has already been used" })
             }
         }
         let userObject = {}
         if(req.file) {
             userObject = {
-                ...JSON.parse(req.body.user),
+                ...JSON.stringify(req.body),
                 avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
             }
-            const filename = User.avatar.split('/images/')[1];
+            const filename = userFind.avatar.split('/images/')[1];
             await fsp.unlink('./images/' + filename)
         }
         else {
-           userObject = { ...req.body }
+            userObject = { ...req.body }
         }
-            // si le lien dans la table contient gravatar.? > empty et si l'image est dans le dossier images fs.unlink
+        // si le lien dans la table contient gravatar.? > empty et si l'image est dans le dossier images fs.unlink
         const updateUser = await User.update({...userObject}, { where: { id: req.params.userId } })
         if (updateUser) {
             return res.status(200).json({ message : 'User has been modified'})
