@@ -94,7 +94,7 @@ exports.login = async (req,res,_next) => {
             res.status(200).json({
                 user,
                 token: jwt.sign(
-                    {userId : user._id},
+                    {userId : user.id},
                     process.env.SECRET_KEY_JWT,
                     {expiresIn: '24h'}
                 )         
@@ -207,13 +207,9 @@ exports.createUser = async (req,res,_next) => {
 }
 exports.myUser = async (req,res,_next) => {
     const token = req.headers.authorization.split(' ')[1];
-    console.log(token)
     const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
-    console.log(decodedToken)
     const tokenUserId = decodedToken.userId
-    console.log(decodedToken.userId)
     const user = await User.findOne({ where: {id: tokenUserId}})
-    console.log(user)
     if (user.id === tokenUserId) {
         return res.status(200).json({
             user
