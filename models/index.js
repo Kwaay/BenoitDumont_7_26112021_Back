@@ -5,13 +5,31 @@ const sequelize = new Sequelize(process.env.DB_BDD, process.env.DB_USER, process
     dialect: 'mysql'
 });
 
-const userModel = require('./user')(sequelize,Sequelize.DataTypes);
-const postModel = require('./post')(sequelize,Sequelize.DataTypes);
-const reactionModel = require('./reaction')(sequelize,Sequelize.DataTypes)
+const user = require('./user')(sequelize,Sequelize.DataTypes);
+const post = require('./post')(sequelize,Sequelize.DataTypes);
+const reaction = require('./reaction')(sequelize,Sequelize.DataTypes)
 
-sequelize.User = userModel;
-sequelize.Post = postModel;
-sequelize.Reaction = reactionModel;
+user.hasMany(post,{
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE"
+});
+post.belongsTo(user);
+
+post.hasMany(reaction, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE"
+});
+reaction.belongsTo(post);
+
+user.hasMany(reaction, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE"
+})
+reaction.belongsTo(user)
+
+sequelize.User = user;
+sequelize.Post = post;
+sequelize.Reaction = reaction;
 
 sequelize.authenticate()
 .then(connexion => {

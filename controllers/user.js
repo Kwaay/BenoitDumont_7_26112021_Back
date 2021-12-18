@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cryptoJS = require('crypto-js')
 const fetch = require("node-fetch");
-const { User } = require('../models');
+const { User, Post } = require('../models');
 const fsp = require('fs/promises');
 require('dotenv').config()
 
@@ -134,7 +134,11 @@ exports.login = async (req,res,_next) => {
 };
 exports.getAllUsers = async (_req,res,_next) => {
     try {
-        const findAllUsers = await User.findAll()
+        const findAllUsers = await User.findAll({
+            order: [
+                ['createdAt', 'DESC']
+              ]
+        })
         if(findAllUsers) {
              return res.status(200).json(findAllUsers);
         }
@@ -217,15 +221,20 @@ exports.myUser = async (req,res,_next) => {
     }
 }
 exports.getOneUser = async (req,res,_next) => {
-    try {
-        const findOne = await User.findOne({ where: { id: req.params.userId } })
+    //try {
+        const findOne = await User.findOne({ 
+            where: { 
+                id: req.params.userId 
+            },
+            include: [Post]
+        })
         if (findOne) {
             return res.status(200).json(findOne);
         }
-    }
+    /*}
     catch (error) {
         res.status(404).json({error});
-    }
+    }*/
 }
 exports.modifyUser = async (req,res,_next) => {
     try {
