@@ -1,8 +1,10 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const fsp = require('fs/promises');
 require('dotenv').config()
 
 const { Post, Reaction } = require('../models');
+
 
 
 exports.getAllPosts = async (_req,res,_next) => {
@@ -22,10 +24,7 @@ exports.getAllPosts = async (_req,res,_next) => {
 }
 exports.createPost = async (req,res,_next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
-        const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
-        const userId = decodedToken.userId
-        console.log(userId)
+        auth.decodeToken()   
         const searchTitle = await Post.findOne({
             where: {
                 title: req.body.title, UserId: userId
@@ -55,10 +54,8 @@ exports.createPost = async (req,res,_next) => {
                 if (postCreation) {
                     return res.status(201).json({ message:'Post Created'});
                 }
-                
             }
         }
-        
     }
     catch (error) {
         res.status(400).json({error});
@@ -85,6 +82,48 @@ exports.getOnePost = async (req,res,_next) => {
     }
 }
 exports.modifyPost = async (req,res,next) => {
+    //try {
+        console.log(req.body);
+        const token = req.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
+        const userId = decodedToken.userId
+        console.log(userId)
+        if (req.body.hasOwnProperty('title')) {
+            const titleCompare = await Post.findOne({ 
+                where: { 
+                    title: req.body.title, UserId: userId
+                }
+            })
+            if(titleCompare) {
+                return res.status(409).json({message: 'Title already exists'})
+            } 
+        }
+        let postObject = {}
+        if(req.file) {
+            postObject = {
+                ...JSON.stringify(req.body),
+                image: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+            }
+            console.log(req.params.postId)
+            const postFind = await Post.findOne({ where: { id: req.params.postId } })
+            console.log(postFind)
+            if (!postFind.image === null || !postFind.image === undefined) {
+                const filename = postFind.image.split('/images/')[1];
+                await fsp.unlink('./images/' + filename)
+            }
+        }
+        else {
+            postObject = { ...req.body }
+        }
+        const updatePost = await Post.update({...postObject}, { where: { id: req.params.postId } })
+        if (updatePost) {
+            return res.status(200).json({ message : 'Post has been modified'})
+        }
+        
+    /*}
+    catch (error) {
+        res.status(400).json({error})
+    }*/
 }
 exports.deletePost = async (req,res,next) => {
     const post = await Post.findOne({ where: {id: req.params.postId} })
