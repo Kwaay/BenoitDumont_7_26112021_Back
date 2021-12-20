@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const fsp = require('fs/promises');
 require('dotenv').config()
 
-const { Post, Reaction } = require('../models');
+const { User, Post, Reaction } = require('../models');
 
 
 
@@ -24,7 +24,10 @@ exports.getAllPosts = async (_req,res,_next) => {
 }
 exports.createPost = async (req,res,_next) => {
     try {
-        auth.decodeToken()   
+        const token = req.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
+        const userId = decodedToken.userId
+        console.log(userId)   
         const searchTitle = await Post.findOne({
             where: {
                 title: req.body.title, UserId: userId
@@ -83,12 +86,12 @@ exports.getOnePost = async (req,res,_next) => {
 }
 exports.modifyPost = async (req,res,next) => {
     //try {
-        console.log(req.body);
+        
         const token = req.headers.authorization.split(' ')[1];
         const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
         const userId = decodedToken.userId
         console.log(userId)
-        if (req.body.hasOwnProperty('title')) {
+        if (!req.body.title === null || !req.body.title === undefined) {
             const titleCompare = await Post.findOne({ 
                 where: { 
                     title: req.body.title, UserId: userId
