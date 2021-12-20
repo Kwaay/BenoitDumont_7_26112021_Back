@@ -22,32 +22,48 @@ exports.getAllPosts = async (_req,res,_next) => {
 }
 exports.createPost = async (req,res,_next) => {
     try {
-        if (req.file) {
-            const postCreation = Post.create({
-                title: req.body.title,
-                content: req.body.content,
-                image: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-            });
-            if (postCreation) {
-                return res.status(201).json({ message:'Post Created'});
+        const token = req.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
+        const userId = decodedToken.userId
+        console.log(userId)
+        const searchTitle = await Post.findOne({
+            where: {
+                title: req.body.title, UserId: userId
             }
+        })
+        if (searchTitle) {
+            return res.status(400).json({message: 'Title already exists'})
         }
         else {
-            const postCreation = Post.create({
-                title: req.body.title,
-                content: req.body.content
-            });
-            if (postCreation) {
-                return res.status(201).json({ message:'Post Created'});
+            if (req.file) {
+                const postCreation = Post.create({
+                    title: req.body.title,
+                    content: req.body.content,
+                    image: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+                    UserId : userId
+                });
+                if (postCreation) {
+                    return res.status(201).json({ message:'Post Created'});
+                }
             }
-            
+            else {
+                const postCreation = Post.create({
+                    title: req.body.title,
+                    content: req.body.content,
+                    UserId : userId
+                });
+                if (postCreation) {
+                    return res.status(201).json({ message:'Post Created'});
+                }
+                
+            }
         }
+        
     }
     catch (error) {
         res.status(400).json({error});
     }
 }
-
 exports.getOnePost = async (req,res,_next) => {
     try {
         const findOnePost = await Post.findOne({ 
@@ -68,11 +84,18 @@ exports.getOnePost = async (req,res,_next) => {
         res.status(404).json({error});
     }
 }
-
 exports.modifyPost = async (req,res,next) => {
-
 }
-
 exports.deletePost = async (req,res,next) => {
-
+    const post = await Post.findOne({ where: {id: req.params.postId} })
+    .catch (() => {
+        res.status(404).json({ message: 'Post not found'})
+    });
+    console.log(post.image)
+    const filename = post.image.split('/images/')[1];
+    await fsp.unlink('./images/' + filename)
+    const deletePost = await Post.destroy({ where: { id: req.params.postId }})
+    if(deletePost) {
+        return res.status(200).json({ message : 'Post has been deleted'}) 
+    }
 }

@@ -136,7 +136,7 @@ exports.getAllUsers = async (_req,res,_next) => {
     try {
         const findAllUsers = await User.findAll({
             order: [
-                ['createdAt', 'DESC']
+                ['createdAt', 'ASC']
               ]
         })
         if(findAllUsers) {

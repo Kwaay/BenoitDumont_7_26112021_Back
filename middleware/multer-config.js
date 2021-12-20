@@ -23,7 +23,5 @@ const storage = multer.diskStorage({
   }
 });
 
-module.exports = multer({storage: storage}).fields([
-  { name: 'avatar', maxCount: 1 },
-  { name: 'image', maxCount: 3 }
-]);
+module.exports = multer({storage: storage}).single('image')
+
