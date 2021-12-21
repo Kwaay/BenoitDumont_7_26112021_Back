@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cryptoJS = require('crypto-js')
 const fetch = require("node-fetch");
-const { User, Post } = require('../models');
+const { User, Post, Reaction } = require('../models');
 const fsp = require('fs/promises');
 require('dotenv').config()
 
@@ -28,14 +28,14 @@ exports.signup = async (req,res,_next) => {
     }
     try {
         const hashPassword = await bcrypt.hash(req.body.password, 10)
-        if (req.file) {
+        if (req.files) {
             User.create({
                 name: req.body.name,
                 firstname: req.body.firstname,
                 username: req.body.username,
                 email: req.body.email,
                 password: hashPassword,
-                avatar: req.file
+                avatar: req.files
             });
         }
         else {
@@ -148,27 +148,36 @@ exports.getAllUsers = async (_req,res,_next) => {
     }
 }
 exports.createUser = async (req,res,_next) => {
-    const emailExist = await User.findOne({ where: {email: req.body.email} })
+    console.log(req.body)
+    const emailExist = await User.findOne({ 
+        where: {
+            email: req.body.email
+        } 
+    })
     if (emailExist) {
         return res.status(409).json({ message: 'Email has already been used'});
     }
-    const usernameExist = await User.findOne({ where: {username: req.body.username} })
+    const usernameExist = await User.findOne({ 
+        where: {
+            username: req.body.username
+        } 
+    })
     if (usernameExist) {
         return res.status(409).json({ message: 'Username has already been used'});
     }
     if (!regexEmail.test(req.body.email) && (!regexPassword.test(req.body.password))) {
         return res.status(400).json({ message: "Email or Password doesn't have the correct format"});
     }
-    try {
+    //try {
         const hashPassword = await bcrypt.hash(req.body.password, 10)
-        if (req.file) {
+        if (req.files) {
             const userCreation = User.create({
                 name: req.body.name,
                 firstname: req.body.firstname,
                 username: req.body.username,
                 email: req.body.email,
                 password: hashPassword,
-                avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                avatar: `${req.protocol}://${req.get('host')}/images/${req.files.filename}`
             });
             if (userCreation) {
                 return res.status(201).json({ message:'User Created'});
@@ -204,10 +213,10 @@ exports.createUser = async (req,res,_next) => {
                 res.status(500).json({error})
             })
         }
-    }
+    /*}
     catch (error) {
         res.status(400).json({error});
-    };
+    };*/
 }
 exports.myUser = async (req,res,_next) => {
     const token = req.headers.authorization.split(' ')[1];
@@ -221,34 +230,36 @@ exports.myUser = async (req,res,_next) => {
     }
 }
 exports.getOneUser = async (req,res,_next) => {
-    //try {
-        const findOne = await User.findOne({ 
+    try {
+        const findOneUser = await User.findOne({ 
             where: { 
                 id: req.params.userId 
             },
-            include: [Post]
+            include: [{
+                model: Post, Reaction
+            }]
         })
-        if (findOne) {
-            return res.status(200).json(findOne);
+        if (findOneUser) {
+            return res.status(200).json(findOneUser);
         }
-    /*}
+    }
     catch (error) {
         res.status(404).json({error});
-    }*/
+    }
 }
 exports.modifyUser = async (req,res,_next) => {
-    try {
+   try {
         const userFind = await User.findOne({ where: { id: req.params.userId } })
-        if (req.body.hasOwnProperty("email")) {
+        if (!req.body.email === null || !req.body.email === undefined) {
             if (userFind) {
                 return res.status(409).json({ message: "Email has already been used" })
             }
         }
         let userObject = {}
-        if(req.file) {
+        if(req.files) {
             userObject = {
                 ...JSON.stringify(req.body),
-                avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                avatar: `${req.protocol}://${req.get('host')}/images/${req.files.filename}`
             }
             const filename = userFind.avatar.split('/images/')[1];
             await fsp.unlink('./images/' + filename)

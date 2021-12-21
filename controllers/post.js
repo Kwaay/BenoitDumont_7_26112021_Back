@@ -37,11 +37,11 @@ exports.createPost = async (req,res,_next) => {
             return res.status(400).json({message: 'Title already exists'})
         }
         else {
-            if (req.file) {
+            if (req.files) {
                 const postCreation = Post.create({
                     title: req.body.title,
                     content: req.body.content,
-                    image: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+                    image: `${req.protocol}://${req.get('host')}/images/${req.files.filename}`,
                     UserId : userId
                 });
                 if (postCreation) {
@@ -85,8 +85,7 @@ exports.getOnePost = async (req,res,_next) => {
     }
 }
 exports.modifyPost = async (req,res,next) => {
-    //try {
-        
+    try {
         const token = req.headers.authorization.split(' ')[1];
         const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
         const userId = decodedToken.userId
@@ -102,10 +101,10 @@ exports.modifyPost = async (req,res,next) => {
             } 
         }
         let postObject = {}
-        if(req.file) {
+        if(req.files) {
             postObject = {
                 ...JSON.stringify(req.body),
-                image: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                image: `${req.protocol}://${req.get('host')}/images/${req.files.filename}`
             }
             console.log(req.params.postId)
             const postFind = await Post.findOne({ where: { id: req.params.postId } })
@@ -123,10 +122,10 @@ exports.modifyPost = async (req,res,next) => {
             return res.status(200).json({ message : 'Post has been modified'})
         }
         
-    /*}
+    }
     catch (error) {
         res.status(400).json({error})
-    }*/
+    }
 }
 exports.deletePost = async (req,res,next) => {
     const post = await Post.findOne({ where: {id: req.params.postId} })
