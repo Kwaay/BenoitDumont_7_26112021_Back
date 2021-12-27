@@ -28,20 +28,21 @@ exports.createPost = async (req, res, _next) => {
         const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
         const userId = decodedToken.userId
         console.log(userId)
+        console.log(req.body)
         const searchTitle = await Post.findOne({
             where: {
                 title: req.body.title, UserId: userId
             }
         })
         if (searchTitle) {
-            return res.status(400).json({ message: 'Title already exists' })
+            return res.status(409).json({ message: 'Title already exists' })
         }
         else {
             if (req.files) {
-                const postCreation = Post.create({
+                const postCreation = await Post.create({
                     title: req.body.title,
                     content: req.body.content,
-                    image: `${req.protocol}://${req.get('host')}/images/${req.files[0].filename}`,
+                    image: `${req.protocol}://${req.get('host')}/images/${req.files.image[0].filename}`,
                     UserId: userId
                 });
                 if (postCreation) {
@@ -49,7 +50,7 @@ exports.createPost = async (req, res, _next) => {
                 }
             }
             else {
-                const postCreation = Post.create({
+                const postCreation = await Post.create({
                     title: req.body.title,
                     content: req.body.content,
                     UserId: userId
@@ -72,11 +73,11 @@ exports.getOnePost = async (req, res, _next) => {
             },
             include: [{
                 model: User,
-                attributes: ['id', 'username', 'avatar' ]
+                attributes: ['id', 'username', 'avatar']
             },
             {
                 model: Reaction,
-                attributes: ['id', 'userId', 'type' ]
+                attributes: ['id', 'userId', 'type']
             }]
         })
         if (findOnePost) {
@@ -107,7 +108,7 @@ exports.modifyPost = async (req, res, next) => {
         if (req.files) {
             postObject = {
                 ...JSON.stringify(req.body),
-                image: `${req.protocol}://${req.get('host')}/images/${req.files[0].filename}`
+                image: `${req.protocol}://${req.get('host')}/images/${req.files.image[0].filename}`
             }
             console.log(req.params.postId)
             const postFind = await Post.findOne({ where: { id: req.params.postId } })

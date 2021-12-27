@@ -177,7 +177,7 @@ exports.createUser = async (req, res, _next) => {
             username: req.body.username,
             email: req.body.email,
             password: hashPassword,
-            avatar: `${req.protocol}://${req.get('host')}/images/${req.files[0].filename}`
+            avatar: `${req.protocol}://${req.get('host')}/images/${req.files.avatar[0].filename}`
         });
         if (userCreation) {
             return res.status(201).json({ message: 'User Created' });
@@ -248,7 +248,7 @@ exports.getOneUser = async (req, res, _next) => {
     }
 };
 exports.modifyUser = async (req, res, _next) => {
-    try {
+    //try {
         const userFind = await User.findOne({ where: { id: req.params.userId } })
         if (!req.body.email === null || !req.body.email === undefined) {
             if (userFind) {
@@ -256,13 +256,17 @@ exports.modifyUser = async (req, res, _next) => {
             }
         }
         let userObject = {}
+        
         if (req.files) {
+            console.log(userFind.avatar)
             userObject = {
                 ...JSON.stringify(req.body),
-                avatar: `${req.protocol}://${req.get('host')}/images/${req.files[0].filename}`
+                avatar: `${req.protocol}://${req.get('host')}/images/${req.files.avatar[0].filename}`
             }
-            const filename = userFind.avatar.split('/images/')[1];
-            await fsp.unlink('./images/' + filename)
+            if (!userFind.avatar === null || !userFind.avatar === undefined) {
+                const filename = userFind.avatar.split('/images/')[1];
+                await fsp.unlink('./images/' + filename)
+            }
         }
         else {
             userObject = { ...req.body }
@@ -272,10 +276,10 @@ exports.modifyUser = async (req, res, _next) => {
         if (updateUser) {
             return res.status(200).json({ message: 'User has been modified' })
         }
-    }
+    /*}
     catch (error) {
         res.status(400).json({ error })
-    }
+    }*/
 };
 exports.deleteUser = async (req, res, _next) => {
     const user = await User.findOne({ where: { id: req.params.userId } })

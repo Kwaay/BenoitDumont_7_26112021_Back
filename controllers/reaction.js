@@ -85,11 +85,21 @@ exports.modifyReaction = async (req, res) => {
         if (searchReaction) {
             return res.status(409).json({ message: 'Reaction already exists' })
         }
+        const searchPost = await Post.findOne({
+            where: {
+                id: req.body.postId
+            }
+        })
+        if (searchPost === null || searchPost === undefined) {
+            return res.status(404).json({ message: 'Post not found' })
+        }
         let reactionObject = {}
         reactionObject = { ...req.body }
+        console.log(req.params.reactionId)
         const updateReaction = await Reaction.update({ ...reactionObject }, { where: { id: req.params.reactionId } })
-        if (updateReaction) {
-            return res.status(200).json({ message: 'Reaction has been modified' })
+        console.log(updateReaction)
+        if(updateReaction) {
+            return res.status(200).json({ message: 'Reaction successfully updated'})
         }
     }
     catch (error) {
