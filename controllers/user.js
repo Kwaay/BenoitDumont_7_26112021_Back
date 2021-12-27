@@ -35,7 +35,7 @@ exports.signup = async (req, res, _next) => {
                 username: req.body.username,
                 email: req.body.email,
                 password: hashPassword,
-                avatar: req.files
+                avatar: `${req.protocol}://${req.get('host')}/images/${req.files[0].filename}`
             });
         }
         else {
@@ -74,9 +74,9 @@ exports.signup = async (req, res, _next) => {
     };
 };
 exports.login = async (req, res, _next) => {
-    if (!regexPassword.test(req.body.password)) {
+    /*if (!regexPassword.test(req.body.password)) {
         return res.status(400).json({ error: "Password doesn't have the correct format" });
-    }
+    }*/
     // Cas ou l'utilisateur essaye de se connecter avec un username
     if (req.body.hasOwnProperty("username")) {
         if (!regexUsername.test(req.body.username)) {
@@ -146,7 +146,7 @@ exports.getAllUsers = async (_req, res, _next) => {
     catch (error) {
         res.status(400).json({ error });
     }
-}
+};
 exports.createUser = async (req, res, _next) => {
     console.log(req.body)
     const emailExist = await User.findOne({
@@ -177,7 +177,7 @@ exports.createUser = async (req, res, _next) => {
             username: req.body.username,
             email: req.body.email,
             password: hashPassword,
-            avatar: `${req.protocol}://${req.get('host')}/images/${req.files.filename}`
+            avatar: `${req.protocol}://${req.get('host')}/images/${req.files[0].filename}`
         });
         if (userCreation) {
             return res.status(201).json({ message: 'User Created' });
@@ -217,7 +217,7 @@ exports.createUser = async (req, res, _next) => {
     catch (error) {
         res.status(400).json({error});
     };*/
-}
+};
 exports.myUser = async (req, res, _next) => {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
@@ -228,7 +228,7 @@ exports.myUser = async (req, res, _next) => {
             user
         })
     }
-}
+};
 exports.getOneUser = async (req, res, _next) => {
     try {
         const findOneUser = await User.findOne({
@@ -246,7 +246,7 @@ exports.getOneUser = async (req, res, _next) => {
     catch (error) {
         res.status(404).json({ error });
     }
-}
+};
 exports.modifyUser = async (req, res, _next) => {
     try {
         const userFind = await User.findOne({ where: { id: req.params.userId } })
@@ -259,7 +259,7 @@ exports.modifyUser = async (req, res, _next) => {
         if (req.files) {
             userObject = {
                 ...JSON.stringify(req.body),
-                avatar: `${req.protocol}://${req.get('host')}/images/${req.files.filename}`
+                avatar: `${req.protocol}://${req.get('host')}/images/${req.files[0].filename}`
             }
             const filename = userFind.avatar.split('/images/')[1];
             await fsp.unlink('./images/' + filename)
@@ -276,7 +276,7 @@ exports.modifyUser = async (req, res, _next) => {
     catch (error) {
         res.status(400).json({ error })
     }
-}
+};
 exports.deleteUser = async (req, res, _next) => {
     const user = await User.findOne({ where: { id: req.params.userId } })
         .catch(() => {
@@ -288,4 +288,4 @@ exports.deleteUser = async (req, res, _next) => {
     if (deleteUser) {
         return res.status(200).json({ message: 'User has been deleted' })
     }
-}
+};

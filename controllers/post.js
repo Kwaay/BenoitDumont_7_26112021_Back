@@ -41,7 +41,7 @@ exports.createPost = async (req, res, _next) => {
                 const postCreation = Post.create({
                     title: req.body.title,
                     content: req.body.content,
-                    image: `${req.protocol}://${req.get('host')}/images/${req.files.filename}`,
+                    image: `${req.protocol}://${req.get('host')}/images/${req.files[0].filename}`,
                     UserId: userId
                 });
                 if (postCreation) {
@@ -72,11 +72,11 @@ exports.getOnePost = async (req, res, _next) => {
             },
             include: [{
                 model: User,
-                attributes: ['username', 'avatar', 'id']
+                attributes: ['id', 'username', 'avatar' ]
             },
             {
                 model: Reaction,
-                attributes: ['type', 'userId']
+                attributes: ['id', 'userId', 'type' ]
             }]
         })
         if (findOnePost) {
@@ -107,7 +107,7 @@ exports.modifyPost = async (req, res, next) => {
         if (req.files) {
             postObject = {
                 ...JSON.stringify(req.body),
-                image: `${req.protocol}://${req.get('host')}/images/${req.files.filename}`
+                image: `${req.protocol}://${req.get('host')}/images/${req.files[0].filename}`
             }
             console.log(req.params.postId)
             const postFind = await Post.findOne({ where: { id: req.params.postId } })

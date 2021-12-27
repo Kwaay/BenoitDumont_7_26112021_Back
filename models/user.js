@@ -1,5 +1,15 @@
+
 module.exports = (Sequelize, DataTypes) => {
     return Sequelize.define('User', {
+        id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            primaryKey: true,
+            autoIncrement: true,
+            noUpdate: {
+                readOnly: true
+            }
+        },
         name: {
             type: DataTypes.STRING,
             allowNull: false
@@ -11,7 +21,7 @@ module.exports = (Sequelize, DataTypes) => {
         username: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true
+            unique: true,
         },
         email: {
             type: DataTypes.STRING,
@@ -25,6 +35,18 @@ module.exports = (Sequelize, DataTypes) => {
         avatar: {
             type: DataTypes.STRING.BINARY,
             allowNull: true
+        },
+        createdAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            noUpdate: {
+                readOnly: true
+            }
+        },
+        updatedAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            noUpdate: true
         }
     }, {
         tableName: 'users',
