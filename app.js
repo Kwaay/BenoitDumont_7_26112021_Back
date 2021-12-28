@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
+const useragent = require('express-useragent');
 require('dotenv').config()
+
 
 const userRoutes = require('./routes/user');
 const postRoutes = require('./routes/post');
@@ -15,6 +17,7 @@ res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OP
 next();
 });
 
+app.use(useragent.express());
 app.use(express.json());
 
 app.use('/images', express.static(path.join(__dirname, 'images')));

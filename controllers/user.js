@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cryptoJS = require('crypto-js')
 const fetch = require("node-fetch");
-const { User, Post, Reaction } = require('../models');
+const { User, Post, Reaction, Token } = require('../models');
 const fsp = require('fs/promises');
 require('dotenv').config()
 
@@ -77,6 +77,10 @@ exports.login = async (req, res, _next) => {
     /*if (!regexPassword.test(req.body.password)) {
         return res.status(400).json({ error: "Password doesn't have the correct format" });
     }*/
+    const userAgent = req.useragent.browser + " " + "|" + " " + req.useragent.version;
+    console.log(userAgent);
+    const ip = req.ip;
+    console.log(ip)
     // Cas ou l'utilisateur essaye de se connecter avec un username
     if (req.body.hasOwnProperty("username")) {
         if (!regexUsername.test(req.body.username)) {
@@ -91,6 +95,13 @@ exports.login = async (req, res, _next) => {
             if (!valid) {
                 return res.status(401).json({ error: 'Failed to login' });
             }
+
+            await Token.create({
+                userAgent: userAgent,
+                ipAddress: ip,
+                UserId : user.id
+            })
+            
             res.status(200).json({
                 user,
                 token: jwt.sign(
@@ -121,7 +132,7 @@ exports.login = async (req, res, _next) => {
             res.status(200).json({
                 user,
                 token: jwt.sign(
-                    { userId: user._id },
+                    { userId: user.id },
                     process.env.SECRET_KEY_JWT,
                     { expiresIn: '24h' }
                 )
