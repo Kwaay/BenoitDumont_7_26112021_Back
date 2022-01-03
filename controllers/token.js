@@ -40,6 +40,6 @@ exports.deleteToken = async (req, res, _next) => {
         });
     const deleteToken = await Token.destroy({ where: { id: req.params.tokenId } })
     if (deleteToken) {
-        return res.status(200).json({ message: 'Reaction has been deleted' })
+        return res.status(200).json({ message: 'Token has been deleted' })
     }
 }

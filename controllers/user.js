@@ -4,6 +4,7 @@ const cryptoJS = require('crypto-js')
 const fetch = require("node-fetch");
 const { User, Post, Reaction, Token } = require('../models');
 const fsp = require('fs/promises');
+const sequelize = require('../models');
 require('dotenv').config()
 
 
@@ -86,7 +87,7 @@ exports.login = async (req, res, _next) => {
         if (!regexUsername.test(req.body.username)) {
             return res.status(400).json({ error: "Username doesn't have the correct format" });
         }
-        try {
+        //try {
             const user = await User.findOne({ where: { username: req.body.username } })
             if (!user) {
                 return res.status(404).json({ error: 'Username not found' });
@@ -97,25 +98,56 @@ exports.login = async (req, res, _next) => {
             }
 
             const token = jwt.sign
-            ({ userId: user.id },
-            process.env.SECRET_KEY_JWT,
-            { expiresIn: '24h' })
+                ({ userId: user.id },
+                    process.env.SECRET_KEY_JWT,
+                    { expiresIn: '24h' })
 
-            await Token.create({
+            //const todayLess24Hours = Date.now() - 86400000;
+            const todayLess24Hours = Date.now() - 300000; 
+            console.log(todayLess24Hours);
+            const dateToCompare = new Date(todayLess24Hours)
+            console.log(dateToCompare)
+            let yyyy = dateToCompare.getFullYear();
+            let mm = dateToCompare.getMonth()+1;
+            let dd = dateToCompare.getDate();
+            let hh = dateToCompare.getHours();
+            let mmm = dateToCompare.getMinutes();
+            let ss = dateToCompare.getSeconds();
+            if (dd < 10) {
+                dd = '0' + dd;
+            }
+            if (mm < 10) {
+                mm = '0' + mm;
+            }
+            if (ss < 10) {
+                ss = '0' + ss;
+            }
+            if (mmm < 10) {
+                mmm = '0'+ mmm;
+            }
+            const format = yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + mmm + ':' + ss;
+            console.log(format);
+
+
+
+            const autoPurgeSelect = sequelize.query(`DELETE FROM tokens WHERE createdAt < "${format}" `)
+            console.log(autoPurgeSelect)
+
+            const TokenCreation = await Token.create({
                 token,
                 userAgent: userAgent,
                 ipAddress: ip,
-                UserId : user.id
+                UserId: user.id
             })
-            
+
             res.status(200).json({
                 user,
                 token
             });
-        }
+        /*}
         catch (error) {
             res.status(500).json({ error })
-        }
+        }*/
     }
     // Cas ou l'utilisateur essaye de se connecter avec un email
     if (req.body.hasOwnProperty("email")) {
@@ -131,13 +163,21 @@ exports.login = async (req, res, _next) => {
             if (!valid) {
                 return res.status(401).json({ error: 'Failed to login' });
             }
+            const token = jwt.sign
+                ({ userId: user.id },
+                    process.env.SECRET_KEY_JWT,
+                    { expiresIn: '24h' })
+
+            const tokenCreation = await Token.create({
+                token,
+                userAgent: userAgent,
+                ipAddress: ip,
+                UserId: user.id
+            })
+
             res.status(200).json({
                 user,
-                token: jwt.sign(
-                    { userId: user.id },
-                    process.env.SECRET_KEY_JWT,
-                    { expiresIn: '24h' }
-                )
+                token
             });
         }
         catch (error) {
@@ -262,33 +302,33 @@ exports.getOneUser = async (req, res, _next) => {
 };
 exports.modifyUser = async (req, res, _next) => {
     //try {
-        const userFind = await User.findOne({ where: { id: req.params.userId } })
-        if (!req.body.email === null || !req.body.email === undefined) {
-            if (userFind) {
-                return res.status(409).json({ message: "Email has already been used" })
-            }
+    const userFind = await User.findOne({ where: { id: req.params.userId } })
+    if (!req.body.email === null || !req.body.email === undefined) {
+        if (userFind) {
+            return res.status(409).json({ message: "Email has already been used" })
         }
-        let userObject = {}
-        
-        if (req.files) {
-            console.log(userFind.avatar)
-            userObject = {
-                ...JSON.stringify(req.body),
-                avatar: `${req.protocol}://${req.get('host')}/images/${req.files.avatar[0].filename}`
-            }
-            if (!userFind.avatar === null || !userFind.avatar === undefined) {
-                const filename = userFind.avatar.split('/images/')[1];
-                await fsp.unlink('./images/' + filename)
-            }
+    }
+    let userObject = {}
+
+    if (req.files) {
+        console.log(userFind.avatar)
+        userObject = {
+            ...JSON.stringify(req.body),
+            avatar: `${req.protocol}://${req.get('host')}/images/${req.files.avatar[0].filename}`
         }
-        else {
-            userObject = { ...req.body }
+        if (!userFind.avatar === null || !userFind.avatar === undefined) {
+            const filename = userFind.avatar.split('/images/')[1];
+            await fsp.unlink('./images/' + filename)
         }
-        // si le lien dans la table contient gravatar.? > empty et si l'image est dans le dossier images fs.unlink
-        const updateUser = await User.update({ ...userObject }, { where: { id: req.params.userId } })
-        if (updateUser) {
-            return res.status(200).json({ message: 'User has been modified' })
-        }
+    }
+    else {
+        userObject = { ...req.body }
+    }
+    // si le lien dans la table contient gravatar.? > empty et si l'image est dans le dossier images fs.unlink
+    const updateUser = await User.update({ ...userObject }, { where: { id: req.params.userId } })
+    if (updateUser) {
+        return res.status(200).json({ message: 'User has been modified' })
+    }
     /*}
     catch (error) {
         res.status(400).json({ error })
