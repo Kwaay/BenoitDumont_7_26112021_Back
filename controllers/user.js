@@ -77,7 +77,7 @@ exports.login = async (req, res, _next) => {
     /*if (!regexPassword.test(req.body.password)) {
         return res.status(400).json({ error: "Password doesn't have the correct format" });
     }*/
-    const userAgent = req.useragent.browser + " " + "|" + " " + req.useragent.version;
+    const userAgent = req.useragent.browser + " | " + req.useragent.version;
     console.log(userAgent);
     const ip = req.ip;
     console.log(ip)
@@ -96,7 +96,13 @@ exports.login = async (req, res, _next) => {
                 return res.status(401).json({ error: 'Failed to login' });
             }
 
+            const token = jwt.sign
+            ({ userId: user.id },
+            process.env.SECRET_KEY_JWT,
+            { expiresIn: '24h' })
+
             await Token.create({
+                token,
                 userAgent: userAgent,
                 ipAddress: ip,
                 UserId : user.id
@@ -104,11 +110,7 @@ exports.login = async (req, res, _next) => {
             
             res.status(200).json({
                 user,
-                token: jwt.sign(
-                    { userId: user.id },
-                    process.env.SECRET_KEY_JWT,
-                    { expiresIn: '24h' }
-                )
+                token
             });
         }
         catch (error) {

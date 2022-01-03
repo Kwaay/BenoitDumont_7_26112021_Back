@@ -7,6 +7,13 @@ module.exports = (Sequelize, DataTypes) => {
             autoIncrement: true,
             noUpdate: true
         },
+        token: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            noUpdate: {
+                readOnly: true
+            }
+        },
         userAgent: {
             type: DataTypes.STRING,
             allowNull: false,
