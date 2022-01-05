@@ -1,12 +1,9 @@
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fsp = require('fs/promises');
 require('dotenv').config()
-
 const { User, Post, Reaction } = require('../models');
 
-
-
+// Récupération de tous les posts en les ordonnant en fonction de leur date de création et trié de façon décroissante //
 exports.getAllPosts = async (_req, res, _next) => {
     try {
         const findAllPosts = await Post.findAll({
@@ -22,6 +19,8 @@ exports.getAllPosts = async (_req, res, _next) => {
         res.status(400).json({ error });
     }
 }
+
+// Création d'un post
 exports.createPost = async (req, res, _next) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
@@ -65,6 +64,8 @@ exports.createPost = async (req, res, _next) => {
         res.status(400).json({ error });
     }
 }
+
+// Récupération d'un post en particulier qui inclus l'id, l'username et l'avatar de l'user relié au post et les réactions du post récupéré 
 exports.getOnePost = async (req, res, _next) => {
     try {
         const findOnePost = await Post.findOne({
@@ -88,6 +89,8 @@ exports.getOnePost = async (req, res, _next) => {
         res.status(404).json({ error });
     }
 }
+
+// Modification d'un post en particulier
 exports.modifyPost = async (req, res, next) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
@@ -131,6 +134,8 @@ exports.modifyPost = async (req, res, next) => {
         res.status(400).json({ error })
     }
 }
+
+// Suppression d"un post en particulier
 exports.deletePost = async (req, res, next) => {
     const post = await Post.findOne({ where: { id: req.params.postId } })
         .catch(() => {

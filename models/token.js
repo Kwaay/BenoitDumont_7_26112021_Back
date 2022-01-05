@@ -1,3 +1,4 @@
+// Model des tokens
 module.exports = (Sequelize, DataTypes) => {
     return Sequelize.define('Token', {
         id: {

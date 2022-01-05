@@ -1,3 +1,4 @@
+// Model des réactions
 module.exports = (Sequelize, DataTypes) => {
     return Sequelize.define('Reaction', {
         id: {

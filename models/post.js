@@ -1,3 +1,4 @@
+// Model des posts
 module.exports = (Sequelize, DataTypes) => {
     return Sequelize.define('Post', {
         id: {

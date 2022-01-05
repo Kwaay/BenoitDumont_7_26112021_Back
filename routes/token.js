@@ -1,10 +1,10 @@
-//get one get all delete 
 const express = require('express');
 const router = express.Router();
 const tokenCtrl = require('../controllers/token');
+const auth = require('../middleware/auth');
 
-router.get('/',tokenCtrl.getAllTokens);
-router.get('/:tokenId', tokenCtrl.getOneToken);
-router.delete('/:tokenId', tokenCtrl.deleteToken);
+router.get('/', auth, tokenCtrl.getAllTokens);
+router.get('/:tokenId', auth, tokenCtrl.getOneToken);
+router.delete('/:tokenId', auth, tokenCtrl.deleteToken);
 
 module.exports = router;

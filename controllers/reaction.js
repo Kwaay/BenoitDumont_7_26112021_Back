@@ -1,10 +1,8 @@
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const fsp = require('fs/promises');
 require('dotenv').config()
-
 const { User, Post, Reaction } = require('../models');
 
+// Récupération de tous les posts en les ordonnant en fonction de leur date de création et trié de façon décroissante //
 exports.getAllReactions = async (_req, res) => {
     try {
         const findAllReactions = await Reaction.findAll({
@@ -20,6 +18,8 @@ exports.getAllReactions = async (_req, res) => {
         res.status(400).json({ error });
     }
 }
+
+// Création d'une réaction
 exports.createReaction = async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
@@ -48,6 +48,8 @@ exports.createReaction = async (req, res) => {
         res.status(400).json({ error });
     }
 }
+
+// Récupération d'une réaction en incluant Le titre et le contenu du Post auquel il est relié et l'username et l'avatar qui a mis cette réaction sur le Post
 exports.getOneReaction = async (req, res) => {
     try {
         const findOneReaction = await Reaction.findOne({
@@ -71,6 +73,8 @@ exports.getOneReaction = async (req, res) => {
         res.status(404).json({ error });
     }
 }
+
+// Modification d'une réaction en particulier
 exports.modifyReaction = async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
@@ -106,6 +110,8 @@ exports.modifyReaction = async (req, res) => {
         res.status(400).json({ error })
     }
 }
+
+// Suppression d'une réaction en particulier
 exports.deleteReaction = async (req, res) => {
     const reaction = await Reaction.findOne({ where: { id: req.params.reactionId } })
         .catch(() => {

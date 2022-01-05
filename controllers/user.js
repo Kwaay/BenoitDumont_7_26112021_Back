@@ -16,20 +16,26 @@ const regexEmail = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{
 const regexPassword = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$/gm;
 // password must contain 1 number (0-9), 1 uppercase letters, 1 lowercase letters, 1 non-alpha numeric number, 8-16 characters with no space
 
+// Partie "S'inscrire"
 exports.signup = async (req, res, _next) => {
+    // Vérification si l'email est déjà utilisée
     const emailExist = await User.findOne({ where: { email: req.body.email } })
     if (emailExist) {
         return res.status(409).json({ message: 'Email has already been used' });
     }
+    // Vérification si l'username a déjà été utilisé
     const usernameExist = await User.findOne({ where: { username: req.body.username } })
     if (usernameExist) {
         return res.status(409).json({ message: 'Username has already been used' });
     }
+    // Vérification du format du contenu envoyé
     if (!regexEmail.test(req.body.email) && (!regexPassword.test(req.body.password))) {
         return res.status(400).json({ message: "Email or Password doesn't have the correct format" });
     }
     try {
+        // Hash du Mot de passe avec 10 tours de SALT
         const hashPassword = await bcrypt.hash(req.body.password, 10)
+        // Si le body contient un fichier
         if (req.files) {
             User.create({
                 name: req.body.name,
@@ -41,7 +47,9 @@ exports.signup = async (req, res, _next) => {
                 maxSecurity: true
             });
         }
+        // Si le body ne contient pas de fichier
         else {
+            // Hash de l'email en MD5 pour pouvoir vérifier si un avatar est relié depuis Gravatar
             const hashEmail = cryptoJS.MD5(req.body.email).toString().toLowerCase();
             console.log(hashEmail);
             fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
@@ -77,6 +85,8 @@ exports.signup = async (req, res, _next) => {
         res.status(400).json({ error });
     };
 };
+
+// Partie "Se connecter"
 exports.login = async (req, res, _next) => {
     /*if (!regexPassword.test(req.body.password)) {
         return res.status(400).json({ error: "Password doesn't have the correct format" });
@@ -87,15 +97,17 @@ exports.login = async (req, res, _next) => {
             return res.status(400).json({ error: "Username doesn't have the correct format" });
         }
         //try {
+        // Vérification si l'username existe
         const user = await User.findOne({ where: { username: req.body.username } })
         if (!user) {
             return res.status(404).json({ error: 'Username not found' });
         }
+        // Vérification si le mot de passe envoyé correspond à celui dans la base de données
         const valid = await bcrypt.compare(req.body.password, user.password)
         if (!valid) {
             return res.status(401).json({ error: 'Failed to login' });
         }
-
+        // Création d'un token de 24h avec l'userId inclus
         const token = jwt.sign({
             userId: user.id
         },
@@ -103,6 +115,7 @@ exports.login = async (req, res, _next) => {
             expiresIn: '24h'
         })
 
+        // Auto-Purge des tokens expirés (24h)
         const datetime = new Date()
         datetime.setHours(datetime.getHours() - 23);
         // Test : datetime.setSeconds(datetime.getSeconds() - 20);
@@ -111,8 +124,11 @@ exports.login = async (req, res, _next) => {
         const autoPurgeSelect = await sequelize.query(`DELETE FROM tokens WHERE createdAt > "${format}" `)
         console.log(autoPurgeSelect)
 
+        // Récupération de l'userAgent
         const userAgent = req.useragent.browser + " | " + req.useragent.version;
         console.log(userAgent);
+
+        // Si l'option de sécurite maximale est activée, l'IP est masquée en partie
         if (user.maxSecurity === true) {
             const maskStringOptions = {
                 maskWith: "*",
@@ -157,21 +173,26 @@ exports.login = async (req, res, _next) => {
             return res.status(400).json({ error: "Email doesn't have the correct format" });
         }
         try {
+            // Vérification si l'username existe
             const user = await User.findOne({ where: { email: req.body.email } })
             if (!user) {
                 return res.status(404).json({ error: 'User not found' });
             }
+            // Vérification si le mot de passe envoyé correspond à celui dans la base de données
             const valid = await bcrypt.compare(req.body.password, user.password)
             if (!valid) {
                 return res.status(401).json({ error: 'Failed to login' });
             }
+
+            // Création d'un token de 24h avec l'userId inclus
             const token = jwt.sign({
                 userId: user.id
             },
-                process.env.SECRET_KEY_JWT, {
+            process.env.SECRET_KEY_JWT, {
                 expiresIn: '24h'
             })
 
+            // Auto-Purge des tokens expirés (24h)
             const datetime = new Date()
             datetime.setHours(datetime.getHours() - 23);
             // Test : datetime.setSeconds(datetime.getSeconds() - 20);
@@ -180,8 +201,11 @@ exports.login = async (req, res, _next) => {
             const autoPurgeSelect = await sequelize.query(`DELETE FROM tokens WHERE createdAt > "${format}" `)
             console.log(autoPurgeSelect)
 
+            // Récupération de l'userAgent
             const userAgent = req.useragent.browser + " | " + req.useragent.version;
             console.log(userAgent);
+
+            // Si l'option de sécurite maximale est activée, l'IP est masquée en partie
             if (user.maxSecurity === true) {
                 const maskStringOptions = {
                     maskWith: "*",
@@ -221,6 +245,8 @@ exports.login = async (req, res, _next) => {
         }
     }
 };
+
+// Récupération de tous les utilisateurs
 exports.getAllUsers = async (_req, res, _next) => {
     try {
         const findAllUsers = await User.findAll({
@@ -236,6 +262,8 @@ exports.getAllUsers = async (_req, res, _next) => {
         res.status(400).json({ error });
     }
 };
+
+// Création d'un utilisateur
 exports.createUser = async (req, res, _next) => {
     console.log(req.body)
     const emailExist = await User.findOne({
@@ -307,6 +335,8 @@ exports.createUser = async (req, res, _next) => {
         res.status(400).json({error});
     };*/
 };
+
+// Récupération de l'utilisateur actuel
 exports.myUser = async (req, res, _next) => {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
@@ -318,6 +348,7 @@ exports.myUser = async (req, res, _next) => {
         })
     }
 };
+// Récupération d'un utilisateur en particulier
 exports.getOneUser = async (req, res, _next) => {
     try {
         const findOneUser = await User.findOne({
@@ -336,6 +367,8 @@ exports.getOneUser = async (req, res, _next) => {
         res.status(404).json({ error });
     }
 };
+
+// Modification d'un utilisateur en particulier
 exports.modifyUser = async (req, res, _next) => {
     //try {
     const userFind = await User.findOne({ where: { id: req.params.userId } })
@@ -370,6 +403,8 @@ exports.modifyUser = async (req, res, _next) => {
         res.status(400).json({ error })
     }*/
 };
+
+// Suppression d'un utilisateur en particulier
 exports.deleteUser = async (req, res, _next) => {
     const user = await User.findOne({ where: { id: req.params.userId } })
         .catch(() => {

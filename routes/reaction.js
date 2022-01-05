@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const reactionCtrl = require('../controllers/reaction');
+const auth = require('../middleware/auth');
 
-router.get('/', reactionCtrl.getAllReactions);
-router.post('/',reactionCtrl.createReaction);
-router.get('/:reactionId',reactionCtrl.getOneReaction);
-router.put('/:reactionId', reactionCtrl.modifyReaction);
-router.delete('/:reactionId', reactionCtrl.deleteReaction);
+router.get('/', auth, reactionCtrl.getAllReactions);
+router.post('/', auth, reactionCtrl.createReaction);
+router.get('/:reactionId', auth, reactionCtrl.getOneReaction);
+router.put('/:reactionId', auth, reactionCtrl.modifyReaction);
+router.delete('/:reactionId', auth, reactionCtrl.deleteReaction);
 
 module.exports = router;

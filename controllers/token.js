@@ -1,5 +1,6 @@
 const { User, Token } = require('../models');
 
+// Récupération de tous les tokens
 exports.getAllTokens = async (req, res, _next) => {
     try {
         const findAllTokens = await Token.findAll({
@@ -15,6 +16,8 @@ exports.getAllTokens = async (req, res, _next) => {
         res.status(400).json({ error });
     }
 };
+
+// Récupération d'un token en particulier
 exports.getOneToken = async (req, res, _next) => {
     try {
         const findOneToken = await Token.findOne({
@@ -33,6 +36,8 @@ exports.getOneToken = async (req, res, _next) => {
         res.status(404).json({ error });
     }
 };
+
+// Suppression d'un token
 exports.deleteToken = async (req, res, _next) => {
     const token = await Token.findOne({ where: { id: req.params.tokenId } })
         .catch(() => {
