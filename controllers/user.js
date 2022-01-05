@@ -88,62 +88,41 @@ exports.login = async (req, res, _next) => {
             return res.status(400).json({ error: "Username doesn't have the correct format" });
         }
         //try {
-            const user = await User.findOne({ where: { username: req.body.username } })
-            if (!user) {
-                return res.status(404).json({ error: 'Username not found' });
-            }
-            const valid = await bcrypt.compare(req.body.password, user.password)
-            if (!valid) {
-                return res.status(401).json({ error: 'Failed to login' });
-            }
+        const user = await User.findOne({ where: { username: req.body.username } })
+        if (!user) {
+            return res.status(404).json({ error: 'Username not found' });
+        }
+        const valid = await bcrypt.compare(req.body.password, user.password)
+        if (!valid) {
+            return res.status(401).json({ error: 'Failed to login' });
+        }
 
-            const token = jwt.sign
-                ({ userId: user.id },
-                    process.env.SECRET_KEY_JWT,
-                    { expiresIn: '24h' })
-
-            //const todayLess24Hours = Date.now() - 86400000;
-            const todayLess24Hours = Date.now() - 300000; 
-            console.log(todayLess24Hours);
-            const dateToCompare = new Date(todayLess24Hours)
-            console.log(dateToCompare)
-            let yyyy = dateToCompare.getFullYear();
-            let mm = dateToCompare.getMonth()+1;
-            let dd = dateToCompare.getDate();
-            let hh = dateToCompare.getHours();
-            let mmm = dateToCompare.getMinutes();
-            let ss = dateToCompare.getSeconds();
-            if (dd < 10) {
-                dd = '0' + dd;
-            }
-            if (mm < 10) {
-                mm = '0' + mm;
-            }
-            if (ss < 10) {
-                ss = '0' + ss;
-            }
-            if (mmm < 10) {
-                mmm = '0'+ mmm;
-            }
-            const format = yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + mmm + ':' + ss;
-            console.log(format);
+        const token = jwt.sign
+            ({ userId: user.id },
+                process.env.SECRET_KEY_JWT,
+                { expiresIn: '24h' })
 
 
+        const datetime = new Date()
+        //datetime.setHours(datetime.getHours() - 23);
+        datetime.setSeconds(datetime.getSeconds() - 20);
+        let format = datetime.toISOString().replace('Z', '').replace('T', ' ').slice(0, 19);
+        console.log(format);
 
-            const autoPurgeSelect = sequelize.query(`DELETE FROM tokens WHERE createdAt < "${format}" `)
-            console.log(autoPurgeSelect)
+        const autoPurgeSelect = await sequelize.query(`DELETE FROM tokens WHERE createdAt > "${format}" `)
+        console.log(autoPurgeSelect)
 
-            const TokenCreation = await Token.create({
-                token,
-                userAgent: userAgent,
-                ipAddress: ip,
-                UserId: user.id
-            })
+        const TokenCreation = await Token.create({
+            token,
+            userAgent: userAgent,
+            ipAddress: ip,
+            UserId: user.id
+        })
 
-            res.status(200).json({
-                user,
-                token
-            });
+        res.status(200).json({
+            user,
+            token
+        });
         /*}
         catch (error) {
             res.status(500).json({ error })
