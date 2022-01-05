@@ -15,6 +15,7 @@
     "express": "^4.17.1",
     "express-useragent": "^1.0.15",
     "jsonwebtoken": "^8.5.1",
+    "maskdata": "^1.1.6",
     "multer": "^1.4.4",
     "mysql2": "^2.3.3",
     "node-fetch": "^2.6.6",

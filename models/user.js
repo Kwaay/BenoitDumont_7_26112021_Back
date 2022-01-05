@@ -36,6 +36,19 @@ module.exports = (Sequelize, DataTypes) => {
             type: DataTypes.STRING.BINARY,
             allowNull: true
         },
+        maxSecurity: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false
+        },
+        /*question: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        //reponse: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        */
         createdAt: {
             type: DataTypes.DATE,
             allowNull: false,

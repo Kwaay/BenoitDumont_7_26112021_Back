@@ -5,6 +5,7 @@ const fetch = require("node-fetch");
 const { User, Post, Reaction, Token } = require('../models');
 const fsp = require('fs/promises');
 const sequelize = require('../models');
+const maskdata = require('maskdata')
 require('dotenv').config()
 
 
@@ -36,7 +37,8 @@ exports.signup = async (req, res, _next) => {
                 username: req.body.username,
                 email: req.body.email,
                 password: hashPassword,
-                avatar: `${req.protocol}://${req.get('host')}/images/${req.files[0].filename}`
+                avatar: `${req.protocol}://${req.get('host')}/images/${req.files[0].filename}`,
+                maxSecurity: true
             });
         }
         else {
@@ -54,7 +56,8 @@ exports.signup = async (req, res, _next) => {
                         username: req.body.username,
                         email: req.body.email,
                         password: hashPassword,
-                        avatar: gravatarImage
+                        avatar: gravatarImage,
+                        maxSecurity: true
                     })
                         .then(done => {
                             res.status(201).json({ message: 'User Created' });
@@ -78,10 +81,6 @@ exports.login = async (req, res, _next) => {
     /*if (!regexPassword.test(req.body.password)) {
         return res.status(400).json({ error: "Password doesn't have the correct format" });
     }*/
-    const userAgent = req.useragent.browser + " | " + req.useragent.version;
-    console.log(userAgent);
-    const ip = req.ip;
-    console.log(ip)
     // Cas ou l'utilisateur essaye de se connecter avec un username
     if (req.body.hasOwnProperty("username")) {
         if (!regexUsername.test(req.body.username)) {
@@ -97,28 +96,52 @@ exports.login = async (req, res, _next) => {
             return res.status(401).json({ error: 'Failed to login' });
         }
 
-        const token = jwt.sign
-            ({ userId: user.id },
-                process.env.SECRET_KEY_JWT,
-                { expiresIn: '24h' })
-
+        const token = jwt.sign({
+            userId: user.id
+        },
+            process.env.SECRET_KEY_JWT, {
+            expiresIn: '24h'
+        })
 
         const datetime = new Date()
-        //datetime.setHours(datetime.getHours() - 23);
-        datetime.setSeconds(datetime.getSeconds() - 20);
+        datetime.setHours(datetime.getHours() - 23);
+        // Test : datetime.setSeconds(datetime.getSeconds() - 20);
         let format = datetime.toISOString().replace('Z', '').replace('T', ' ').slice(0, 19);
         console.log(format);
-
         const autoPurgeSelect = await sequelize.query(`DELETE FROM tokens WHERE createdAt > "${format}" `)
         console.log(autoPurgeSelect)
 
-        const TokenCreation = await Token.create({
-            token,
-            userAgent: userAgent,
-            ipAddress: ip,
-            UserId: user.id
-        })
-
+        const userAgent = req.useragent.browser + " | " + req.useragent.version;
+        console.log(userAgent);
+        if (user.maxSecurity === true) {
+            const maskStringOptions = {
+                maskWith: "*",
+                values: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
+                maskOnlyFirstOccurance: true,
+                maskAll: false,
+                maskSpace: false
+            }
+            const ip = req.ip;
+            console.log(ip)
+            const strMask = maskdata.maskString(ip, maskStringOptions);
+            console.log(strMask)
+            await Token.create({
+                token,
+                userAgent: userAgent,
+                ipAddress: strMask,
+                UserId: user.id
+            })
+        }
+        else {
+            const ip = req.ip;
+            console.log(ip)
+            await Token.create({
+                token,
+                userAgent: userAgent,
+                ipAddress: ip,
+                UserId: user.id
+            })
+        }
         res.status(200).json({
             user,
             token
@@ -142,18 +165,52 @@ exports.login = async (req, res, _next) => {
             if (!valid) {
                 return res.status(401).json({ error: 'Failed to login' });
             }
-            const token = jwt.sign
-                ({ userId: user.id },
-                    process.env.SECRET_KEY_JWT,
-                    { expiresIn: '24h' })
-
-            const tokenCreation = await Token.create({
-                token,
-                userAgent: userAgent,
-                ipAddress: ip,
-                UserId: user.id
+            const token = jwt.sign({
+                userId: user.id
+            },
+                process.env.SECRET_KEY_JWT, {
+                expiresIn: '24h'
             })
 
+            const datetime = new Date()
+            datetime.setHours(datetime.getHours() - 23);
+            // Test : datetime.setSeconds(datetime.getSeconds() - 20);
+            let format = datetime.toISOString().replace('Z', '').replace('T', ' ').slice(0, 19);
+            console.log(format);
+            const autoPurgeSelect = await sequelize.query(`DELETE FROM tokens WHERE createdAt > "${format}" `)
+            console.log(autoPurgeSelect)
+
+            const userAgent = req.useragent.browser + " | " + req.useragent.version;
+            console.log(userAgent);
+            if (user.maxSecurity === true) {
+                const maskStringOptions = {
+                    maskWith: "*",
+                    values: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
+                    maskOnlyFirstOccurance: true,
+                    maskAll: false,
+                    maskSpace: false
+                }
+                const ip = req.ip;
+                console.log(ip)
+                const strMask = maskdata.maskString(ip, maskStringOptions);
+                console.log(strMask)
+                await Token.create({
+                    token,
+                    userAgent: userAgent,
+                    ipAddress: strMask,
+                    UserId: user.id
+                })
+            }
+            else {
+                const ip = req.ip;
+                console.log(ip)
+                await Token.create({
+                    token,
+                    userAgent: userAgent,
+                    ipAddress: ip,
+                    UserId: user.id
+                })
+            }
             res.status(200).json({
                 user,
                 token
