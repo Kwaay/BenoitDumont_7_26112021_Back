@@ -4,9 +4,9 @@ const cryptoJS = require('crypto-js')
 const fetch = require("node-fetch");
 const { User, Post, Reaction, Token } = require('../models');
 const fsp = require('fs/promises');
-const sequelize = require('../models');
 const maskdata = require('maskdata')
 require('dotenv').config()
+const fonction = require('../fonction');
 
 
 const regexName = /^[A-Z]{1}[a-z]{2,15}$/gm;
@@ -114,15 +114,8 @@ exports.login = async (req, res, _next) => {
             process.env.SECRET_KEY_JWT, {
             expiresIn: '24h'
         })
-
-        // Auto-Purge des tokens expirés (24h)
-        const datetime = new Date()
-        datetime.setHours(datetime.getHours() - 23);
-        // Test : datetime.setSeconds(datetime.getSeconds() - 20);
-        let format = datetime.toISOString().replace('Z', '').replace('T', ' ').slice(0, 19);
-        console.log(format);
-        const autoPurgeSelect = await sequelize.query(`DELETE FROM tokens WHERE createdAt > "${format}" `)
-        console.log(autoPurgeSelect)
+        // Fonction AutoPurge (Delete token +24h)
+        fonction.autoPurge()
 
         // Récupération de l'userAgent
         const userAgent = req.useragent.browser + " | " + req.useragent.version;
@@ -188,18 +181,12 @@ exports.login = async (req, res, _next) => {
             const token = jwt.sign({
                 userId: user.id
             },
-            process.env.SECRET_KEY_JWT, {
+                process.env.SECRET_KEY_JWT, {
                 expiresIn: '24h'
             })
 
-            // Auto-Purge des tokens expirés (24h)
-            const datetime = new Date()
-            datetime.setHours(datetime.getHours() - 23);
-            // Test : datetime.setSeconds(datetime.getSeconds() - 20);
-            let format = datetime.toISOString().replace('Z', '').replace('T', ' ').slice(0, 19);
-            console.log(format);
-            const autoPurgeSelect = await sequelize.query(`DELETE FROM tokens WHERE createdAt > "${format}" `)
-            console.log(autoPurgeSelect)
+            // Fonction AutoPurge (Delete token +24h)
+            fonction.autoPurge()
 
             // Récupération de l'userAgent
             const userAgent = req.useragent.browser + " | " + req.useragent.version;
