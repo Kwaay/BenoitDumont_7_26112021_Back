@@ -1,13 +1,7 @@
-const jwt = require('jsonwebtoken');
+const { User, Post, Reaction } = require('../models');
 const fsp = require('fs/promises');
 require('dotenv').config()
-const { User, Post, Reaction } = require('../models');
 
-async function checkIfAdmin() {
-    if (!req.token.rank === 1) {
-        return res.status(401).json({ message: 'Not Enough Permissions to do this action' });
-    }
-}
 
 async function checkIfModerator() {
     if (!req.token.rank === 1 || !req.token.rank === 2) {
@@ -35,14 +29,9 @@ exports.getAllPosts = async (_req, res, _next) => {
 // Création d'un post
 exports.createPost = async (req, res, _next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
-        const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
-        const userId = decodedToken.userId
-        console.log(userId)
-        console.log(req.body)
         const searchTitle = await Post.findOne({
             where: {
-                title: req.body.title, UserId: userId
+                title: req.body.title, UserId: req.token.userId
             }
         })
         if (searchTitle) {
@@ -54,7 +43,7 @@ exports.createPost = async (req, res, _next) => {
                     title: req.body.title,
                     content: req.body.content,
                     image: `${req.protocol}://${req.get('host')}/images/${req.files.image[0].filename}`,
-                    UserId: userId
+                    UserId: req.token.userId
                 });
                 if (postCreation) {
                     return res.status(201).json({ message: 'Post Created' });
@@ -64,7 +53,7 @@ exports.createPost = async (req, res, _next) => {
                 const postCreation = await Post.create({
                     title: req.body.title,
                     content: req.body.content,
-                    UserId: userId
+                    UserId: req.token.userId
                 });
                 if (postCreation) {
                     return res.status(201).json({ message: 'Post Created' });
@@ -107,14 +96,10 @@ exports.getOnePost = async (req, res, _next) => {
 exports.modifyPost = async (req, res, next) => {
     checkIfModerator()
     try {
-        const token = req.headers.authorization.split(' ')[1];
-        const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
-        const userId = decodedToken.userId
-        console.log(userId)
         if (!req.body.title === null || !req.body.title === undefined) {
             const titleCompare = await Post.findOne({
                 where: {
-                    title: req.body.title, UserId: userId
+                    title: req.body.title, UserId: req.token.userId
                 }
             })
             if (titleCompare) {
@@ -127,9 +112,7 @@ exports.modifyPost = async (req, res, next) => {
                 ...JSON.stringify(req.body),
                 image: `${req.protocol}://${req.get('host')}/images/${req.files.image[0].filename}`
             }
-            console.log(req.params.postId)
             const postFind = await Post.findOne({ where: { id: req.params.postId } })
-            console.log(postFind)
             if (!postFind.image === null || !postFind.image === undefined) {
                 const filename = postFind.image.split('/images/')[1];
                 await fsp.unlink('./images/' + filename)
@@ -156,7 +139,6 @@ exports.deletePost = async (req, res, next) => {
         .catch(() => {
             res.status(404).json({ message: 'Post not found' })
         });
-    console.log(post.image)
     const filename = post.image.split('/images/')[1];
     await fsp.unlink('./images/' + filename)
     const deletePost = await Post.destroy({ where: { id: req.params.postId } })

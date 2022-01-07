@@ -22,7 +22,6 @@ async function autoPurge() {
     datetime.setHours(datetime.getHours() - 23);
     // Test : datetime.setSeconds(datetime.getSeconds() - 20);
     let format = datetime.toISOString().replace('Z', '').replace('T', ' ').slice(0, 19);
-    console.log(format);
     await Token.destroy({
         where: {
             createdAt: {
@@ -73,13 +72,11 @@ exports.signup = async (req, res, _next) => {
         else {
             // Hash de l'email en MD5 pour pouvoir vérifier si un avatar est relié depuis Gravatar
             const hashEmail = cryptoJS.MD5(req.body.email).toString().toLowerCase();
-            console.log(hashEmail);
             fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
                 method: "GET"
             })
                 .then(function (value) {
                     const gravatarImage = value.url;
-                    console.log(gravatarImage);
                     User.create({
                         name: req.body.name,
                         firstname: req.body.firstname,
@@ -119,7 +116,7 @@ exports.login = async (req, res, _next) => {
         if (!regexUsername.test(req.body.username)) {
             return res.status(400).json({ error: "Username doesn't have the correct format" });
         }
-        //try {
+        try {
         // Vérification si l'username existe
         const user = await User.findOne({ where: { username: req.body.username } })
         if (!user) {
@@ -144,7 +141,6 @@ exports.login = async (req, res, _next) => {
 
         // Récupération de l'userAgent
         const userAgent = req.useragent.browser + " | " + req.useragent.version;
-        console.log(userAgent);
 
         // Si l'option de sécurite maximale est activée, l'IP est masquée en partie
         if (user.maxSecurity === true) {
@@ -156,9 +152,7 @@ exports.login = async (req, res, _next) => {
                 maskSpace: false
             }
             const ip = req.ip;
-            console.log(ip)
             const strMask = maskdata.maskString(ip, maskStringOptions);
-            console.log(strMask)
             await Token.create({
                 token,
                 userAgent: userAgent,
@@ -168,7 +162,6 @@ exports.login = async (req, res, _next) => {
         }
         else {
             const ip = req.ip;
-            console.log(ip)
             await Token.create({
                 token,
                 userAgent: userAgent,
@@ -180,10 +173,10 @@ exports.login = async (req, res, _next) => {
             user,
             token
         });
-        /*}
+        }
         catch (error) {
             res.status(500).json({ error })
-        }*/
+        }
     }
     // Cas ou l'utilisateur essaye de se connecter avec un email
     if (req.body.hasOwnProperty("email")) {
@@ -216,7 +209,6 @@ exports.login = async (req, res, _next) => {
 
             // Récupération de l'userAgent
             const userAgent = req.useragent.browser + " | " + req.useragent.version;
-            console.log(userAgent);
 
             // Si l'option de sécurite maximale est activée, l'IP est masquée en partie
             if (user.maxSecurity === true) {
@@ -228,9 +220,7 @@ exports.login = async (req, res, _next) => {
                     maskSpace: false
                 }
                 const ip = req.ip;
-                console.log(ip)
                 const strMask = maskdata.maskString(ip, maskStringOptions);
-                console.log(strMask)
                 await Token.create({
                     token,
                     userAgent: userAgent,
@@ -240,7 +230,6 @@ exports.login = async (req, res, _next) => {
             }
             else {
                 const ip = req.ip;
-                console.log(ip)
                 await Token.create({
                     token,
                     userAgent: userAgent,
@@ -299,7 +288,7 @@ exports.createUser = async (req, res, _next) => {
     if (!regexEmail.test(req.body.email) && (!regexPassword.test(req.body.password))) {
         return res.status(400).json({ message: "Email or Password doesn't have the correct format" });
     }
-    //try {
+    try {
     const hashPassword = await bcrypt.hash(req.body.password, 10)
     if (req.files) {
         const userCreation = User.create({
@@ -318,13 +307,11 @@ exports.createUser = async (req, res, _next) => {
     }
     else {
         const hashEmail = cryptoJS.MD5(req.body.email).toString().toLowerCase();
-        console.log(hashEmail);
         fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
             method: "GET"
         })
             .then(function (value) {
                 const gravatarImage = value.url;
-                console.log(gravatarImage);
                 User.create({
                     name: req.body.name,
                     firstname: req.body.firstname,
@@ -348,10 +335,10 @@ exports.createUser = async (req, res, _next) => {
                 res.status(500).json({ error })
             })
     }
-    /*}
+    }
     catch (error) {
         res.status(400).json({error});
-    };*/
+    };
 
 };
 
@@ -396,7 +383,6 @@ exports.modifyUser = async (req, res, _next) => {
         }
         let userObject = {}
         if (req.files) {
-            console.log(userFind.avatar)
             userObject = {
                 ...JSON.stringify(req.body),
                 avatar: `${req.protocol}://${req.get('host')}/images/${req.files.avatar[0].filename}`

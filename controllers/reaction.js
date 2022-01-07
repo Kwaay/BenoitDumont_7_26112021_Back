@@ -1,6 +1,5 @@
-const jwt = require('jsonwebtoken');
-require('dotenv').config()
 const { User, Post, Reaction } = require('../models');
+require('dotenv').config()
 
 async function checkIfModerator() {
     if (!req.token.rank === 1 || !req.token.rank === 2) {
@@ -28,14 +27,9 @@ exports.getAllReactions = async (_req, res) => {
 // Création d'une réaction
 exports.createReaction = async (req, res) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
-        const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
-        const userId = decodedToken.userId
-        console.log(userId)
-        console.log(req.body.postId)
         const searchReaction = await Reaction.findOne({
             where: {
-                PostId: req.body.postId, UserId: userId
+                PostId: req.body.postId, UserId: req.token.userId
             }
         })
         if (searchReaction) {
@@ -44,7 +38,7 @@ exports.createReaction = async (req, res) => {
         const reactionCreation = await Reaction.create({
             type: req.body.type,
             PostId: req.body.postId,
-            UserId: userId
+            UserId: req.token.userId
         });
         if (reactionCreation) {
             return res.status(201).json({ message: 'Reaction Created' });
@@ -82,15 +76,11 @@ exports.getOneReaction = async (req, res) => {
 
 // Modification d'une réaction en particulier
 exports.modifyReaction = async (req, res) => {
-    checkIfModerator
+    checkIfModerator()
     try {
-        const token = req.headers.authorization.split(' ')[1];
-        const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
-        const userId = decodedToken.userId
-        console.log(userId)
         const searchReaction = await Reaction.findOne({
             where: {
-                PostId: req.body.postId, UserId: userId, type: req.body.type
+                PostId: req.body.postId, UserId: req.token.userId, type: req.body.type
             }
         })
         if (searchReaction) {
@@ -106,9 +96,7 @@ exports.modifyReaction = async (req, res) => {
         }
         let reactionObject = {}
         reactionObject = { ...req.body }
-        console.log(req.params.reactionId)
         const updateReaction = await Reaction.update({ ...reactionObject }, { where: { id: req.params.reactionId } })
-        console.log(updateReaction)
         if(updateReaction) {
             return res.status(200).json({ message: 'Reaction successfully updated'})
         }
@@ -121,7 +109,7 @@ exports.modifyReaction = async (req, res) => {
 // Suppression d'une réaction en particulier
 exports.deleteReaction = async (req, res) => {
     checkIfModerator()
-    const reaction = await Reaction.findOne({ where: { id: req.params.reactionId } })
+    await Reaction.findOne({ where: { id: req.params.reactionId } })
         .catch(() => {
             res.status(404).json({ message: 'Reaction not found' })
         });
