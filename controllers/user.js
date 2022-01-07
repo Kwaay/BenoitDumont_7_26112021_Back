@@ -5,8 +5,9 @@ const fetch = require("node-fetch");
 const { User, Post, Reaction, Token } = require('../models');
 const fsp = require('fs/promises');
 const maskdata = require('maskdata')
+const { Op } = require("sequelize");
+
 require('dotenv').config()
-const fonction = require('../fonction');
 
 
 const regexName = /^[A-Z]{1}[a-z]{2,15}$/gm;
@@ -15,6 +16,21 @@ const regexUsername = /^[a-zA-Z0-9_-]{4,10}$/gm;
 const regexEmail = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 const regexPassword = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$/gm;
 // password must contain 1 number (0-9), 1 uppercase letters, 1 lowercase letters, 1 non-alpha numeric number, 8-16 characters with no space
+
+async function autoPurge() {
+    const datetime = new Date()
+    datetime.setHours(datetime.getHours() - 23);
+    // Test : datetime.setSeconds(datetime.getSeconds() - 20);
+    let format = datetime.toISOString().replace('Z', '').replace('T', ' ').slice(0, 19);
+    console.log(format);
+    await Token.destroy({
+        where: { 
+            createdAt: { 
+                [Op.gt]: format
+            }
+        }
+    });
+}
 
 // Partie "S'inscrire"
 exports.signup = async (req, res, _next) => {
@@ -115,7 +131,7 @@ exports.login = async (req, res, _next) => {
             expiresIn: '24h'
         })
         // Fonction AutoPurge (Delete token +24h)
-        fonction.autoPurge()
+        autoPurge()
 
         // Récupération de l'userAgent
         const userAgent = req.useragent.browser + " | " + req.useragent.version;
@@ -186,7 +202,7 @@ exports.login = async (req, res, _next) => {
             })
 
             // Fonction AutoPurge (Delete token +24h)
-            fonction.autoPurge()
+            autoPurge()
 
             // Récupération de l'userAgent
             const userAgent = req.useragent.browser + " | " + req.useragent.version;
@@ -325,11 +341,9 @@ exports.createUser = async (req, res, _next) => {
 
 // Récupération de l'utilisateur actuel
 exports.myUser = async (req, res, _next) => {
-    const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
-    const tokenUserId = decodedToken.userId
-    const user = await User.findOne({ where: { id: tokenUserId } })
-    if (user.id === tokenUserId) {
+    req.token
+    const user = await User.findOne({ where: { id: req.token.userId } })
+    if (user.id === req.token.userId) {
         return res.status(200).json({
             user
         })
@@ -397,6 +411,7 @@ exports.deleteUser = async (req, res, _next) => {
         .catch(() => {
             res.status(404).json({ message: 'User not found' })
         });
+    // req.token.role est suffisant élevé ou propriétaire
     const filename = user.avatar.split('/images/')[1];
     await fsp.unlink('./images/' + filename)
     const deleteUser = await User.destroy({ where: { id: req.params.userId } })

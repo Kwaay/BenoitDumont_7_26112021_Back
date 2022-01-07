@@ -81,12 +81,13 @@ exports.getOnePost = async (req, res, _next) => {
                 attributes: ['id', 'userId', 'type']
             }]
         })
-        if (findOnePost) {
-            return res.status(200).json(findOnePost);
+        if (!findOnePost) {
+            return res.status(404).json({ message: 'Post not found' });
         }
+        return res.status(200).json(findOnePost); 
     }
     catch (error) {
-        res.status(404).json({ error });
+        res.status(500).json({ error });
     }
 }
 
