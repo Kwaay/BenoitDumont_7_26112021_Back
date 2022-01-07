@@ -3,6 +3,18 @@ const fsp = require('fs/promises');
 require('dotenv').config()
 const { User, Post, Reaction } = require('../models');
 
+async function checkIfAdmin() {
+    if (!req.token.rank === 1) {
+        return res.status(401).json({ message: 'Not Enough Permissions to do this action' });
+    }
+}
+
+async function checkIfModerator() {
+    if (!req.token.rank === 1 || !req.token.rank === 2) {
+        return res.status(401).json({ message: 'Not Enough Permissions to do this action' });
+    }
+}
+
 // Récupération de tous les posts en les ordonnant en fonction de leur date de création et trié de façon décroissante //
 exports.getAllPosts = async (_req, res, _next) => {
     try {
@@ -93,6 +105,7 @@ exports.getOnePost = async (req, res, _next) => {
 
 // Modification d'un post en particulier
 exports.modifyPost = async (req, res, next) => {
+    checkIfModerator()
     try {
         const token = req.headers.authorization.split(' ')[1];
         const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
@@ -138,6 +151,7 @@ exports.modifyPost = async (req, res, next) => {
 
 // Suppression d"un post en particulier
 exports.deletePost = async (req, res, next) => {
+    checkIfModerator()
     const post = await Post.findOne({ where: { id: req.params.postId } })
         .catch(() => {
             res.status(404).json({ message: 'Post not found' })

@@ -2,6 +2,12 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config()
 const { User, Post, Reaction } = require('../models');
 
+async function checkIfModerator() {
+    if (!req.token.rank === 1 || !req.token.rank === 2) {
+        return res.status(401).json({ message: 'Not Enough Permissions to do this action' });
+    }
+}
+
 // Récupération de tous les posts en les ordonnant en fonction de leur date de création et trié de façon décroissante //
 exports.getAllReactions = async (_req, res) => {
     try {
@@ -76,6 +82,7 @@ exports.getOneReaction = async (req, res) => {
 
 // Modification d'une réaction en particulier
 exports.modifyReaction = async (req, res) => {
+    checkIfModerator
     try {
         const token = req.headers.authorization.split(' ')[1];
         const decodedToken = jwt.verify(token, process.env.SECRET_KEY_JWT);
@@ -113,6 +120,7 @@ exports.modifyReaction = async (req, res) => {
 
 // Suppression d'une réaction en particulier
 exports.deleteReaction = async (req, res) => {
+    checkIfModerator()
     const reaction = await Reaction.findOne({ where: { id: req.params.reactionId } })
         .catch(() => {
             res.status(404).json({ message: 'Reaction not found' })

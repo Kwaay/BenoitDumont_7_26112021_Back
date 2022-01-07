@@ -40,6 +40,10 @@ module.exports = (Sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             allowNull: false
         },
+        rank: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
         /*question: {
             type: DataTypes.STRING,
             allowNull: false

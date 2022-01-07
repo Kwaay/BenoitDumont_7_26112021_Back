@@ -24,12 +24,17 @@ async function autoPurge() {
     let format = datetime.toISOString().replace('Z', '').replace('T', ' ').slice(0, 19);
     console.log(format);
     await Token.destroy({
-        where: { 
-            createdAt: { 
+        where: {
+            createdAt: {
                 [Op.gt]: format
             }
         }
     });
+}
+async function checkIfAdmin() {
+    if (!req.token.rank === 1) {
+        return res.status(401).json({ message: 'Not Enough Permissions to do this action' });
+    }
 }
 
 // Partie "S'inscrire"
@@ -60,7 +65,8 @@ exports.signup = async (req, res, _next) => {
                 email: req.body.email,
                 password: hashPassword,
                 avatar: `${req.protocol}://${req.get('host')}/images/${req.files[0].filename}`,
-                maxSecurity: true
+                maxSecurity: true,
+                rank: 3
             });
         }
         // Si le body ne contient pas de fichier
@@ -81,7 +87,8 @@ exports.signup = async (req, res, _next) => {
                         email: req.body.email,
                         password: hashPassword,
                         avatar: gravatarImage,
-                        maxSecurity: true
+                        maxSecurity: true,
+                        rank: 3
                     })
                         .then(done => {
                             res.status(201).json({ message: 'User Created' });
@@ -125,7 +132,9 @@ exports.login = async (req, res, _next) => {
         }
         // Création d'un token de 24h avec l'userId inclus
         const token = jwt.sign({
-            userId: user.id
+            userId: user.id,
+            rank: user.rank
+
         },
             process.env.SECRET_KEY_JWT, {
             expiresIn: '24h'
@@ -195,7 +204,8 @@ exports.login = async (req, res, _next) => {
 
             // Création d'un token de 24h avec l'userId inclus
             const token = jwt.sign({
-                userId: user.id
+                userId: user.id,
+                rank: user.rank
             },
                 process.env.SECRET_KEY_JWT, {
                 expiresIn: '24h'
@@ -251,6 +261,7 @@ exports.login = async (req, res, _next) => {
 
 // Récupération de tous les utilisateurs
 exports.getAllUsers = async (_req, res, _next) => {
+    checkIfAdmin()
     try {
         const findAllUsers = await User.findAll({
             order: [
@@ -268,7 +279,7 @@ exports.getAllUsers = async (_req, res, _next) => {
 
 // Création d'un utilisateur
 exports.createUser = async (req, res, _next) => {
-    console.log(req.body)
+    checkIfAdmin()
     const emailExist = await User.findOne({
         where: {
             email: req.body.email
@@ -297,7 +308,9 @@ exports.createUser = async (req, res, _next) => {
             username: req.body.username,
             email: req.body.email,
             password: hashPassword,
-            avatar: `${req.protocol}://${req.get('host')}/images/${req.files.avatar[0].filename}`
+            avatar: `${req.protocol}://${req.get('host')}/images/${req.files.avatar[0].filename}`,
+            maxSecurity: true,
+            rank: 3
         });
         if (userCreation) {
             return res.status(201).json({ message: 'User Created' });
@@ -318,7 +331,9 @@ exports.createUser = async (req, res, _next) => {
                     username: req.body.username,
                     email: req.body.email,
                     password: hashPassword,
-                    avatar: gravatarImage
+                    avatar: gravatarImage,
+                    maxSecurity: true,
+                    rank: 3
                 })
                     .then(done => {
                         res.status(201).json({ message: 'User Created' });
@@ -337,11 +352,11 @@ exports.createUser = async (req, res, _next) => {
     catch (error) {
         res.status(400).json({error});
     };*/
+
 };
 
 // Récupération de l'utilisateur actuel
 exports.myUser = async (req, res, _next) => {
-    req.token
     const user = await User.findOne({ where: { id: req.token.userId } })
     if (user.id === req.token.userId) {
         return res.status(200).json({
@@ -371,42 +386,43 @@ exports.getOneUser = async (req, res, _next) => {
 
 // Modification d'un utilisateur en particulier
 exports.modifyUser = async (req, res, _next) => {
-    //try {
-    const userFind = await User.findOne({ where: { id: req.params.userId } })
-    if (!req.body.email === null || !req.body.email === undefined) {
-        if (userFind) {
-            return res.status(409).json({ message: "Email has already been used" })
+    checkIfAdmin()
+    try {
+        const userFind = await User.findOne({ where: { id: req.params.userId } })
+        if (!req.body.email === null || !req.body.email === undefined) {
+            if (userFind) {
+                return res.status(409).json({ message: "Email has already been used" })
+            }
+        }
+        let userObject = {}
+        if (req.files) {
+            console.log(userFind.avatar)
+            userObject = {
+                ...JSON.stringify(req.body),
+                avatar: `${req.protocol}://${req.get('host')}/images/${req.files.avatar[0].filename}`
+            }
+            if (!userFind.avatar === null || !userFind.avatar === undefined) {
+                const filename = userFind.avatar.split('/images/')[1];
+                await fsp.unlink('./images/' + filename)
+            }
+        }
+        else {
+            userObject = { ...req.body }
+        }
+        // si le lien dans la table contient gravatar.? > empty et si l'image est dans le dossier images fs.unlink
+        const updateUser = await User.update({ ...userObject }, { where: { id: req.params.userId } })
+        if (updateUser) {
+            return res.status(200).json({ message: 'User has been modified' })
         }
     }
-    let userObject = {}
-
-    if (req.files) {
-        console.log(userFind.avatar)
-        userObject = {
-            ...JSON.stringify(req.body),
-            avatar: `${req.protocol}://${req.get('host')}/images/${req.files.avatar[0].filename}`
-        }
-        if (!userFind.avatar === null || !userFind.avatar === undefined) {
-            const filename = userFind.avatar.split('/images/')[1];
-            await fsp.unlink('./images/' + filename)
-        }
-    }
-    else {
-        userObject = { ...req.body }
-    }
-    // si le lien dans la table contient gravatar.? > empty et si l'image est dans le dossier images fs.unlink
-    const updateUser = await User.update({ ...userObject }, { where: { id: req.params.userId } })
-    if (updateUser) {
-        return res.status(200).json({ message: 'User has been modified' })
-    }
-    /*}
     catch (error) {
         res.status(400).json({ error })
-    }*/
+    }
 };
 
 // Suppression d'un utilisateur en particulier
 exports.deleteUser = async (req, res, _next) => {
+    checkIfAdmin()
     const user = await User.findOne({ where: { id: req.params.userId } })
         .catch(() => {
             res.status(404).json({ message: 'User not found' })
