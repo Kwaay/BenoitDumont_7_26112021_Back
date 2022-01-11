@@ -42,17 +42,20 @@ module.exports = (Sequelize, DataTypes) => {
         },
         rank: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
+            noUpdate: {
+                readOnly: true
+            }
         },
-        /*question: {
+        question: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        //reponse: {
+        reponse: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        */
+        
         createdAt: {
             type: DataTypes.DATE,
             allowNull: false,

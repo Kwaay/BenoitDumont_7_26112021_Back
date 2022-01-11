@@ -65,7 +65,9 @@ exports.signup = async (req, res, _next) => {
                 password: hashPassword,
                 avatar: `${req.protocol}://${req.get('host')}/images/${req.files[0].filename}`,
                 maxSecurity: true,
-                rank: 3
+                rank: 3,
+                question: req.body.question,
+                reponse: req.body.awswer
             });
         }
         // Si le body ne contient pas de fichier
@@ -85,7 +87,9 @@ exports.signup = async (req, res, _next) => {
                         password: hashPassword,
                         avatar: gravatarImage,
                         maxSecurity: true,
-                        rank: 3
+                        rank: 3,
+                        question: req.body.question,
+                        reponse: req.body.awswer
                     })
                         .then(done => {
                             res.status(201).json({ message: 'User Created' });
@@ -248,6 +252,53 @@ exports.login = async (req, res, _next) => {
     }
 };
 
+// Récupération de l'email pour savoir quel compte modifier
+exports.forgot = async (req, res, _next) => {
+    if (!regexEmail.test(req.body.email)) {
+        return res.status(400).json({ message: "Email doesn't have the correct format" });
+    }
+    const user = await User.findOne({
+        where: {
+            email: req.body.email
+        }
+    })
+    if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+    }
+    else {
+        res.status(200).json(
+            user.question
+        )
+    }
+
+};
+
+// Modification du mot de passe si la réponse à la question est good
+exports.forgotModify =  async (req, res, _next) => {
+    const user = await User.findOne({
+        where: { 
+            email: req.body.email
+        }
+    })
+    if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+    }
+    if (user.reponse !== req.body.reponse) {
+        return res.status(400).json({ message: 'Wrong Response'})
+    }
+    const valid = await bcrypt.compare(req.body.password, user.password)
+        if (valid) {
+            return res.status(401).json({ error: 'Your new password is the same than your current password' });
+        }
+
+    const hashPassword = await bcrypt.hash(req.body.password, 10)
+    const updatePassword = User.update({ ...hashPassword}, { where: { id: user.id } })
+    if (updatePassword) {
+        return res.status(200).json({ message: 'Password changed successfully'})
+    }
+};
+
+
 // Récupération de tous les utilisateurs
 exports.getAllUsers = async (_req, res, _next) => {
     checkIfAdmin()
@@ -377,7 +428,8 @@ exports.modifyUser = async (req, res, _next) => {
     try {
         const userFind = await User.findOne({ where: { id: req.params.userId } })
         if (!req.body.email === null || !req.body.email === undefined) {
-            if (userFind) {
+            const checkEmail = await User.findOne({ where: { email: req.body.email } })
+            if (checkEmail) {
                 return res.status(409).json({ message: "Email has already been used" })
             }
         }
@@ -413,7 +465,6 @@ exports.deleteUser = async (req, res, _next) => {
         .catch(() => {
             res.status(404).json({ message: 'User not found' })
         });
-    // req.token.role est suffisant élevé ou propriétaire
     const filename = user.avatar.split('/images/')[1];
     await fsp.unlink('./images/' + filename)
     const deleteUser = await User.destroy({ where: { id: req.params.userId } })

@@ -27,7 +27,7 @@ const errorHandler = error => {
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(bind + ' déjà utilisé.');
+      console.error('Port' + bind + ' déjà utilisé.');
       process.exit(1);
       break;
     default:
