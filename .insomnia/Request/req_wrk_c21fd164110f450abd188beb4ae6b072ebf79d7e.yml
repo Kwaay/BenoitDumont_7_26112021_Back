@@ -1,0 +1,38 @@
+_id: req_wrk_c21fd164110f450abd188beb4ae6b072ebf79d7e
+type: Request
+parentId: fld_wrk_c21fd164110f450abd188beb4ae6b07212dea96f
+modified: 1638460074930
+created: 1638460074930
+url: "{{ base_url }}/api/user"
+name: /api/user
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+      "id": 0,
+      "nom": "string",
+      "prenom": "string",
+      "username": "string",
+      "email": "user@example.com",
+      "password": "string",
+      "createdAt": "string",
+      "updatedAt": "string"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+authentication:
+  type: bearer
+  token: "{{bearerToken}}"
+  prefix: ""
+metaSortKey: -1638460074931
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

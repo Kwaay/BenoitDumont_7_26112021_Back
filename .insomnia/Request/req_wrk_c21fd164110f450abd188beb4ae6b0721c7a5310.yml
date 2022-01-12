@@ -1,0 +1,32 @@
+_id: req_wrk_c21fd164110f450abd188beb4ae6b0721c7a5310
+type: Request
+parentId: fld_wrk_c21fd164110f450abd188beb4ae6b072a9043ffe
+modified: 1638542411522
+created: 1638542411522
+url: "{{ base_url }}/api/reaction"
+name: /api/reaction
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+      "postId": 0,
+      "type": "string"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+authentication:
+  type: bearer
+  token: "{{bearerToken}}"
+  prefix: ""
+metaSortKey: -1638542411522
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

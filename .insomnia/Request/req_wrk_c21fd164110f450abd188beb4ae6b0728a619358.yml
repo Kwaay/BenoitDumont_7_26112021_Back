@@ -1,0 +1,37 @@
+_id: req_wrk_c21fd164110f450abd188beb4ae6b0728a619358
+type: Request
+parentId: fld_wrk_c21fd164110f450abd188beb4ae6b07266a36e77
+modified: 1642007340736
+created: 1638460075218
+url: "{{ base_url }}/api/user/signup"
+name: /api/user/signup
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+      "nom": "string",
+      "prenom": "string",
+      "username": "string",
+      "email": "user@example.com",
+      "password": "string",
+      "avatar": {}
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_0b20152e3fa34d5280730ed627d94351
+authentication:
+  type: bearer
+  token: "{{bearerToken}}"
+  prefix: ""
+metaSortKey: -1638460075218
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

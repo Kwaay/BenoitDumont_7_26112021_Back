@@ -1,0 +1,24 @@
+_id: req_wrk_c21fd164110f450abd188beb4ae6b072e65c3748
+type: Request
+parentId: fld_wrk_c21fd164110f450abd188beb4ae6b07212dea96f
+modified: 1638460074852
+created: 1638460074852
+url: "{{ base_url }}/api/user/me"
+name: /api/user/me
+description: ""
+method: GET
+body: {}
+parameters: []
+headers: []
+authentication:
+  type: bearer
+  token: "{{bearerToken}}"
+  prefix: ""
+metaSortKey: -1638460074852
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

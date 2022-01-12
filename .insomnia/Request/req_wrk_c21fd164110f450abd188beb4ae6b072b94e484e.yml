@@ -1,0 +1,28 @@
+_id: req_wrk_c21fd164110f450abd188beb4ae6b072b94e484e
+type: Request
+parentId: fld_wrk_c21fd164110f450abd188beb4ae6b07266a36e77
+modified: 1638460075082
+created: 1638460075082
+url: "{{ base_url }}/api/user/login"
+name: /api/user/login
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: "null"
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+authentication:
+  type: bearer
+  token: "{{bearerToken}}"
+  prefix: ""
+metaSortKey: -1638460075082
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

@@ -1,0 +1,30 @@
+_id: req_wrk_c21fd164110f450abd188beb4ae6b07211f7ae30
+type: Request
+parentId: fld_wrk_c21fd164110f450abd188beb4ae6b07212dea96f
+modified: 1642007338372
+created: 1642007338372
+url: "{{ base_url }}/api/user/forgot/modify"
+name: /api/user/forgot/modify
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+      "email": "user@example.com",
+      "reponse": "string",
+      "password": "string"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+authentication: {}
+metaSortKey: -1642007338372
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

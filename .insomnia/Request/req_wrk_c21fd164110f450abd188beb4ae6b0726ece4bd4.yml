@@ -1,0 +1,35 @@
+_id: req_wrk_c21fd164110f450abd188beb4ae6b0726ece4bd4
+type: Request
+parentId: fld_wrk_c21fd164110f450abd188beb4ae6b07212dea96f
+modified: 1638542411820
+created: 1638542411820
+url: "{{ base_url }}/api/user/{{ userId }}"
+name: /api/user/{userId}
+description: ""
+method: PUT
+body:
+  mimeType: application/json
+  text: |-
+    {
+      "name": "string",
+      "firstname": "string",
+      "username": "string",
+      "email": "user@example.com",
+      "password": "string"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+authentication:
+  type: bearer
+  token: "{{bearerToken}}"
+  prefix: ""
+metaSortKey: -1638542411820
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

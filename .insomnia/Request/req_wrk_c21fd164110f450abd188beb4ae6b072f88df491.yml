@@ -1,0 +1,24 @@
+_id: req_wrk_c21fd164110f450abd188beb4ae6b072f88df491
+type: Request
+parentId: fld_wrk_c21fd164110f450abd188beb4ae6b072a9043ffe
+modified: 1638542411464
+created: 1638542411464
+url: "{{ base_url }}/api/reaction/{{ reactionId }}"
+name: /api/reaction/{reactionId}
+description: ""
+method: DELETE
+body: {}
+parameters: []
+headers: []
+authentication:
+  type: bearer
+  token: "{{bearerToken}}"
+  prefix: ""
+metaSortKey: -1638542411464
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global
