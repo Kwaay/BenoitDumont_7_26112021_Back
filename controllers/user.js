@@ -15,6 +15,9 @@ const regexFirstname = /^[A-Z]{1}[a-z]{2,15}$/gm;
 const regexUsername = /^[a-zA-Z0-9_-]{4,10}$/gm;
 const regexEmail = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 const regexPassword = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$/gm;
+const regexQuestion = /^[a-zA-Z0-9_-]{4,15}$/gm;
+const regexReponse = /^[a-zA-Z0-9_-]{4,15}$/gm;
+
 // password must contain 1 number (0-9), 1 uppercase letters, 1 lowercase letters, 1 non-alpha numeric number, 8-16 characters with no space
 
 async function autoPurge() {
@@ -398,7 +401,7 @@ exports.createUser = async (req, res, _next) => {
             reponse: req.body.reponse
         });
         if (userCreation) {
-            return res.status(201).json({ message: 'User Created' });
+            return res.status(201).json({ message: 'User Created with an Image' });
         }
     }
     else {

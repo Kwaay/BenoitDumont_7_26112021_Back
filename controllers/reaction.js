@@ -26,18 +26,25 @@ exports.getAllReactions = async (_req, res) => {
 
 // Création d'une réaction
 exports.createReaction = async (req, res) => {
+    const { postId, type } = req.body
+    if (typeof type !== number || isNaN(type)) {
+        return res.status(400).json({message: 'Type must be a number'})
+    }
+    if (typeof postId !== number || isNaN(postId)) {
+        return res.status(400).json({message: 'PostId must be a number'})
+    }
     try {
         const searchReaction = await Reaction.findOne({
             where: {
-                PostId: req.body.postId, UserId: req.token.userId
+                PostId: postId, UserId: req.token.userId
             }
         })
         if (searchReaction) {
             return res.status(409).json({ message: 'Reaction already exists' })
         }
         const reactionCreation = await Reaction.create({
-            type: req.body.type,
-            PostId: req.body.postId,
+            type: type,
+            PostId: postId,
             UserId: req.token.userId
         });
         if (reactionCreation) {
@@ -77,10 +84,17 @@ exports.getOneReaction = async (req, res) => {
 // Modification d'une réaction en particulier
 exports.modifyReaction = async (req, res) => {
     checkIfModerator()
+    const { postId, type } = req.body
+    if (typeof type !== number || isNaN(type)) {
+        return res.status(400).json({message: 'Type must be a number'})
+    }
+    if (typeof postId !== number || isNaN(postId)) {
+        return res.status(400).json({message: 'PostId must be a number'})
+    }
     try {
         const searchReaction = await Reaction.findOne({
             where: {
-                PostId: req.body.postId, UserId: req.token.userId, type: req.body.type
+                PostId: postId, UserId: req.token.userId, type: type
             }
         })
         if (searchReaction) {
@@ -88,7 +102,7 @@ exports.modifyReaction = async (req, res) => {
         }
         const searchPost = await Post.findOne({
             where: {
-                id: req.body.postId
+                id: postId
             }
         })
         if (searchPost === null || searchPost === undefined) {

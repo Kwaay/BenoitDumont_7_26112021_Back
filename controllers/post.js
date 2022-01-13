@@ -55,7 +55,7 @@ exports.createPost = async (req, res, _next) => {
                     UserId: req.token.userId
                 });
                 if (postCreation) {
-                    return res.status(201).json({ message: 'Post Created' });
+                    return res.status(201).json({ message: 'Post Created with an image' });
                 }
             }
             else {
