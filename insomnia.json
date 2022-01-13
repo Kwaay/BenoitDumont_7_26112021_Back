@@ -619,7 +619,7 @@
                 }
             }
         },
-        "/api/user/{userId}": {
+        "/api/user/{UserId}": {
             "get": {
                 "tags": [
                     "user"
@@ -628,7 +628,7 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "userId",
+                        "name": "UserId",
                         "schema": {
                             "type": "integer",
                             "format": "int32"
@@ -687,7 +687,7 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "userId",
+                        "name": "UserId",
                         "schema": {
                             "type": "integer",
                             "format": "int32"
@@ -810,7 +810,7 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "userId",
+                        "name": "UserId",
                         "schema": {
                             "type": "integer",
                             "format": "int32"
@@ -996,7 +996,7 @@
                 }
             }
         },
-        "/api/post/{postId}": {
+        "/api/post/{PostId}": {
             "get": {
                 "tags": [
                     "post"
@@ -1005,7 +1005,7 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "postId",
+                        "name": "PostId",
                         "schema": {
                             "type": "integer",
                             "format": "int32"
@@ -1079,7 +1079,7 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "postId",
+                        "name": "PostId",
                         "schema": {
                             "type": "integer",
                             "format": "int32"
@@ -1182,7 +1182,7 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "postId",
+                        "name": "PostId",
                         "schema": {
                             "type": "integer",
                             "format": "int32"
@@ -1367,7 +1367,7 @@
                 }
             }
         },
-        "/api/reaction/{reactionId}": {
+        "/api/reaction/{ReactionId}": {
             "get": {
                 "tags": [
                     "reaction"
@@ -1376,7 +1376,7 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "reactionId",
+                        "name": "ReactionId",
                         "schema": {
                             "type": "integer",
                             "format": "int32"
@@ -1434,7 +1434,7 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "reactionId",
+                        "name": "ReactionId",
                         "schema": {
                             "type": "integer",
                             "format": "int32"
@@ -1553,7 +1553,7 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "reactionId",
+                        "name": "ReactionId",
                         "schema": {
                             "type": "integer",
                             "format": "int32"
@@ -1652,7 +1652,7 @@
                 }
             }
         },
-        "/api/token/{tokenId}": {
+        "/api/token/{TokenId}": {
             "get": {
                 "tags": [
                     "token"
@@ -1661,7 +1661,7 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "tokenId",
+                        "name": "TokenId",
                         "schema": {
                             "type": "integer",
                             "format": "int32"
@@ -1719,7 +1719,7 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "tokenId",
+                        "name": "TokenId",
                         "schema": {
                             "type": "integer",
                             "format": "int32"
