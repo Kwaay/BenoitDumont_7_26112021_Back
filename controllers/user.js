@@ -1,11 +1,13 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const cryptoJS = require('crypto-js')
-const fetch = require("node-fetch");
-const { User, Post, Reaction, Token } = require('../models');
+const cryptoJS = require('crypto-js');
+const fetch = require('node-fetch');
+const { Op } = require('sequeliz');
+const maskdata = require('maskdata');
 const fsp = require('fs/promises');
-const maskdata = require('maskdata')
-const { Op } = require("sequelize");
+const {
+  User, Post, Reaction, Token
+} = require('../models');
 
 require('dotenv').config()
 
@@ -39,32 +41,32 @@ async function checkIfAdmin() {
     }
 }
 
-// Partie "S'inscrire"
+// Partie 'S'inscrire'
 exports.signup = async (req, res, _next) => {
     console.log(req.body)
     // Vérification du format du contenu envoyé
     if (!regexName.test(req.body.name)) {
-        return res.status(400).json({ message: "Name doesn't have a correct format" });
+        return res.status(400).json({ message: 'Name doesn\'t have a correct format' })
     } 
     if (!regexFirstname.test(req.body.firstname)) {
-        return res.status(400).json({ message: "Firstname doesn't have a correct format" });
+        return res.status(400).json({ message: 'Firstname doesn\'t have a correct format' })
     } 
     if (!regexUsername.test(req.body.username)) {
-        return res.status(400).json({ message: "Username doesn't have a correct format" });
+        return res.status(400).json({ message: 'Username doesn\'t have a correct format' })
     } 
     if (!regexEmail.test(req.body.email)) {
-        return res.status(400).json({ message: "Email doesn't have a correct format" });
+        return res.status(400).json({ message: 'Email doesn\'t have a correct format' })
     } 
     if (!regexPassword.test(req.body.password)) {
-        return res.status(400).json({ message:  "Password doesn't have a correct format"});
+        return res.status(400).json({ message:  'Password doesn\'t have a correct format'})
     }
     if (!regexQuestion.test(req.body.question)) {
-        return res.status(400).json({ message: "Question doesn't have a correct format" });
+        return res.status(400).json({ message: 'Question doesn\'t have a correct format' });
     } 
     if (!regexReponse.test(req.body.reponse)) {
-        return res.status(400).json({ message: "Reponse doesn't have a correct format" });
+        return res.status(400).json({ message: 'Reponse doesn\'t have a correct format' });
     } 
-    if (typeof req.body.rank !== "number" || isNaN(req.body.rank)) {
+    if (typeof req.body.rank !== 'number' || isNaN(req.body.rank)) {
         return res.status(400).json({message: 'Rank must be a number'})
     }
     delete req.body.avatar
@@ -101,7 +103,7 @@ exports.signup = async (req, res, _next) => {
             // Hash de l'email en MD5 pour pouvoir vérifier si un avatar est relié depuis Gravatar
             const hashEmail = cryptoJS.MD5(req.body.email).toString().toLowerCase();
             fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
-                method: "GET"
+                method: 'GET'
             })
                 .then(function (value) {
                     const gravatarImage = value.url;
@@ -136,15 +138,15 @@ exports.signup = async (req, res, _next) => {
     };
 };
 
-// Partie "Se connecter"
+// Partie 'Se connecter'
 exports.login = async (req, res, _next) => {
     if (!regexPassword.test(req.body.password)) {
-        return res.status(400).json({ error: "Password doesn't have a correct format" });
+        return res.status(400).json({ error: 'Password doesn\'t have a correct format' });
     }
     // Cas ou l'utilisateur essaye de se connecter avec un username
-    if (req.body.hasOwnProperty("username")) {
+    if (req.body.hasOwnProperty('username')) {
         if (!regexUsername.test(req.body.username)) {
-            return res.status(400).json({ message: "Username doesn't have a correct format" });
+            return res.status(400).json({ message: 'Username doesn\'t have a correct format' });
         }
         try {
         // Vérification si l'username existe
@@ -170,12 +172,12 @@ exports.login = async (req, res, _next) => {
         autoPurge()
 
         // Récupération de l'userAgent
-        const userAgent = req.useragent.browser + " | " + req.useragent.version;
+        const userAgent = req.useragent.browser + ' | ' + req.useragent.version;
 
         // Si l'option de sécurite maximale est activée, l'IP est masquée en partie
         if (user.maxSecurity === true) {
             const maskStringOptions = {
-                maskWith: "*",
+                maskWith: '*',
                 values: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
                 maskOnlyFirstOccurance: true,
                 maskAll: false,
@@ -209,9 +211,9 @@ exports.login = async (req, res, _next) => {
         }
     }
     // Cas ou l'utilisateur essaye de se connecter avec un email
-    if (req.body.hasOwnProperty("email")) {
+    if (req.body.hasOwnProperty('email')) {
         if (!regexEmail.test(req.body.email)) {
-            return res.status(400).json({ message: "Email doesn't have a correct format" });
+            return res.status(400).json({ message: 'Email doesn\'t have a correct format' });
         } 
         try {
             // Vérification si l'username existe
@@ -238,12 +240,12 @@ exports.login = async (req, res, _next) => {
             autoPurge()
 
             // Récupération de l'userAgent
-            const userAgent = req.useragent.browser + " | " + req.useragent.version;
+            const userAgent = req.useragent.browser + ' | ' + req.useragent.version;
 
             // Si l'option de sécurite maximale est activée, l'IP est masquée en partie
             if (user.maxSecurity === true) {
                 const maskStringOptions = {
-                    maskWith: "*",
+                    maskWith: '*',
                     values: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
                     maskOnlyFirstOccurance: true,
                     maskAll: false,
@@ -281,7 +283,7 @@ exports.login = async (req, res, _next) => {
 // Récupération de l'email pour savoir quel compte modifier
 exports.forgot = async (req, res, _next) => {
     if (!regexEmail.test(req.body.email)) {
-        return res.status(400).json({ message: "Email doesn't have a correct format" });
+        return res.status(400).json({ message: 'Email doesn\'t have a correct format' });
     } 
     const user = await User.findOne({
         where: {
@@ -302,10 +304,10 @@ exports.forgot = async (req, res, _next) => {
 // Modification du mot de passe si la réponse à la question est good
 exports.forgotModify =  async (req, res, _next) => {
     if (!regexQuestion.test(req.body.question)) {
-        return res.status(400).json({ message: "Question doesn't have a correct format" });
+        return res.status(400).json({ message: 'Question doesn\'t have a correct format' });
     } 
     if (!regexPassword.test(req.body.password)) {
-        return res.status(400).json({ message: "Password doesn't have a correct format" });
+        return res.status(400).json({ message: 'Password doesn\'t have a correct format' });
     } 
     const user = await User.findOne({
         where: { 
@@ -353,27 +355,27 @@ exports.createUser = async (req, res, _next) => {
     checkIfAdmin()
     // Vérification du format du contenu envoyé
     if (!regexName.test(req.body.name)) {
-        return res.status(400).json({ message: "Name doesn't have a correct format" });
+        return res.status(400).json({ message: 'Name doesn\'t have a correct format' });
     } 
     if (!regexFirstname.test(req.body.firstname)) {
-        return res.status(400).json({ message: "Firstname doesn't have a correct format" });
+        return res.status(400).json({ message: 'Firstname doesn\'t have a correct format' });
     } 
     if (!regexUsername.test(req.body.username)) {
-        return res.status(400).json({ message: "Username doesn't have a correct format" });
+        return res.status(400).json({ message: 'Username doesn\'t have a correct format' });
     } 
     if (!regexEmail.test(req.body.email)) {
-        return res.status(400).json({ message: "Email doesn't have a correct format" });
+        return res.status(400).json({ message: 'Email doesn\'t have a correct format' });
     } 
     if (!regexPassword.test(req.body.password)) {
-        return res.status(400).json({ message:  "Password doesn't have a correct format"});
+        return res.status(400).json({ message:  'Password doesn\'t have a correct format'});
     }
     if (!regexQuestion.test(req.body.question)) {
-        return res.status(400).json({ message: "Question doesn't have a correct format" });
+        return res.status(400).json({ message: 'Question doesn\'t have a correct format' });
     } 
     if (!regexReponse.test(req.body.reponse)) {
-        return res.status(400).json({ message: "Reponse doesn't have a correct format" });
+        return res.status(400).json({ message: 'Reponse doesn\'t have a correct format' });
     } 
-    if (typeof req.body.rank !== "number" || isNaN(req.body.rank)) {
+    if (typeof req.body.rank !== 'number' || isNaN(req.body.rank)) {
         return res.status(400).json({message: 'Rank must be a number'})
     }
     delete req.body.avatar
@@ -415,7 +417,7 @@ exports.createUser = async (req, res, _next) => {
     else {
         const hashEmail = cryptoJS.MD5(req.body.email).toString().toLowerCase();
         fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
-            method: "GET"
+            method: 'GET'
         })
             .then(function (value) {
                 const gravatarImage = value.url;
@@ -486,32 +488,32 @@ exports.modifyUser = async (req, res, _next) => {
     delete req.body.rank
     // Vérification du format du contenu envoyé
     if (req.body.name !== undefined && !regexName.test(req.body.name)) {
-        return res.status(400).json({ message: "Name doesn't have a correct format" });
+        return res.status(400).json({ message: 'Name doesn\'t have a correct format' });
     } 
     if (req.body.firstname !== undefined && !regexFirstname.test(req.body.firstname)) {
-        return res.status(400).json({ message: "Firstname doesn't have a correct format" });
+        return res.status(400).json({ message: 'Firstname doesn\'t have a correct format' });
     } 
     if (req.body.username !== undefined && !regexUsername.test(req.body.username)) {
-        return res.status(400).json({ message: "Username doesn't have a correct format" });
+        return res.status(400).json({ message: 'Username doesn\'t have a correct format' });
     } 
     if (req.body.email !== undefined && !regexEmail.test(req.body.email)) {
-        return res.status(400).json({ message: "Email doesn't have a correct format" });
+        return res.status(400).json({ message: 'Email doesn\'t have a correct format' });
     } 
     if (req.body.password !== undefined && !regexPassword.test(req.body.password)) {
-        return res.status(400).json({ message:  "Password doesn't have a correct format"});
+        return res.status(400).json({ message:  'Password doesn\'t have a correct format'});
     }
     if (req.body.question !== undefined && !regexQuestion.test(req.body.question)) {
-        return res.status(400).json({ message: "Question doesn't have a correct format" });
+        return res.status(400).json({ message: 'Question doesn\'t have a correct format' });
     } 
     if (req.body.reponse !== undefined && !regexReponse.test(req.body.reponse)) {
-        return res.status(400).json({ message: "Reponse doesn't have a correct format" });
+        return res.status(400).json({ message: 'Reponse doesn\'t have a correct format' });
     } 
     try {
         const userFind = await User.findOne({ where: { id: req.params.UserId } })
         if (!req.body.email === null || !req.body.email === undefined) {
             const checkEmail = await User.findOne({ where: { email: req.body.email } })
             if (checkEmail) {
-                return res.status(409).json({ message: "Email has already been used" })
+                return res.status(409).json({ message: 'Email has already been used' })
             }
         }
         let userObject = {}

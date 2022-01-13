@@ -9,6 +9,6 @@ module.exports = (req,res,next) => {
         req.token = decodedToken;
         next();
    } catch (error) {
-       res.status(401).json({ error: error | "You're not logged in"});
+       res.status(401).json({ error: error | 'You're not logged in'});
    }
 }

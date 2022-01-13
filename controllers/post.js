@@ -32,10 +32,10 @@ exports.getAllPosts = async (_req, res, _next) => {
 // Création d'un post
 exports.createPost = async (req, res, _next) => {
     if (!regexTitle.test(req.body.title)) {
-        return res.status(400).json({ message: "Title doesn't have a correct format" });
+        return res.status(400).json({ message: 'Title doesn\'t have a correct format' });
     }
     if (!regexContent.test(req.body.content)) {
-        return res.status(400).json({ message: "Content doesn't have a correct format" });
+        return res.status(400).json({ message: 'Content doesn\'t have a correct format' });
     }
     delete req.body.image
     try {
@@ -106,10 +106,10 @@ exports.getOnePost = async (req, res, _next) => {
 exports.modifyPost = async (req, res, next) => {
     checkIfModerator()
     if (req.body.title !== undefined &&!regexTitle.test(req.body.title)) {
-        return res.status(400).json({ message: "Title doesn't have a correct format" });
+        return res.status(400).json({ message: 'Title doesn\'t have a correct format' });
     }
     if (req.body.content !== undefined && !regexContent.test(req.body.content)) {
-        return res.status(400).json({ message: "Content doesn't have a correct format" });
+        return res.status(400).json({ message: 'Content doesn\'t have a correct format' });
     }
     delete req.body.image
     try {
@@ -149,7 +149,7 @@ exports.modifyPost = async (req, res, next) => {
     }
 }
 
-// Suppression d"un post en particulier
+// Suppression d'un post en particulier
 exports.deletePost = async (req, res, next) => {
     checkIfModerator()
     const post = await Post.findOne({ where: { id: req.params.PostId } })
