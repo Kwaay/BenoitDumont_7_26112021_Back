@@ -92,18 +92,34 @@
                                         "errors": {
                                             "type": "object",
                                             "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Name doesn't have a correct format"
+                                                },
                                                 "firstname": {
                                                     "type": "string",
-                                                    "example": "Invalid Firstname"
+                                                    "example": "Firstname doesn't have a correct format"
                                                 },
-                                                "email": {
+                                                "username": {
                                                     "type": "string",
-                                                    "example": "Invalid Email"
+                                                    "example": "Username doesn't have a correct format"
                                                 },
-                                                "password": {
-                                                    "type": "string",
-                                                    "example": "Invalid Password"
-                                                }
+												"email": {
+													"type": "string",
+													"example": "Username doesn't have a correct format"
+												},
+												"password": {
+													"type": "string",
+													"example": "Password doesn't have a correct format"
+												},
+												"question": {
+													"type": "string",
+													"example": "Question doesn't have a correct format"
+												},
+												"reponse": {
+													"type": "string",
+													"example": "Reponse doesn't have a correct format"
+												}
                                             }
                                         }
                                     }
@@ -198,15 +214,15 @@
                                             "properties": {
                                                 "username": {
                                                     "type": "string",
-                                                    "example": "Username doesn' have the correct format"
+                                                    "example": "Username doesn't have a correct format"
                                                 },
                                                 "email": {
                                                     "type": "string",
-                                                    "example": "Email doesn't have the correct format"
+                                                    "example": "Email doesn't have a correct format"
                                                 },
                                                 "password": {
                                                     "type": "string",
-                                                    "example": "Password doesn't have the correct format"
+                                                    "example": "Password doesn't have a correct format"
                                                 }
                                             }
                                         }
@@ -232,7 +248,7 @@
                         }
                     },
                     "404": {
-                        "description": "User Not Found",
+                        "description": "Not Found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -268,7 +284,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "",
+                        "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -283,7 +299,7 @@
                         }
                     },
                     "400": {
-                        "description": "",
+                        "description": "Bad Request",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -294,7 +310,7 @@
                                             "properties": {
                                                 "email": {
                                                     "type": "string",
-                                                    "example": "Email doesn't have the correct format"
+                                                    "example": "Email doesn't have a correct format"
                                                 }
                                             }
                                         }
@@ -346,17 +362,33 @@
                                 "schema": {
                                     "type": "object",
                                     "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "Wrong Response"
-                                        }
+                                        "errors": {
+                                            "type": "object",
+                                            "properties": {
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "Email doesn't have a correct format"
+                                                }, 
+												"question": {
+                                                    "type": "string",
+                                                    "example": "Question doesn't have a correct format"
+                                                },
+                                                "password": {
+                                                    "type": "string",
+                                                    "example": "Password doesn't have a correct format"
+                                                }
+                                            }
+                                        },
+										"error": {
+											"type": "string"
+										}
                                     }
                                 }
                             }
                         }
                     },
                     "404": {
-                        "description": "User Not Found",
+                        "description": "Not Found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -447,7 +479,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "User Created",
+                        "description": "Created",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -466,7 +498,7 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "User Created with Image"
+                                            "example": "User Created with an Image"
                                         }
                                     }
                                 }
@@ -474,7 +506,7 @@
                         }
                     },
                     "400": {
-                        "description": "errors",
+                        "description": "Bad Request",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -483,14 +515,34 @@
                                         "errors": {
                                             "type": "object",
                                             "properties": {
-                                                "email": {
+                                                "name": {
                                                     "type": "string",
-                                                    "example": "Email doesn't have the correct format"
+                                                    "example": "Name doesn't have a correct format"
                                                 },
-                                                "password": {
+                                                "firstname": {
                                                     "type": "string",
-                                                    "example": "Password doesn't have the correct format"
-                                                }
+                                                    "example": "Firstname doesn't have a correct format"
+                                                },
+                                                "username": {
+                                                    "type": "string",
+                                                    "example": "Username doesn't have a correct format"
+                                                },
+												"email": {
+													"type": "string",
+													"example": "Username doesn't have a correct format"
+												},
+												"password": {
+													"type": "string",
+													"example": "Password doesn't have a correct format"
+												},
+												"question": {
+													"type": "string",
+													"example": "Question doesn't have a correct format"
+												},
+												"reponse": {
+													"type": "string",
+													"example": "Reponse doesn't have a correct format"
+												}
                                             }
                                         }
                                     }
@@ -610,7 +662,7 @@
                         "$ref": "#/components/responses/401"
                     },
                     "404": {
-                        "description": "User Not Found",
+                        "description": "Not Found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -627,7 +679,7 @@
                     }
                 }
             },
-            "put": {
+            "patch": {
                 "tags": [
                     "user"
                 ],
@@ -682,12 +734,45 @@
                         }
                     },
                     "400": {
-                        "description": "error",
+                        "description": "Bad Request",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object",
                                     "properties": {
+										"errors": {
+                                            "type": "object",
+                                            "properties": {
+												"name": {
+                                                    "type": "string",
+                                                    "example": "Name doesn't have a correct format"
+                                                },
+                                                "firstname": {
+                                                    "type": "string",
+                                                    "example": "Firstname doesn't have a correct format"
+                                                },
+                                                "username": {
+                                                    "type": "string",
+                                                    "example": "Username doesn't have a correct format"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "Email doesn't have a correct format"
+                                                },
+                                                "password": {
+                                                    "type": "string",
+                                                    "example": "Password doesn't have a correct format"
+                                                },
+                                                "question": {
+                                                    "type": "string",
+                                                    "example": "Question doesn't have a correct format"
+                                                },
+                                                "reponse": {
+                                                    "type": "string",
+                                                    "example": "Reponse doesn't have a correct format"
+                                                }
+                                            }
+                                        },
                                         "error": {
                                             "type": "string"
                                         }
@@ -760,7 +845,7 @@
                         "$ref": "#/components/responses/401"
                     },
                     "404": {
-                        "description": "User don't exist",
+                        "description": "Not Found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -835,7 +920,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Post Created",
+                        "description": "Created",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -854,7 +939,7 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Post Created with Image"
+                                            "example": "Post Created with an Image"
                                         }
                                     }
                                 }
@@ -862,12 +947,25 @@
                         }
                     },
                     "400": {
-                        "description": " catch error",
+                        "description": "Bad Request",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object",
                                     "properties": {
+										"errors": {
+                                            "type": "object",
+                                            "properties": {
+												"title": {
+													"type": "string",
+													"example": "Title doesn't have a correct format"
+												},
+												"content": {
+													"type": "string",
+													"example": "Content doesn't have a correct format"
+												}
+                                            }
+                                        },
                                         "error": {
                                             "type": "string"
                                         }
@@ -938,7 +1036,7 @@
                         }
                     },
                     "400": {
-                        "description": "catch error",
+                        "description": "Bad Request",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -956,7 +1054,7 @@
                         "$ref": "#/components/responses/401"
                     },
                     "404": {
-                        "description": "Post Not Found",
+                        "description": "Not Found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -973,7 +1071,7 @@
                     }
                 }
             },
-            "put": {
+            "patch": {
                 "tags": [
                     "post"
                 ],
@@ -1028,12 +1126,25 @@
                         }
                     },
                     "400": {
-                        "description": "catch error",
+                        "description": "Bad Request",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object",
                                     "properties": {
+										"errors": {
+                                            "type": "object",
+                                            "properties": {
+												"title": {
+													"type": "string",
+													"example": "Title doesn't have a correct format"
+												},
+												"content": {
+													"type": "string",
+													"example": "Content doesn't have a correct format"
+												}
+                                            }
+                                        },
                                         "error": {
                                             "type": "string"
                                         }
@@ -1106,7 +1217,7 @@
                         "$ref": "#/components/responses/401"
                     },
                     "404": {
-                        "description": "Post don't exist",
+                        "description": "Not Found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1150,7 +1261,7 @@
                         }
                     },
                     "400": {
-                        "description": "catch error",
+                        "description": "Bad Request",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1191,7 +1302,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Reaction Created",
+                        "description": "Created",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1207,12 +1318,25 @@
                         }
                     },
                     "400": {
-                        "description": "catch error",
+                        "description": "Bad Request",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object",
                                     "properties": {
+										"errors": {
+                                            "type": "object",
+                                            "properties": {
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "Type must be a number"
+                                                },
+												"PostId": {
+													"type": "string",
+													"example": "PostId must be a number"
+												}
+                                            }
+                                        },
                                         "error": {
                                             "type": "string"
                                         }
@@ -1302,7 +1426,7 @@
                     }
                 }
             },
-            "put": {
+            "patch": {
                 "tags": [
                     "reaction"
                 ],
@@ -1357,12 +1481,25 @@
                         }
                     },
                     "400": {
-                        "description": "catch error",
+                        "description": "Bad Request",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object",
                                     "properties": {
+										"errors": {
+                                            "type": "object",
+                                            "properties": {
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "Type must be a number"
+                                                },
+												"PostId": {
+													"type": "string",
+													"example": "PostId must be a number"
+												}
+                                            }
+                                        },
                                         "error": {
                                             "type": "string"
                                         }
@@ -1375,7 +1512,7 @@
                         "$ref": "#/components/responses/401"
                     },
                     "404": {
-                        "description": "Reaction Not Found",
+                        "description": "Not Found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1495,7 +1632,7 @@
                         }
                     },
                     "400": {
-                        "description": "catch error",
+                        "description": "Bad Request",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1995,8 +2132,7 @@
                     "id": {
                         "type": "integer"
                     },
-                    
-					"title": {
+                    "title": {
                         "type": "string"
                     },
                     "content": {
@@ -2037,7 +2173,7 @@
                     "id": {
                         "type": "integer"
                     },
-					"title": {
+                    "title": {
                         "type": "string"
                     },
                     "content": {
@@ -2094,7 +2230,7 @@
             "Reaction": {
                 "type": "object",
                 "properties": {
-                    "postId": {
+                    "PostId": {
                         "type": "integer"
                     },
                     "type": {
@@ -2102,7 +2238,7 @@
                     }
                 },
                 "required": [
-                    "postId",
+                    "PostId",
                     "type"
                 ]
             },
@@ -2123,10 +2259,10 @@
                         "type": "string",
                         "format": "date-time"
                     },
-                    "postId": {
+                    "PostId": {
                         "type": "integer"
                     },
-                    "userId": {
+                    "UserId": {
                         "type": "integer"
                     },
                     "Post": {
@@ -2154,10 +2290,10 @@
                         "type": "string",
                         "format": "date-time"
                     },
-                    "postId": {
+                    "PostId": {
                         "type": "integer"
                     },
-                    "userId": {
+                    "UserId": {
                         "type": "integer"
                     }
                 }
@@ -2224,7 +2360,7 @@
                         "type": "integer",
                         "format": "int32"
                     },
-                    "userId": {
+                    "UserId": {
                         "type": "integer",
                         "format": "int32"
                     },

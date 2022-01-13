@@ -26,26 +26,26 @@ exports.getAllReactions = async (_req, res) => {
 
 // Création d'une réaction
 exports.createReaction = async (req, res) => {
-    const { postId, type } = req.body
+    const { PostId, type } = req.body
     if (typeof type !== number || isNaN(type)) {
         return res.status(400).json({message: 'Type must be a number'})
     }
-    if (typeof postId !== number || isNaN(postId)) {
+    if (typeof PostId !== number || isNaN(PostId)) {
         return res.status(400).json({message: 'PostId must be a number'})
     }
     try {
         const searchReaction = await Reaction.findOne({
             where: {
-                PostId: postId, UserId: req.token.userId
+                PostId, UserId: req.token.UserId
             }
         })
         if (searchReaction) {
             return res.status(409).json({ message: 'Reaction already exists' })
         }
         const reactionCreation = await Reaction.create({
-            type: type,
-            PostId: postId,
-            UserId: req.token.userId
+            type,
+            PostId,
+            UserId: req.token.UserId
         });
         if (reactionCreation) {
             return res.status(201).json({ message: 'Reaction Created' });
@@ -84,17 +84,17 @@ exports.getOneReaction = async (req, res) => {
 // Modification d'une réaction en particulier
 exports.modifyReaction = async (req, res) => {
     checkIfModerator()
-    const { postId, type } = req.body
+    const { PostId, type } = req.body
     if (typeof type !== number || isNaN(type)) {
         return res.status(400).json({message: 'Type must be a number'})
     }
-    if (typeof postId !== number || isNaN(postId)) {
+    if (typeof PostId !== number || isNaN(PostId)) {
         return res.status(400).json({message: 'PostId must be a number'})
     }
     try {
         const searchReaction = await Reaction.findOne({
             where: {
-                PostId: postId, UserId: req.token.userId, type: type
+                PostId, UserId: req.token.UserId, type
             }
         })
         if (searchReaction) {
@@ -102,7 +102,7 @@ exports.modifyReaction = async (req, res) => {
         }
         const searchPost = await Post.findOne({
             where: {
-                id: postId
+                id: PostId
             }
         })
         if (searchPost === null || searchPost === undefined) {

@@ -37,10 +37,11 @@ exports.createPost = async (req, res, _next) => {
     if (!regexContent.test(req.body.content)) {
         return res.status(400).json({ message: "Content doesn't have a correct format" });
     }
+    delete req.body.image
     try {
         const searchTitle = await Post.findOne({
             where: {
-                title: req.body.title, UserId: req.token.userId
+                title: req.body.title, UserId: req.token.UserId
             }
         })
         if (searchTitle) {
@@ -52,7 +53,7 @@ exports.createPost = async (req, res, _next) => {
                     title: req.body.title,
                     content: req.body.content,
                     image: `${req.protocol}://${req.get('host')}/images/${req.files.image[0].filename}`,
-                    UserId: req.token.userId
+                    UserId: req.token.UserId
                 });
                 if (postCreation) {
                     return res.status(201).json({ message: 'Post Created with an image' });
@@ -62,7 +63,7 @@ exports.createPost = async (req, res, _next) => {
                 const postCreation = await Post.create({
                     title: req.body.title,
                     content: req.body.content,
-                    UserId: req.token.userId
+                    UserId: req.token.UserId
                 });
                 if (postCreation) {
                     return res.status(201).json({ message: 'Post Created' });
@@ -110,11 +111,12 @@ exports.modifyPost = async (req, res, next) => {
     if (!regexContent.test(req.body.content)) {
         return res.status(400).json({ message: "Content doesn't have a correct format" });
     }
+    delete req.body.image
     try {
         if (!req.body.title === null || !req.body.title === undefined) {
             const titleCompare = await Post.findOne({
                 where: {
-                    title: req.body.title, UserId: req.token.userId
+                    title: req.body.title, UserId: req.token.UserId
                 }
             })
             if (titleCompare) {

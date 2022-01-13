@@ -63,6 +63,10 @@ exports.signup = async (req, res, _next) => {
     if (!regexReponse.test(req.body.reponse)) {
         return res.status(400).json({ message: "Reponse doesn't have a correct format" });
     } 
+    if (typeof req.body.rank !== number || isNaN(req.body.rank)) {
+        return res.status(400).json({message: 'Rank must be a number'})
+    }
+    delete req.body.avatar
     // Vérification si l'email est déjà utilisée
     const emailExist = await User.findOne({ where: { email: req.body.email } })
     if (emailExist) {
@@ -154,7 +158,7 @@ exports.login = async (req, res, _next) => {
         }
         // Création d'un token de 24h avec l'userId inclus
         const token = jwt.sign({
-            userId: user.id,
+            UserId: user.id,
             rank: user.rank
 
         },
@@ -222,7 +226,7 @@ exports.login = async (req, res, _next) => {
 
             // Création d'un token de 24h avec l'userId inclus
             const token = jwt.sign({
-                userId: user.id,
+                UserId: user.id,
                 rank: user.rank
             },
                 process.env.SECRET_KEY_JWT, {
@@ -369,6 +373,10 @@ exports.createUser = async (req, res, _next) => {
     if (!regexReponse.test(req.body.reponse)) {
         return res.status(400).json({ message: "Reponse doesn't have a correct format" });
     } 
+    if (typeof req.body.rank !== number || isNaN(req.body.rank)) {
+        return res.status(400).json({message: 'Rank must be a number'})
+    }
+    delete req.body.avatar
     const emailExist = await User.findOne({
         where: {
             email: req.body.email
@@ -445,8 +453,8 @@ exports.createUser = async (req, res, _next) => {
 
 // Récupération de l'utilisateur actuel
 exports.myUser = async (req, res, _next) => {
-    const user = await User.findOne({ where: { id: req.token.userId } })
-    if (user.id === req.token.userId) {
+    const user = await User.findOne({ where: { id: req.token.UserId } })
+    if (user.id === req.token.UserId) {
         return res.status(200).json({
             user
         })
