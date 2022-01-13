@@ -2,6 +2,9 @@ const { User, Post, Reaction } = require('../models');
 const fsp = require('fs/promises');
 require('dotenv').config()
 
+const regexTitle = /^[A-Z]{1}[a-z]{2,15}$/gm;
+const regexContent = /^[a-zA-Z0-9_-]{4,10}$/gm;
+
 
 async function checkIfModerator() {
     if (!req.token.rank === 1 || !req.token.rank === 2) {
@@ -28,6 +31,12 @@ exports.getAllPosts = async (_req, res, _next) => {
 
 // Création d'un post
 exports.createPost = async (req, res, _next) => {
+    if (!regexTitle.test(req.body.title)) {
+        return res.status(400).json({ message: "Title doesn't have a correct format" });
+    }
+    if (!regexContent.test(req.body.content)) {
+        return res.status(400).json({ message: "Content doesn't have a correct format" });
+    }
     try {
         const searchTitle = await Post.findOne({
             where: {
@@ -95,6 +104,12 @@ exports.getOnePost = async (req, res, _next) => {
 // Modification d'un post en particulier
 exports.modifyPost = async (req, res, next) => {
     checkIfModerator()
+    if (!regexTitle.test(req.body.title)) {
+        return res.status(400).json({ message: "Title doesn't have a correct format" });
+    }
+    if (!regexContent.test(req.body.content)) {
+        return res.status(400).json({ message: "Content doesn't have a correct format" });
+    }
     try {
         if (!req.body.title === null || !req.body.title === undefined) {
             const titleCompare = await Post.findOne({
