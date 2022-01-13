@@ -38,6 +38,28 @@ async function checkIfAdmin() {
 
 // Partie "S'inscrire"
 exports.signup = async (req, res, _next) => {
+    // Vérification du format du contenu envoyé
+    if (!regexName.test(req.body.name)) {
+        return res.status(400).json({ message: "Name doesn't have a correct format" });
+    } 
+    if (!regexFirstname.test(req.body.firstname)) {
+        return res.status(400).json({ message: "Firstname doesn't have a correct format" });
+    } 
+    if (!regexUsername.test(req.body.username)) {
+        return res.status(400).json({ message: "Username doesn't have a correct format" });
+    } 
+    if (!regexEmail.test(req.body.email)) {
+        return res.status(400).json({ message: "Email doesn't have a correct format" });
+    } 
+    if (!regexPassword.test(req.body.password)) {
+        return res.status(400).json({ message:  "Password doesn't have a correct format"});
+    }
+    if (!regexQuestion.test(req.body.question)) {
+        return res.status(400).json({ message: "Question doesn't have a correct format" });
+    } 
+    if (!regexReponse.test(req.body.reponse)) {
+        return res.status(400).json({ message: "Reponse doesn't have a correct format" });
+    } 
     // Vérification si l'email est déjà utilisée
     const emailExist = await User.findOne({ where: { email: req.body.email } })
     if (emailExist) {
@@ -47,10 +69,6 @@ exports.signup = async (req, res, _next) => {
     const usernameExist = await User.findOne({ where: { username: req.body.username } })
     if (usernameExist) {
         return res.status(409).json({ message: 'Username has already been used' });
-    }
-    // Vérification du format du contenu envoyé
-    if (!regexEmail.test(req.body.email) && (!regexPassword.test(req.body.password))) {
-        return res.status(400).json({ message: "Email or Password doesn't have the correct format" });
     }
     try {
         // Hash du Mot de passe avec 10 tours de SALT
@@ -67,7 +85,7 @@ exports.signup = async (req, res, _next) => {
                 maxSecurity: true,
                 rank: 3,
                 question: req.body.question,
-                reponse: req.body.awswer
+                reponse: req.body.reponse
             });
         }
         // Si le body ne contient pas de fichier
@@ -89,7 +107,7 @@ exports.signup = async (req, res, _next) => {
                         maxSecurity: true,
                         rank: 3,
                         question: req.body.question,
-                        reponse: req.body.awswer
+                        reponse: req.body.reponse
                     })
                         .then(done => {
                             res.status(201).json({ message: 'User Created' });
@@ -112,13 +130,13 @@ exports.signup = async (req, res, _next) => {
 
 // Partie "Se connecter"
 exports.login = async (req, res, _next) => {
-    /*if (!regexPassword.test(req.body.password)) {
-        return res.status(400).json({ error: "Password doesn't have the correct format" });
-    }*/
+    if (!regexPassword.test(req.body.password)) {
+        return res.status(400).json({ error: "Password doesn't have a correct format" });
+    }
     // Cas ou l'utilisateur essaye de se connecter avec un username
     if (req.body.hasOwnProperty("username")) {
         if (!regexUsername.test(req.body.username)) {
-            return res.status(400).json({ error: "Username doesn't have the correct format" });
+            return res.status(400).json({ message: "Username doesn't have a correct format" });
         }
         try {
         // Vérification si l'username existe
@@ -185,8 +203,8 @@ exports.login = async (req, res, _next) => {
     // Cas ou l'utilisateur essaye de se connecter avec un email
     if (req.body.hasOwnProperty("email")) {
         if (!regexEmail.test(req.body.email)) {
-            return res.status(400).json({ error: "Email doesn't have the correct format" });
-        }
+            return res.status(400).json({ message: "Email doesn't have a correct format" });
+        } 
         try {
             // Vérification si l'username existe
             const user = await User.findOne({ where: { email: req.body.email } })
@@ -255,8 +273,8 @@ exports.login = async (req, res, _next) => {
 // Récupération de l'email pour savoir quel compte modifier
 exports.forgot = async (req, res, _next) => {
     if (!regexEmail.test(req.body.email)) {
-        return res.status(400).json({ message: "Email doesn't have the correct format" });
-    }
+        return res.status(400).json({ message: "Email doesn't have a correct format" });
+    } 
     const user = await User.findOne({
         where: {
             email: req.body.email
@@ -275,6 +293,12 @@ exports.forgot = async (req, res, _next) => {
 
 // Modification du mot de passe si la réponse à la question est good
 exports.forgotModify =  async (req, res, _next) => {
+    if (!regexQuestion.test(req.body.question)) {
+        return res.status(400).json({ message: "Question doesn't have a correct format" });
+    } 
+    if (!regexPassword.test(req.body.password)) {
+        return res.status(400).json({ message: "Password doesn't have a correct format" });
+    } 
     const user = await User.findOne({
         where: { 
             email: req.body.email
@@ -320,6 +344,28 @@ exports.getAllUsers = async (_req, res, _next) => {
 // Création d'un utilisateur
 exports.createUser = async (req, res, _next) => {
     checkIfAdmin()
+    // Vérification du format du contenu envoyé
+    if (!regexName.test(req.body.name)) {
+        return res.status(400).json({ message: "Name doesn't have a correct format" });
+    } 
+    if (!regexFirstname.test(req.body.firstname)) {
+        return res.status(400).json({ message: "Firstname doesn't have a correct format" });
+    } 
+    if (!regexUsername.test(req.body.username)) {
+        return res.status(400).json({ message: "Username doesn't have a correct format" });
+    } 
+    if (!regexEmail.test(req.body.email)) {
+        return res.status(400).json({ message: "Email doesn't have a correct format" });
+    } 
+    if (!regexPassword.test(req.body.password)) {
+        return res.status(400).json({ message:  "Password doesn't have a correct format"});
+    }
+    if (!regexQuestion.test(req.body.question)) {
+        return res.status(400).json({ message: "Question doesn't have a correct format" });
+    } 
+    if (!regexReponse.test(req.body.reponse)) {
+        return res.status(400).json({ message: "Reponse doesn't have a correct format" });
+    } 
     const emailExist = await User.findOne({
         where: {
             email: req.body.email
@@ -336,9 +382,6 @@ exports.createUser = async (req, res, _next) => {
     if (usernameExist) {
         return res.status(409).json({ message: 'Username has already been used' });
     }
-    if (!regexEmail.test(req.body.email) && (!regexPassword.test(req.body.password))) {
-        return res.status(400).json({ message: "Email or Password doesn't have the correct format" });
-    }
     try {
     const hashPassword = await bcrypt.hash(req.body.password, 10)
     if (req.files) {
@@ -350,7 +393,9 @@ exports.createUser = async (req, res, _next) => {
             password: hashPassword,
             avatar: `${req.protocol}://${req.get('host')}/images/${req.files.avatar[0].filename}`,
             maxSecurity: true,
-            rank: 3
+            rank: 3,
+            question: req.body.question,
+            reponse: req.body.reponse
         });
         if (userCreation) {
             return res.status(201).json({ message: 'User Created' });
@@ -371,7 +416,9 @@ exports.createUser = async (req, res, _next) => {
                     password: hashPassword,
                     avatar: gravatarImage,
                     maxSecurity: true,
-                    rank: 3
+                    rank: 3,
+                    question: req.body.question,
+                    reponse: req.body.reponse
                 })
                     .then(done => {
                         res.status(201).json({ message: 'User Created' });
@@ -425,6 +472,28 @@ exports.getOneUser = async (req, res, _next) => {
 // Modification d'un utilisateur en particulier
 exports.modifyUser = async (req, res, _next) => {
     checkIfAdmin()
+    // Vérification du format du contenu envoyé
+    if (req.body.name !== undefined && !regexName.test(req.body.name)) {
+        return res.status(400).json({ message: "Name doesn't have a correct format" });
+    } 
+    if (req.body.firstname !== undefined && !regexFirstname.test(req.body.firstname)) {
+        return res.status(400).json({ message: "Firstname doesn't have a correct format" });
+    } 
+    if (req.body.username !== undefined && !regexUsername.test(req.body.username)) {
+        return res.status(400).json({ message: "Username doesn't have a correct format" });
+    } 
+    if (req.body.email !== undefined && !regexEmail.test(req.body.email)) {
+        return res.status(400).json({ message: "Email doesn't have a correct format" });
+    } 
+    if (req.body.password !== undefined && !regexPassword.test(req.body.password)) {
+        return res.status(400).json({ message:  "Password doesn't have a correct format"});
+    }
+    if (req.body.question !== undefined && !regexQuestion.test(req.body.question)) {
+        return res.status(400).json({ message: "Question doesn't have a correct format" });
+    } 
+    if (req.body.reponse !== undefined && !regexReponse.test(req.body.reponse)) {
+        return res.status(400).json({ message: "Reponse doesn't have a correct format" });
+    } 
     try {
         const userFind = await User.findOne({ where: { id: req.params.userId } })
         if (!req.body.email === null || !req.body.email === undefined) {
