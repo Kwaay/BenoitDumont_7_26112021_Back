@@ -1,7 +1,7 @@
 _id: spc_6a55d566298e429289dc79e4435d3bbf
 type: ApiSpec
 parentId: wrk_c21fd164110f450abd188beb4ae6b072
-modified: 1642090860999
+modified: 1642091524437
 created: 1637929337991
 fileName: groupomania-doc.json
 contents: >-
@@ -626,7 +626,7 @@ contents: >-
                   }
               }
           },
-          "/api/user/{userId}": {
+          "/api/user/{UserId}": {
               "get": {
                   "tags": [
                       "user"
@@ -635,7 +635,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "userId",
+                          "name": "UserId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -694,7 +694,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "userId",
+                          "name": "UserId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -817,7 +817,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "userId",
+                          "name": "UserId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -1003,7 +1003,7 @@ contents: >-
                   }
               }
           },
-          "/api/post/{postId}": {
+          "/api/post/{PostId}": {
               "get": {
                   "tags": [
                       "post"
@@ -1012,7 +1012,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "postId",
+                          "name": "PostId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -1086,7 +1086,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "postId",
+                          "name": "PostId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -1189,7 +1189,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "postId",
+                          "name": "PostId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -1374,7 +1374,7 @@ contents: >-
                   }
               }
           },
-          "/api/reaction/{reactionId}": {
+          "/api/reaction/{ReactionId}": {
               "get": {
                   "tags": [
                       "reaction"
@@ -1383,7 +1383,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "reactionId",
+                          "name": "ReactionId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -1441,7 +1441,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "reactionId",
+                          "name": "ReactionId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -1560,7 +1560,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "reactionId",
+                          "name": "ReactionId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -1659,7 +1659,7 @@ contents: >-
                   }
               }
           },
-          "/api/token/{tokenId}": {
+          "/api/token/{TokenId}": {
               "get": {
                   "tags": [
                       "token"
@@ -1668,7 +1668,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "tokenId",
+                          "name": "TokenId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -1726,7 +1726,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "tokenId",
+                          "name": "TokenId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
