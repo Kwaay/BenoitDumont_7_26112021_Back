@@ -2,8 +2,8 @@ const { User, Post, Reaction } = require('../models');
 const fsp = require('fs/promises');
 require('dotenv').config()
 
-const regexTitle = /^[A-Z]{1}[a-z]{2,15}$/gm;
-const regexContent = /^[a-zA-Z0-9_-]{4,10}$/gm;
+const regexTitle = /^[A-Z]{1}[a-z-_ ]{2,15}$/;
+const regexContent = /^[a-zA-Z0-9_-]{4,10}$/;
 
 
 async function checkIfModerator() {
@@ -89,7 +89,7 @@ exports.getOnePost = async (req, res, _next) => {
             },
             {
                 model: Reaction,
-                attributes: ['id', 'PserId', 'type']
+                attributes: ['id', 'UserId', 'type']
             }]
         })
         if (!findOnePost) {
@@ -105,10 +105,10 @@ exports.getOnePost = async (req, res, _next) => {
 // Modification d'un post en particulier
 exports.modifyPost = async (req, res, next) => {
     checkIfModerator()
-    if (!regexTitle.test(req.body.title)) {
+    if (req.body.title !== undefined &&!regexTitle.test(req.body.title)) {
         return res.status(400).json({ message: "Title doesn't have a correct format" });
     }
-    if (!regexContent.test(req.body.content)) {
+    if (req.body.content !== undefined && !regexContent.test(req.body.content)) {
         return res.status(400).json({ message: "Content doesn't have a correct format" });
     }
     delete req.body.image

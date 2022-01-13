@@ -6,9 +6,10 @@ async function checkIfAdmin() {
     }
 }
 
+
 // Récupération de tous les tokens
 exports.getAllTokens = async (_req, res, _next) => {
-    checkifAdmin()
+    fonction.checkIfAdmin()
     try {
         const findAllTokens = await Token.findAll({
             order: [

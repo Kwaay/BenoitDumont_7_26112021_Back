@@ -26,11 +26,12 @@ exports.getAllReactions = async (_req, res) => {
 
 // Création d'une réaction
 exports.createReaction = async (req, res) => {
+    console.log(req.body)
     const { PostId, type } = req.body
-    if (typeof type !== number || isNaN(type)) {
+    if (typeof type !== "number" || isNaN(type)) {
         return res.status(400).json({message: 'Type must be a number'})
     }
-    if (typeof PostId !== number || isNaN(PostId)) {
+    if (typeof PostId !== "number" || isNaN(PostId)) {
         return res.status(400).json({message: 'PostId must be a number'})
     }
     try {
@@ -85,10 +86,10 @@ exports.getOneReaction = async (req, res) => {
 exports.modifyReaction = async (req, res) => {
     checkIfModerator()
     const { PostId, type } = req.body
-    if (typeof type !== number || isNaN(type)) {
+    if (typeof type !== "number" || isNaN(type)) {
         return res.status(400).json({message: 'Type must be a number'})
     }
-    if (typeof PostId !== number || isNaN(PostId)) {
+    if (typeof PostId !== "number" || isNaN(PostId)) {
         return res.status(400).json({message: 'PostId must be a number'})
     }
     try {

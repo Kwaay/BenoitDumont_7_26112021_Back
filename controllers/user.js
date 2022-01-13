@@ -10,13 +10,13 @@ const { Op } = require("sequelize");
 require('dotenv').config()
 
 
-const regexName = /^[A-Z]{1}[a-z]{2,15}$/gm;
-const regexFirstname = /^[A-Z]{1}[a-z]{2,15}$/gm;
-const regexUsername = /^[a-zA-Z0-9_-]{4,10}$/gm;
+const regexName = /^[A-Z]{1}[a-z]{2,15}$/;
+const regexFirstname = /^[A-Z]{1}[a-z]{2,15}$/;
+const regexUsername = /^[a-zA-Z0-9_-]{4,10}$/;
 const regexEmail = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-const regexPassword = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$/gm;
-const regexQuestion = /^[a-zA-Z0-9_-]{4,15}$/gm;
-const regexReponse = /^[a-zA-Z0-9_-]{4,15}$/gm;
+const regexPassword = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$/;
+const regexQuestion = /^[a-zA-Z0-9_-]{4,15}$/;
+const regexReponse = /^[a-zA-Z0-9_-]{4,15}$/;
 
 // password must contain 1 number (0-9), 1 uppercase letters, 1 lowercase letters, 1 non-alpha numeric number, 8-16 characters with no space
 
@@ -41,6 +41,7 @@ async function checkIfAdmin() {
 
 // Partie "S'inscrire"
 exports.signup = async (req, res, _next) => {
+    console.log(req.body)
     // Vérification du format du contenu envoyé
     if (!regexName.test(req.body.name)) {
         return res.status(400).json({ message: "Name doesn't have a correct format" });
@@ -63,7 +64,7 @@ exports.signup = async (req, res, _next) => {
     if (!regexReponse.test(req.body.reponse)) {
         return res.status(400).json({ message: "Reponse doesn't have a correct format" });
     } 
-    if (typeof req.body.rank !== number || isNaN(req.body.rank)) {
+    if (typeof req.body.rank !== "number" || isNaN(req.body.rank)) {
         return res.status(400).json({message: 'Rank must be a number'})
     }
     delete req.body.avatar
@@ -329,7 +330,6 @@ exports.forgotModify =  async (req, res, _next) => {
     }
 };
 
-
 // Récupération de tous les utilisateurs
 exports.getAllUsers = async (_req, res, _next) => {
     checkIfAdmin()
@@ -373,7 +373,7 @@ exports.createUser = async (req, res, _next) => {
     if (!regexReponse.test(req.body.reponse)) {
         return res.status(400).json({ message: "Reponse doesn't have a correct format" });
     } 
-    if (typeof req.body.rank !== number || isNaN(req.body.rank)) {
+    if (typeof req.body.rank !== "number" || isNaN(req.body.rank)) {
         return res.status(400).json({message: 'Rank must be a number'})
     }
     delete req.body.avatar
@@ -483,6 +483,7 @@ exports.getOneUser = async (req, res, _next) => {
 // Modification d'un utilisateur en particulier
 exports.modifyUser = async (req, res, _next) => {
     checkIfAdmin()
+    delete req.body.rank
     // Vérification du format du contenu envoyé
     if (req.body.name !== undefined && !regexName.test(req.body.name)) {
         return res.status(400).json({ message: "Name doesn't have a correct format" });
