@@ -1,7 +1,7 @@
 _id: spc_6a55d566298e429289dc79e4435d3bbf
 type: ApiSpec
 parentId: wrk_c21fd164110f450abd188beb4ae6b072
-modified: 1642008723773
+modified: 1642091524437
 created: 1637929337991
 fileName: groupomania-doc.json
 contents: >-
@@ -34,10 +34,10 @@ contents: >-
               "name": "reaction",
               "description": "Used for the reactions"
           },
-  		{
-  			"name": "token",
-  			"description": "Used for the tokens"
-  		}
+          {
+              "name": "token",
+              "description": "Used for the tokens"
+          }
       ],
       "paths": {
           "/api/user/signup": {
@@ -76,7 +76,7 @@ contents: >-
                                       }
                                   }
                               },
-  							"multipart/form-data": {
+                              "multipart/form-data": {
                                   "schema": {
                                       "type": "object",
                                       "properties": {
@@ -99,18 +99,34 @@ contents: >-
                                           "errors": {
                                               "type": "object",
                                               "properties": {
+                                                  "name": {
+                                                      "type": "string",
+                                                      "example": "Name doesn't have a correct format"
+                                                  },
                                                   "firstname": {
                                                       "type": "string",
-                                                      "example": "Invalid Firstname"
+                                                      "example": "Firstname doesn't have a correct format"
                                                   },
-                                                  "email": {
+                                                  "username": {
                                                       "type": "string",
-                                                      "example": "Invalid Email"
+                                                      "example": "Username doesn't have a correct format"
                                                   },
-                                                  "password": {
-                                                      "type": "string",
-                                                      "example": "Invalid Password"
-                                                  }
+  												"email": {
+  													"type": "string",
+  													"example": "Username doesn't have a correct format"
+  												},
+  												"password": {
+  													"type": "string",
+  													"example": "Password doesn't have a correct format"
+  												},
+  												"question": {
+  													"type": "string",
+  													"example": "Question doesn't have a correct format"
+  												},
+  												"reponse": {
+  													"type": "string",
+  													"example": "Reponse doesn't have a correct format"
+  												}
                                               }
                                           }
                                       }
@@ -203,17 +219,17 @@ contents: >-
                                           "errors": {
                                               "type": "object",
                                               "properties": {
-  												"username": {
-  													"type": "string",
-  													"example": "Username doesn' have the correct format"
-  												},
+                                                  "username": {
+                                                      "type": "string",
+                                                      "example": "Username doesn't have a correct format"
+                                                  },
                                                   "email": {
                                                       "type": "string",
-                                                      "example": "Email doesn't have the correct format"
+                                                      "example": "Email doesn't have a correct format"
                                                   },
                                                   "password": {
                                                       "type": "string",
-                                                      "example": "Password doesn't have the correct format"
+                                                      "example": "Password doesn't have a correct format"
                                                   }
                                               }
                                           }
@@ -239,7 +255,7 @@ contents: >-
                           }
                       },
                       "404": {
-                          "description": "User Not Found",
+                          "description": "Not Found",
                           "content": {
                               "application/json": {
                                   "schema": {
@@ -257,8 +273,8 @@ contents: >-
                   }
               }
           },
-  		"/api/user/forgot": {
-  			"post": {
+          "/api/user/forgot": {
+              "post": {
                   "tags": [
                       "user"
                   ],
@@ -275,7 +291,7 @@ contents: >-
                   },
                   "responses": {
                       "200": {
-                          "description": "",
+                          "description": "OK",
                           "content": {
                               "application/json": {
                                   "schema": {
@@ -290,7 +306,7 @@ contents: >-
                           }
                       },
                       "400": {
-                          "description": "",
+                          "description": "Bad Request",
                           "content": {
                               "application/json": {
                                   "schema": {
@@ -301,7 +317,7 @@ contents: >-
                                               "properties": {
                                                   "email": {
                                                       "type": "string",
-                                                      "example": "Email doesn't have the correct format"
+                                                      "example": "Email doesn't have a correct format"
                                                   }
                                               }
                                           }
@@ -310,12 +326,11 @@ contents: >-
                               }
                           }
                       }
-
                   }
               }
-  		},
-  		"/api/user/forgot/modify": {
-  			"post": {
+          },
+          "/api/user/forgot/modify": {
+              "post": {
                   "tags": [
                       "user"
                   ],
@@ -340,7 +355,7 @@ contents: >-
                                       "properties": {
                                           "message": {
                                               "type": "string",
-  											"example": "Password changed successfully"
+                                              "example": "Password changed successfully"
                                           }
                                       }
                                   }
@@ -354,17 +369,33 @@ contents: >-
                                   "schema": {
                                       "type": "object",
                                       "properties": {
-                                          "error": {
-                                             "type": "string",
-  										   "example": "Wrong Response"
-                                          }
+                                          "errors": {
+                                              "type": "object",
+                                              "properties": {
+                                                  "email": {
+                                                      "type": "string",
+                                                      "example": "Email doesn't have a correct format"
+                                                  }, 
+  												"question": {
+                                                      "type": "string",
+                                                      "example": "Question doesn't have a correct format"
+                                                  },
+                                                  "password": {
+                                                      "type": "string",
+                                                      "example": "Password doesn't have a correct format"
+                                                  }
+                                              }
+                                          },
+  										"error": {
+  											"type": "string"
+  										}
                                       }
                                   }
                               }
                           }
                       },
-  					"404": {
-                          "description": "User Not Found",
+                      "404": {
+                          "description": "Not Found",
                           "content": {
                               "application/json": {
                                   "schema": {
@@ -379,7 +410,7 @@ contents: >-
                               }
                           }
                       },
-  					"409": {
+                      "409": {
                           "description": "Conflict",
                           "content": {
                               "application/json": {
@@ -387,17 +418,17 @@ contents: >-
                                       "type": "object",
                                       "properties": {
                                           "error": {
-                                             "type": "string",
-  										   "example": "Your new password cannot be the same than your current password"
+                                              "type": "string",
+                                              "example": "Your new password cannot be the same than your current password"
                                           }
                                       }
                                   }
                               }
                           }
-                      },
+                      }
                   }
               }
-  		},
+          },
           "/api/user": {
               "get": {
                   "tags": [
@@ -455,7 +486,7 @@ contents: >-
                   },
                   "responses": {
                       "201": {
-                          "description": "User Created",
+                          "description": "Created",
                           "content": {
                               "application/json": {
                                   "schema": {
@@ -468,13 +499,13 @@ contents: >-
                                       }
                                   }
                               },
-  							"multipart/form-data": {
+                              "multipart/form-data": {
                                   "schema": {
                                       "type": "object",
                                       "properties": {
                                           "message": {
                                               "type": "string",
-                                              "example": "User Created with Image"
+                                              "example": "User Created with an Image"
                                           }
                                       }
                                   }
@@ -482,7 +513,7 @@ contents: >-
                           }
                       },
                       "400": {
-                          "description": "errors",
+                          "description": "Bad Request",
                           "content": {
                               "application/json": {
                                   "schema": {
@@ -491,14 +522,34 @@ contents: >-
                                           "errors": {
                                               "type": "object",
                                               "properties": {
-                                                  "email": {
+                                                  "name": {
                                                       "type": "string",
-                                                      "example": "Email doesn't have the correct format"
+                                                      "example": "Name doesn't have a correct format"
                                                   },
-                                                  "password": {
+                                                  "firstname": {
                                                       "type": "string",
-                                                      "example": "Password doesn't have the correct format"
-                                                  }
+                                                      "example": "Firstname doesn't have a correct format"
+                                                  },
+                                                  "username": {
+                                                      "type": "string",
+                                                      "example": "Username doesn't have a correct format"
+                                                  },
+  												"email": {
+  													"type": "string",
+  													"example": "Username doesn't have a correct format"
+  												},
+  												"password": {
+  													"type": "string",
+  													"example": "Password doesn't have a correct format"
+  												},
+  												"question": {
+  													"type": "string",
+  													"example": "Question doesn't have a correct format"
+  												},
+  												"reponse": {
+  													"type": "string",
+  													"example": "Reponse doesn't have a correct format"
+  												}
                                               }
                                           }
                                       }
@@ -575,7 +626,7 @@ contents: >-
                   }
               }
           },
-          "/api/user/{userId}": {
+          "/api/user/{UserId}": {
               "get": {
                   "tags": [
                       "user"
@@ -584,7 +635,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "userId",
+                          "name": "UserId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -618,7 +669,7 @@ contents: >-
                           "$ref": "#/components/responses/401"
                       },
                       "404": {
-                          "description": "User Not Found",
+                          "description": "Not Found",
                           "content": {
                               "application/json": {
                                   "schema": {
@@ -635,7 +686,7 @@ contents: >-
                       }
                   }
               },
-              "put": {
+              "patch": {
                   "tags": [
                       "user"
                   ],
@@ -643,7 +694,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "userId",
+                          "name": "UserId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -690,15 +741,48 @@ contents: >-
                           }
                       },
                       "400": {
-                          "description": "error",
+                          "description": "Bad Request",
                           "content": {
                               "application/json": {
                                   "schema": {
                                       "type": "object",
                                       "properties": {
-                                         "error": {
-  									   	"type": "string"
-  										}
+  										"errors": {
+                                              "type": "object",
+                                              "properties": {
+  												"name": {
+                                                      "type": "string",
+                                                      "example": "Name doesn't have a correct format"
+                                                  },
+                                                  "firstname": {
+                                                      "type": "string",
+                                                      "example": "Firstname doesn't have a correct format"
+                                                  },
+                                                  "username": {
+                                                      "type": "string",
+                                                      "example": "Username doesn't have a correct format"
+                                                  },
+                                                  "email": {
+                                                      "type": "string",
+                                                      "example": "Email doesn't have a correct format"
+                                                  },
+                                                  "password": {
+                                                      "type": "string",
+                                                      "example": "Password doesn't have a correct format"
+                                                  },
+                                                  "question": {
+                                                      "type": "string",
+                                                      "example": "Question doesn't have a correct format"
+                                                  },
+                                                  "reponse": {
+                                                      "type": "string",
+                                                      "example": "Reponse doesn't have a correct format"
+                                                  }
+                                              }
+                                          },
+                                          "error": {
+                                              "type": "string"
+                                          }
                                       }
                                   }
                               }
@@ -733,7 +817,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "userId",
+                          "name": "UserId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -768,7 +852,7 @@ contents: >-
                           "$ref": "#/components/responses/401"
                       },
                       "404": {
-                          "description": "User don't exist",
+                          "description": "Not Found",
                           "content": {
                               "application/json": {
                                   "schema": {
@@ -843,7 +927,7 @@ contents: >-
                   },
                   "responses": {
                       "201": {
-                          "description": "Post Created",
+                          "description": "Created",
                           "content": {
                               "application/json": {
                                   "schema": {
@@ -856,13 +940,13 @@ contents: >-
                                       }
                                   }
                               },
-  							"multipart/form-data": {
+                              "multipart/form-data": {
                                   "schema": {
                                       "type": "object",
                                       "properties": {
                                           "message": {
                                               "type": "string",
-                                              "example": "Post Created with Image"
+                                              "example": "Post Created with an Image"
                                           }
                                       }
                                   }
@@ -870,12 +954,25 @@ contents: >-
                           }
                       },
                       "400": {
-                          "description": " catch error",
+                          "description": "Bad Request",
                           "content": {
                               "application/json": {
                                   "schema": {
                                       "type": "object",
                                       "properties": {
+  										"errors": {
+                                              "type": "object",
+                                              "properties": {
+  												"title": {
+  													"type": "string",
+  													"example": "Title doesn't have a correct format"
+  												},
+  												"content": {
+  													"type": "string",
+  													"example": "Content doesn't have a correct format"
+  												}
+                                              }
+                                          },
                                           "error": {
                                               "type": "string"
                                           }
@@ -887,13 +984,13 @@ contents: >-
                       "401": {
                           "$ref": "#/components/responses/401"
                       },
-  					"409": {
+                      "409": {
                           "description": "Conflict",
                           "content": {
                               "application/json": {
                                   "schema": {
                                       "type": "object",
-  									 "properties": {
+                                      "properties": {
                                           "message": {
                                               "type": "string",
                                               "example": "Title already exists"
@@ -906,7 +1003,7 @@ contents: >-
                   }
               }
           },
-          "/api/post/{postId}": {
+          "/api/post/{PostId}": {
               "get": {
                   "tags": [
                       "post"
@@ -915,7 +1012,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "postId",
+                          "name": "PostId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -945,8 +1042,8 @@ contents: >-
                               }
                           }
                       },
-  					 "400": {
-                          "description": "catch error",
+                      "400": {
+                          "description": "Bad Request",
                           "content": {
                               "application/json": {
                                   "schema": {
@@ -964,7 +1061,7 @@ contents: >-
                           "$ref": "#/components/responses/401"
                       },
                       "404": {
-                          "description": "Post Not Found",
+                          "description": "Not Found",
                           "content": {
                               "application/json": {
                                   "schema": {
@@ -981,7 +1078,7 @@ contents: >-
                       }
                   }
               },
-              "put": {
+              "patch": {
                   "tags": [
                       "post"
                   ],
@@ -989,7 +1086,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "postId",
+                          "name": "PostId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -1036,15 +1133,28 @@ contents: >-
                           }
                       },
                       "400": {
-                          "description": "catch error",
+                          "description": "Bad Request",
                           "content": {
                               "application/json": {
                                   "schema": {
                                       "type": "object",
                                       "properties": {
+  										"errors": {
+                                              "type": "object",
+                                              "properties": {
+  												"title": {
+  													"type": "string",
+  													"example": "Title doesn't have a correct format"
+  												},
+  												"content": {
+  													"type": "string",
+  													"example": "Content doesn't have a correct format"
+  												}
+                                              }
+                                          },
                                           "error": {
-  											"type": "string"
-  										}
+                                              "type": "string"
+                                          }
                                       }
                                   }
                               }
@@ -1053,13 +1163,13 @@ contents: >-
                       "401": {
                           "$ref": "#/components/responses/401"
                       },
-  					"409": {
+                      "409": {
                           "description": "Conflict",
                           "content": {
                               "application/json": {
                                   "schema": {
                                       "type": "object",
-  									 "properties": {
+                                      "properties": {
                                           "message": {
                                               "type": "string",
                                               "example": "Title already exists"
@@ -1079,7 +1189,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "postId",
+                          "name": "PostId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -1114,7 +1224,7 @@ contents: >-
                           "$ref": "#/components/responses/401"
                       },
                       "404": {
-                          "description": "Post don't exist",
+                          "description": "Not Found",
                           "content": {
                               "application/json": {
                                   "schema": {
@@ -1157,16 +1267,16 @@ contents: >-
                               }
                           }
                       },
-  					"400": {
-                          "description": "catch error",
+                      "400": {
+                          "description": "Bad Request",
                           "content": {
                               "application/json": {
                                   "schema": {
                                       "type": "object",
                                       "properties": {
-  										"error": {
-  											"type": "string"
-  										}
+                                          "error": {
+                                              "type": "string"
+                                          }
                                       }
                                   }
                               }
@@ -1199,7 +1309,7 @@ contents: >-
                   },
                   "responses": {
                       "201": {
-                          "description": "Reaction Created",
+                          "description": "Created",
                           "content": {
                               "application/json": {
                                   "schema": {
@@ -1215,15 +1325,28 @@ contents: >-
                           }
                       },
                       "400": {
-                          "description": "catch error",
+                          "description": "Bad Request",
                           "content": {
                               "application/json": {
                                   "schema": {
                                       "type": "object",
                                       "properties": {
-  										"error": {
-  											"type": "string"
-  										}
+  										"errors": {
+                                              "type": "object",
+                                              "properties": {
+                                                  "type": {
+                                                      "type": "string",
+                                                      "example": "Type must be a number"
+                                                  },
+  												"PostId": {
+  													"type": "string",
+  													"example": "PostId must be a number"
+  												}
+                                              }
+                                          },
+                                          "error": {
+                                              "type": "string"
+                                          }
                                       }
                                   }
                               }
@@ -1251,7 +1374,7 @@ contents: >-
                   }
               }
           },
-          "/api/reaction/{reactionId}": {
+          "/api/reaction/{ReactionId}": {
               "get": {
                   "tags": [
                       "reaction"
@@ -1260,7 +1383,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "reactionId",
+                          "name": "ReactionId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -1299,18 +1422,18 @@ contents: >-
                               "application/json": {
                                   "schema": {
                                       "type": "object",
-  									"properties": {
-  										"error": {
-  											"type": "string"
-  										}
-  									}
+                                      "properties": {
+                                          "error": {
+                                              "type": "string"
+                                          }
+                                      }
                                   }
                               }
                           }
                       }
                   }
               },
-              "put": {
+              "patch": {
                   "tags": [
                       "reaction"
                   ],
@@ -1318,7 +1441,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "reactionId",
+                          "name": "ReactionId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -1365,15 +1488,28 @@ contents: >-
                           }
                       },
                       "400": {
-                          "description": "catch error",
+                          "description": "Bad Request",
                           "content": {
                               "application/json": {
                                   "schema": {
                                       "type": "object",
                                       "properties": {
-  										"error": {
-  											"type": "string"
-  										}
+  										"errors": {
+                                              "type": "object",
+                                              "properties": {
+                                                  "type": {
+                                                      "type": "string",
+                                                      "example": "Type must be a number"
+                                                  },
+  												"PostId": {
+  													"type": "string",
+  													"example": "PostId must be a number"
+  												}
+                                              }
+                                          },
+                                          "error": {
+                                              "type": "string"
+                                          }
                                       }
                                   }
                               }
@@ -1383,7 +1519,7 @@ contents: >-
                           "$ref": "#/components/responses/401"
                       },
                       "404": {
-                          "description": "Reaction Not Found",
+                          "description": "Not Found",
                           "content": {
                               "application/json": {
                                   "schema": {
@@ -1398,7 +1534,7 @@ contents: >-
                               }
                           }
                       },
-  					"409": {
+                      "409": {
                           "description": "Conflict",
                           "content": {
                               "application/json": {
@@ -1424,7 +1560,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "reactionId",
+                          "name": "ReactionId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -1477,8 +1613,8 @@ contents: >-
                   }
               }
           },
-  		"/api/token": {
-  			"get": {
+          "/api/token": {
+              "get": {
                   "tags": [
                       "token"
                   ],
@@ -1502,16 +1638,16 @@ contents: >-
                               }
                           }
                       },
-  					"400": {
-                          "description": "catch error",
+                      "400": {
+                          "description": "Bad Request",
                           "content": {
                               "application/json": {
                                   "schema": {
                                       "type": "object",
                                       "properties": {
-  										"error": {
-  											"type": "string"
-  										}
+                                          "error": {
+                                              "type": "string"
+                                          }
                                       }
                                   }
                               }
@@ -1521,10 +1657,10 @@ contents: >-
                           "$ref": "#/components/responses/401"
                       }
                   }
-              },
-  		},
-  		"/api/token/{tokenId}": {
-  			 "get": {
+              }
+          },
+          "/api/token/{TokenId}": {
+              "get": {
                   "tags": [
                       "token"
                   ],
@@ -1532,7 +1668,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "tokenId",
+                          "name": "TokenId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -1571,18 +1707,18 @@ contents: >-
                               "application/json": {
                                   "schema": {
                                       "type": "object",
-  									"properties": {
-  										"error": {
-  											"type": "string"
-  										}
-  									}
+                                      "properties": {
+                                          "error": {
+                                              "type": "string"
+                                          }
+                                      }
                                   }
                               }
                           }
                       }
                   }
               },
-  			"delete": {
+              "delete": {
                   "tags": [
                       "token"
                   ],
@@ -1590,7 +1726,7 @@ contents: >-
                   "parameters": [
                       {
                           "in": "path",
-                          "name": "tokenId",
+                          "name": "TokenId",
                           "schema": {
                               "type": "integer",
                               "format": "int32"
@@ -1613,8 +1749,8 @@ contents: >-
                                       "type": "object",
                                       "properties": {
                                           "message": {
-                                             "type": "string",
-  										   "example": "Token has been deleted"
+                                              "type": "string",
+                                              "example": "Token has been deleted"
                                           }
                                       }
                                   }
@@ -1630,19 +1766,18 @@ contents: >-
                               "application/json": {
                                   "schema": {
                                       "type": "object",
-  									"properties": {
-  										"error": {
-  											"type": "string"
-  										}
-  									}
+                                      "properties": {
+                                          "error": {
+                                              "type": "string"
+                                          }
+                                      }
                                   }
                               }
                           }
                       }
                   }
-              },
-  		}
-  			 
+              }
+          }
       },
       "components": {
           "responses": {
@@ -1686,24 +1821,23 @@ contents: >-
                           "format": "password",
                           "minLength": 8
                       },
-  					"avatar": {
-  						"type": "string",
-  						"format": "url"
-  					},
-  					"maxSecurity": {
-  						"type": "boolean"
-  					}, 
-  					"rank": {
-  						"type": "integer",
-  						"format": "int32"
-  					},
-  					"question": {
-  						"type": "string"
-  					},
-  					"reponse": {
-  						"type": "string"
-  					}
-  					
+                      "avatar": {
+                          "type": "string",
+                          "format": "url"
+                      },
+                      "maxSecurity": {
+                          "type": "boolean"
+                      },
+                      "rank": {
+                          "type": "integer",
+                          "format": "int32"
+                      },
+                      "question": {
+                          "type": "string"
+                      },
+                      "reponse": {
+                          "type": "string"
+                      }
                   },
                   "required": [
                       "name",
@@ -1711,10 +1845,10 @@ contents: >-
                       "username",
                       "email",
                       "password",
-  					"maxSecurity",
-  					"rank",
-  					"question",
-  					"reponse"
+                      "maxSecurity",
+                      "rank",
+                      "question",
+                      "reponse"
                   ]
               },
               "UserStructure": {
@@ -1743,23 +1877,23 @@ contents: >-
                           "format": "password",
                           "minLength": 8
                       },
-  					"avatar": {
-  						"type": "string",
-  						"format": "binary"
-  					},
-  					"maxSecurity": {
-  						"type": "boolean"
-  					},
-  					"rank": {
-  						"type": "integer",
-  						"format": "int32"
-  					},
-  					"question": {
-  						"type": "string"
-  					},
-  					"reponse": {
-  						"type": "string"
-  					},
+                      "avatar": {
+                          "type": "string",
+                          "format": "binary"
+                      },
+                      "maxSecurity": {
+                          "type": "boolean"
+                      },
+                      "rank": {
+                          "type": "integer",
+                          "format": "int32"
+                      },
+                      "question": {
+                          "type": "string"
+                      },
+                      "reponse": {
+                          "type": "string"
+                      },
                       "createdAt": {
                           "type": "string",
                           "format": "date-time"
@@ -1796,20 +1930,19 @@ contents: >-
                           "type": "string",
                           "format": "binary"
                       },
-  					"maxSecurity": {
-  						"type": "boolean"
-  					}, 
-  					"rank": {
-  						"type": "integer",
-  						"format": "int32"
-  					},
-  					"question": {
-  						"type": "string"
-  					},
-  					"reponse": {
-  						"type": "string"
-  					}
-  					
+                      "maxSecurity": {
+                          "type": "boolean"
+                      },
+                      "rank": {
+                          "type": "integer",
+                          "format": "int32"
+                      },
+                      "question": {
+                          "type": "string"
+                      },
+                      "reponse": {
+                          "type": "string"
+                      }
                   },
                   "required": [
                       "name",
@@ -1818,10 +1951,10 @@ contents: >-
                       "email",
                       "avatar",
                       "password",
-  					"maxSecurity",
-  					"rank",
-  					"question",
-  					"reponse"
+                      "maxSecurity",
+                      "rank",
+                      "question",
+                      "reponse"
                   ]
               },
               "UserConnected": {
@@ -1854,19 +1987,19 @@ contents: >-
                           "type": "string",
                           "format": "binary"
                       },
-  					"maxSecurity" : {
-  						"type": "boolean"
-  					},
-  					"rank": {
-  						"type": "integer",
-  						"format": "int32"
-  					},
-  					"question": {
-  						"type": "string"
-  					},
-  					"reponse": {
-  						"type": "string"
-  					},
+                      "maxSecurity": {
+                          "type": "boolean"
+                      },
+                      "rank": {
+                          "type": "integer",
+                          "format": "int32"
+                      },
+                      "question": {
+                          "type": "string"
+                      },
+                      "reponse": {
+                          "type": "string"
+                      },
                       "createdAt": {
                           "type": "string",
                           "format": "date"
@@ -1888,34 +2021,34 @@ contents: >-
                       "updatedAt"
                   ]
               },
-  			"UserSpecialGetOne": {
-  				"type": "object",
-  				"properties": {
-  					"id": {
-  						"type": "integer",
-  						"format": "int32"
-  					},
-  					"username": {
-  						"type": "string"
-  					},
-  					"avatar": {
-  						"type": "string",
-  						"format": "binary"
-  					}
-  				}
-  			},
-  			"UserSpecialReactions": {
-  				"type": "object",
-  				"properties": {
-  					"username": {
-  						"type": "string"
-  					},
-  					"avatar": {
-  						"type": "string",
-  						"format": "binary"
-  					}
-  				}
-  			},
+              "UserSpecialGetOne": {
+                  "type": "object",
+                  "properties": {
+                      "id": {
+                          "type": "integer",
+                          "format": "int32"
+                      },
+                      "username": {
+                          "type": "string"
+                      },
+                      "avatar": {
+                          "type": "string",
+                          "format": "binary"
+                      }
+                  }
+              },
+              "UserSpecialReactions": {
+                  "type": "object",
+                  "properties": {
+                      "username": {
+                          "type": "string"
+                      },
+                      "avatar": {
+                          "type": "string",
+                          "format": "binary"
+                      }
+                  }
+              },
               "LoginWithUsername": {
                   "type": "object",
                   "properties": {
@@ -1952,51 +2085,51 @@ contents: >-
                       "password"
                   ]
               },
-  			"Forgot": {
+              "Forgot": {
                   "type": "object",
                   "properties": {
                       "email": {
                           "type": "string",
-  						"format": "email"
+                          "format": "email"
                       }
                   },
                   "required": [
                       "email"
                   ]
               },
-  			"ModifyPassword": {
+              "ModifyPassword": {
                   "type": "object",
                   "properties": {
                       "email": {
                           "type": "string",
-  						"format": "email"
+                          "format": "email"
                       },
-  					"reponse": {
-  						"type": "string"
-  					},
-  					"password": {
-  						"type": "string",
-  						"format": "password"
-  					}
+                      "reponse": {
+                          "type": "string"
+                      },
+                      "password": {
+                          "type": "string",
+                          "format": "password"
+                      }
                   },
                   "required": [
                       "email",
-  					"reponse",
-  					"password"
+                      "reponse",
+                      "password"
                   ]
               },
               "Post": {
                   "type": "object",
                   "properties": {
-  					"title": {
-  						"type": "string"
-  					},
+                      "title": {
+                          "type": "string"
+                      },
                       "content": {
                           "type": "string"
                       }
                   },
                   "required": [
-  					"title",
+                      "title",
                       "content"
                   ]
               },
@@ -2006,14 +2139,13 @@ contents: >-
                       "id": {
                           "type": "integer"
                       },
-                      
-  					title: {
-  						"type": "string"
-  					},
+                      "title": {
+                          "type": "string"
+                      },
                       "content": {
                           "type": "string"
                       },
-  					"image": {
+                      "image": {
                           "type": "string",
                           "format": "binary"
                       },
@@ -2025,36 +2157,36 @@ contents: >-
                           "type": "string",
                           "format": "date-time"
                       },
-  					"UserId": {
+                      "UserId": {
                           "type": "integer"
                       },
-  					"User": {
-  						"type": "array",
-  						"items": {
-  							"$ref": "#/components/schemas/UserSpecialGetOne"
-  						}
-  					},
-  					"Reactions": {
+                      "User": {
                           "type": "array",
                           "items": {
-  							"$ref": "#/components/schemas/ReactionSpecial"
+                              "$ref": "#/components/schemas/UserSpecialGetOne"
                           }
                       },
+                      "Reactions": {
+                          "type": "array",
+                          "items": {
+                              "$ref": "#/components/schemas/ReactionSpecial"
+                          }
+                      }
                   }
               },
-  			"PostStructureNoRef": {
+              "PostStructureNoRef": {
                   "type": "object",
                   "properties": {
                       "id": {
                           "type": "integer"
                       },
-  					title: {
-  						"type": "string"
-  					},
+                      "title": {
+                          "type": "string"
+                      },
                       "content": {
                           "type": "string"
                       },
-  					"image": {
+                      "image": {
                           "type": "string",
                           "format": "binary"
                       },
@@ -2066,17 +2198,17 @@ contents: >-
                           "type": "string",
                           "format": "date-time"
                       },
-  					 "UserId": {
+                      "UserId": {
                           "type": "integer"
-                      },
+                      }
                   }
               },
               "PostWithImage": {
                   "type": "object",
                   "properties": {
-  					"title": {
-  						"type": "string"
-  					},
+                      "title": {
+                          "type": "string"
+                      },
                       "content": {
                           "type": "string"
                       },
@@ -2086,26 +2218,26 @@ contents: >-
                       }
                   },
                   "required": [
-  					"title",
+                      "title",
                       "content",
                       "image"
                   ]
               },
-  			"PostSpecial" : {
-  				"type": "object",
-  				"properties": {
-  					"title": {
-  						"type": "string"
-  					},
-  					"content": {
-  						"type": "string"
-  					}
-  				}
-  			},
-  			"Reaction": {
+              "PostSpecial": {
                   "type": "object",
                   "properties": {
-                      "postId": {
+                      "title": {
+                          "type": "string"
+                      },
+                      "content": {
+                          "type": "string"
+                      }
+                  }
+              },
+              "Reaction": {
+                  "type": "object",
+                  "properties": {
+                      "PostId": {
                           "type": "integer"
                       },
                       "type": {
@@ -2113,7 +2245,7 @@ contents: >-
                       }
                   },
                   "required": [
-                      "postId",
+                      "PostId",
                       "type"
                   ]
               },
@@ -2134,21 +2266,21 @@ contents: >-
                           "type": "string",
                           "format": "date-time"
                       },
-  					"postId": {
+                      "PostId": {
                           "type": "integer"
                       },
-  					"userId": {
+                      "UserId": {
                           "type": "integer"
                       },
-  					"Post": {
-  						"$ref": "#/components/schemas/PostSpecial"
-  					},
-  					"User": {
-  						"$ref": "#/components/schemas/UserSpecialReactions"
-  					}
+                      "Post": {
+                          "$ref": "#/components/schemas/PostSpecial"
+                      },
+                      "User": {
+                          "$ref": "#/components/schemas/UserSpecialReactions"
+                      }
                   }
               },
-  			"ReactionStructureNoRef": {
+              "ReactionStructureNoRef": {
                   "type": "object",
                   "properties": {
                       "id": {
@@ -2165,86 +2297,86 @@ contents: >-
                           "type": "string",
                           "format": "date-time"
                       },
-  					"postId": {
+                      "PostId": {
                           "type": "integer"
                       },
-                      "userId": {
+                      "UserId": {
                           "type": "integer"
                       }
                   }
               },
-  			"TokenStructure": {
+              "TokenStructure": {
                   "type": "object",
                   "properties": {
                       "id": {
                           "type": "integer"
                       },
                       "token": {
-  						"type": "string"
-  					},
-  					"userAgent": {
-  						"type": "string"
-  					},
-  					"ipAddress": {
-  						"type": "integer",
-  						"format": "int32"
-  					},
+                          "type": "string"
+                      },
+                      "userAgent": {
+                          "type": "string"
+                      },
+                      "ipAddress": {
+                          "type": "integer",
+                          "format": "int32"
+                      },
                       "createdAt": {
                           "type": "string",
                           "format": "date-time"
                       },
-  					"UserId": {
-  						"type": "integer",
-  						"format": "int32"
-  					},
-  					"User": {
-  						"$ref": "#/components/schemas/User"
-  					}
+                      "UserId": {
+                          "type": "integer",
+                          "format": "int32"
+                      },
+                      "User": {
+                          "$ref": "#/components/schemas/User"
+                      }
                   }
               },
-  			"TokenStructureNoRef": {
-  				 "type": "object",
+              "TokenStructureNoRef": {
+                  "type": "object",
                   "properties": {
                       "id": {
                           "type": "integer"
                       },
                       "token": {
-  						"type": "string"
-  					},
-  					"userAgent": {
-  						"type": "string"
-  					},
-  					"ipAddress": {
-  						"type": "integer",
-  						"format": "int32"
-  					},
+                          "type": "string"
+                      },
+                      "userAgent": {
+                          "type": "string"
+                      },
+                      "ipAddress": {
+                          "type": "integer",
+                          "format": "int32"
+                      },
                       "createdAt": {
                           "type": "string",
                           "format": "date-time"
                       },
-  					"UserId": {
-  						"type": "integer",
-  						"format": "int32"
-  					}
+                      "UserId": {
+                          "type": "integer",
+                          "format": "int32"
+                      }
                   }
               },
-  			"ReactionSpecial": {
-  				"type": "object",
-  				"properties" : {
-  					"id": {
-  						"type": "integer",
-  						"format": "int32"
-  					},
-  					"userId": {
-  						"type": "integer",
-  						"format": "int32"
-  					},
-  					"type": {
-  						"type": "integer",
-  						"format": "int32"
-  					}
-  				}
-  			},
+              "ReactionSpecial": {
+                  "type": "object",
+                  "properties": {
+                      "id": {
+                          "type": "integer",
+                          "format": "int32"
+                      },
+                      "UserId": {
+                          "type": "integer",
+                          "format": "int32"
+                      },
+                      "type": {
+                          "type": "integer",
+                          "format": "int32"
+                      }
+                  }
+              }
           },
           "securitySchemes": {
               "bearerAuth": {
