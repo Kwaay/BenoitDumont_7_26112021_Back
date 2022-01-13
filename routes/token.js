@@ -4,7 +4,7 @@ const tokenCtrl = require('../controllers/token');
 const auth = require('../middleware/auth');
 
 router.get('/', auth, tokenCtrl.getAllTokens);
-router.get('/:tokenId', auth, tokenCtrl.getOneToken);
-router.delete('/:tokenId', auth, tokenCtrl.deleteToken);
+router.get('/:TokenId', auth, tokenCtrl.getOneToken);
+router.delete('/:TokenId', auth, tokenCtrl.deleteToken);
 
 module.exports = router;

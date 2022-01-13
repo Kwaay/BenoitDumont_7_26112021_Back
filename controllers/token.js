@@ -30,7 +30,7 @@ exports.getOneToken = async (req, res, _next) => {
     try {
         const findOneToken = await Token.findOne({
             where: {
-                id: req.params.tokenId
+                id: req.params.TokenId
             },
             include: [{
                 model: User
@@ -48,11 +48,11 @@ exports.getOneToken = async (req, res, _next) => {
 // Suppression d'un token
 exports.deleteToken = async (req, res, _next) => {
     checkIfAdmin()
-    await Token.findOne({ where: { id: req.params.tokenId } })
+    await Token.findOne({ where: { id: req.params.TokenId } })
         .catch(() => {
             res.status(404).json({ message: 'Token not found' })
         });
-    const deleteToken = await Token.destroy({ where: { id: req.params.tokenId } })
+    const deleteToken = await Token.destroy({ where: { id: req.params.TokenId } })
     if (deleteToken) {
         return res.status(200).json({ message: 'Token has been deleted' })
     }

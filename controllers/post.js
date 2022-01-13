@@ -81,7 +81,7 @@ exports.getOnePost = async (req, res, _next) => {
     try {
         const findOnePost = await Post.findOne({
             where: {
-                id: req.params.postId
+                id: req.params.PostId
             },
             include: [{
                 model: User,
@@ -89,7 +89,7 @@ exports.getOnePost = async (req, res, _next) => {
             },
             {
                 model: Reaction,
-                attributes: ['id', 'userId', 'type']
+                attributes: ['id', 'PserId', 'type']
             }]
         })
         if (!findOnePost) {
@@ -129,7 +129,7 @@ exports.modifyPost = async (req, res, next) => {
                 ...JSON.stringify(req.body),
                 image: `${req.protocol}://${req.get('host')}/images/${req.files.image[0].filename}`
             }
-            const postFind = await Post.findOne({ where: { id: req.params.postId } })
+            const postFind = await Post.findOne({ where: { id: req.params.PostId } })
             if (!postFind.image === null || !postFind.image === undefined) {
                 const filename = postFind.image.split('/images/')[1];
                 await fsp.unlink('./images/' + filename)
@@ -138,7 +138,7 @@ exports.modifyPost = async (req, res, next) => {
         else {
             postObject = { ...req.body }
         }
-        const updatePost = await Post.update({ ...postObject }, { where: { id: req.params.postId } })
+        const updatePost = await Post.update({ ...postObject }, { where: { id: req.params.PostId } })
         if (updatePost) {
             return res.status(200).json({ message: 'Post has been modified' })
         }
@@ -152,13 +152,13 @@ exports.modifyPost = async (req, res, next) => {
 // Suppression d"un post en particulier
 exports.deletePost = async (req, res, next) => {
     checkIfModerator()
-    const post = await Post.findOne({ where: { id: req.params.postId } })
+    const post = await Post.findOne({ where: { id: req.params.PostId } })
         .catch(() => {
             res.status(404).json({ message: 'Post not found' })
         });
     const filename = post.image.split('/images/')[1];
     await fsp.unlink('./images/' + filename)
-    const deletePost = await Post.destroy({ where: { id: req.params.postId } })
+    const deletePost = await Post.destroy({ where: { id: req.params.PostId } })
     if (deletePost) {
         return res.status(200).json({ message: 'Post has been deleted' })
     }

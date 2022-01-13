@@ -61,7 +61,7 @@ exports.getOneReaction = async (req, res) => {
     try {
         const findOneReaction = await Reaction.findOne({
             where: {
-                id: req.params.reactionId
+                id: req.params.ReactionId
             },
             include: [{
                 model: Post,
@@ -110,7 +110,7 @@ exports.modifyReaction = async (req, res) => {
         }
         let reactionObject = {}
         reactionObject = { ...req.body }
-        const updateReaction = await Reaction.update({ ...reactionObject }, { where: { id: req.params.reactionId } })
+        const updateReaction = await Reaction.update({ ...reactionObject }, { where: { id: req.params.ReactionId } })
         if(updateReaction) {
             return res.status(200).json({ message: 'Reaction successfully updated'})
         }
@@ -123,11 +123,11 @@ exports.modifyReaction = async (req, res) => {
 // Suppression d'une réaction en particulier
 exports.deleteReaction = async (req, res) => {
     checkIfModerator()
-    await Reaction.findOne({ where: { id: req.params.reactionId } })
+    await Reaction.findOne({ where: { id: req.params.ReactionId } })
         .catch(() => {
             res.status(404).json({ message: 'Reaction not found' })
         });
-    const deleteReaction = await Reaction.destroy({ where: { id: req.params.reactionId } })
+    const deleteReaction = await Reaction.destroy({ where: { id: req.params.ReactionId } })
     if (deleteReaction) {
         return res.status(200).json({ message: 'Reaction has been deleted' })
     }

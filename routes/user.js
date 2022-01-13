@@ -11,8 +11,8 @@ router.post('/forgot/modify', userCtrl.forgotModify);
 router.get('/', auth, userCtrl.getAllUsers);
 router.post('/', auth, multer, userCtrl.createUser);
 router.get('/me', auth, userCtrl.myUser);
-router.get('/:userId', auth, userCtrl.getOneUser);
-router.patch('/:userId', auth, multer, userCtrl.modifyUser);
-router.delete('/:userId', auth, userCtrl.deleteUser)
+router.get('/:UserId', auth, userCtrl.getOneUser);
+router.patch('/:UserId', auth, multer, userCtrl.modifyUser);
+router.delete('/:UserId', auth, userCtrl.deleteUser)
 
 module.exports = router;

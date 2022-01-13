@@ -156,7 +156,7 @@ exports.login = async (req, res, _next) => {
         if (!valid) {
             return res.status(401).json({ error: 'Failed to login' });
         }
-        // Création d'un token de 24h avec l'userId inclus
+        // Création d'un token de 24h avec l'UserId inclus
         const token = jwt.sign({
             UserId: user.id,
             rank: user.rank
@@ -224,7 +224,7 @@ exports.login = async (req, res, _next) => {
                 return res.status(401).json({ error: 'Failed to login' });
             }
 
-            // Création d'un token de 24h avec l'userId inclus
+            // Création d'un token de 24h avec l'UserId inclus
             const token = jwt.sign({
                 UserId: user.id,
                 rank: user.rank
@@ -465,7 +465,7 @@ exports.getOneUser = async (req, res, _next) => {
     try {
         const findOneUser = await User.findOne({
             where: {
-                id: req.params.userId
+                id: req.params.UserId
             },
             include: [{
                 model: Post, Reaction
@@ -506,7 +506,7 @@ exports.modifyUser = async (req, res, _next) => {
         return res.status(400).json({ message: "Reponse doesn't have a correct format" });
     } 
     try {
-        const userFind = await User.findOne({ where: { id: req.params.userId } })
+        const userFind = await User.findOne({ where: { id: req.params.UserId } })
         if (!req.body.email === null || !req.body.email === undefined) {
             const checkEmail = await User.findOne({ where: { email: req.body.email } })
             if (checkEmail) {
@@ -528,7 +528,7 @@ exports.modifyUser = async (req, res, _next) => {
             userObject = { ...req.body }
         }
         // si le lien dans la table contient gravatar.? > empty et si l'image est dans le dossier images fs.unlink
-        const updateUser = await User.update({ ...userObject }, { where: { id: req.params.userId } })
+        const updateUser = await User.update({ ...userObject }, { where: { id: req.params.UserId } })
         if (updateUser) {
             return res.status(200).json({ message: 'User has been modified' })
         }
@@ -541,13 +541,13 @@ exports.modifyUser = async (req, res, _next) => {
 // Suppression d'un utilisateur en particulier
 exports.deleteUser = async (req, res, _next) => {
     checkIfAdmin()
-    const user = await User.findOne({ where: { id: req.params.userId } })
+    const user = await User.findOne({ where: { id: req.params.UserId } })
         .catch(() => {
             res.status(404).json({ message: 'User not found' })
         });
     const filename = user.avatar.split('/images/')[1];
     await fsp.unlink('./images/' + filename)
-    const deleteUser = await User.destroy({ where: { id: req.params.userId } })
+    const deleteUser = await User.destroy({ where: { id: req.params.UserId } })
     if (deleteUser) {
         return res.status(200).json({ message: 'User has been deleted' })
     }

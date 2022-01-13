@@ -5,8 +5,8 @@ const auth = require('../middleware/auth');
 
 router.get('/', auth, reactionCtrl.getAllReactions);
 router.post('/', auth, reactionCtrl.createReaction);
-router.get('/:reactionId', auth, reactionCtrl.getOneReaction);
-router.patch('/:reactionId', auth, reactionCtrl.modifyReaction);
-router.delete('/:reactionId', auth, reactionCtrl.deleteReaction);
+router.get('/:ReactionId', auth, reactionCtrl.getOneReaction);
+router.patch('/:ReactionId', auth, reactionCtrl.modifyReaction);
+router.delete('/:ReactionId', auth, reactionCtrl.deleteReaction);
 
 module.exports = router;
