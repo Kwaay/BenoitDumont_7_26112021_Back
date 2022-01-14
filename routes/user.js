@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 const userCtrl = require('../controllers/user');
 const auth = require('../middleware/auth');
@@ -13,6 +14,6 @@ router.post('/', auth, multer, userCtrl.createUser);
 router.get('/me', auth, userCtrl.myUser);
 router.get('/:UserId', auth, userCtrl.getOneUser);
 router.patch('/:UserId', auth, multer, userCtrl.modifyUser);
-router.delete('/:UserId', auth, userCtrl.deleteUser)
+router.delete('/:UserId', auth, userCtrl.deleteUser);
 
 module.exports = router;

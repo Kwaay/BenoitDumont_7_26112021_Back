@@ -1,10 +1,10 @@
 const http = require('http');
 const app = require('./app');
 
-const normalizePort = val => {
+const normalizePort = (val) => {
   const port = parseInt(val, 10);
 
-  if (isNaN(port)) {
+  if (Number.isNaN(port)) {
     return val;
   }
   if (port >= 0) {
@@ -12,22 +12,24 @@ const normalizePort = val => {
   }
   return false;
 };
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || '3000', '3001');
 app.set('port', port);
 
-const errorHandler = error => {
+/* eslint no-console: ["error", { allow: ["error","log"] }] */
+const errorHandler = (error) => {
   if (error.syscall !== 'listen') {
     throw error;
   }
+  // eslint-disable-next-line no-use-before-define
   const address = server.address();
-  const bind = typeof address === 'string' ? 'pipe ' + address : port;
+  const bind = typeof address === 'string' ? `pipe ${address}` : port;
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' Pas de permissions.');
+      console.error(`${bind} Pas de permissions.`);
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error('Port' + bind + ' déjà utilisé.');
+      console.error(`Port ${bind} déjà utilisé.`);
       process.exit(1);
       break;
     default:
@@ -40,8 +42,8 @@ const server = http.createServer(app);
 server.on('error', errorHandler);
 server.on('listening', () => {
   const address = server.address();
-  const bind = typeof address === 'string' ? 'pipe ' + address : port;
-  console.log('🔍 Port en cours d\'utilisation: ' + bind);
+  const bind = typeof address === 'string' ? `pipe ${address}` : port;
+  console.log(`🔍 Port en cours d'utilisation: ${bind}`);
 });
 
 server.listen(port);

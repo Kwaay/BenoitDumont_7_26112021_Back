@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const useragent = require('express-useragent');
-require('dotenv').config()
+require('dotenv').config();
 
 // Récupération des routes
 const userRoutes = require('./routes/user');
@@ -12,11 +12,11 @@ const tokenRoutes = require('./routes/token');
 const app = express();
 
 // Mise en place des headers
-app.use((_req,res,next) => {
-res.setHeader('Access-Control-Allow-Origin', '*');
-res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-next();
+app.use((_req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  next();
 });
 
 app.use(useragent.express());

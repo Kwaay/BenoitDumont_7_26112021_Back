@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 const reactionCtrl = require('../controllers/reaction');
 const auth = require('../middleware/auth');
