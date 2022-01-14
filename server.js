@@ -15,7 +15,8 @@ const normalizePort = (val) => {
 const port = normalizePort(process.env.PORT || '3000', '3001');
 app.set('port', port);
 
-/* eslint no-console: ["error", { allow: ["error","log"] }] */
+const server = http.createServer(app);
+
 const errorHandler = (error) => {
   if (error.syscall !== 'listen') {
     throw error;
@@ -36,8 +37,6 @@ const errorHandler = (error) => {
       throw error;
   }
 };
-
-const server = http.createServer(app);
 
 server.on('error', errorHandler);
 server.on('listening', () => {

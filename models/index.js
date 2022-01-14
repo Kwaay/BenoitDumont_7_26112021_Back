@@ -15,6 +15,7 @@ const user = require('./user')(sequelize, Sequelize.DataTypes);
 const post = require('./post')(sequelize, Sequelize.DataTypes);
 const reaction = require('./reaction')(sequelize, Sequelize.DataTypes);
 const token = require('./token')(sequelize, Sequelize.DataTypes);
+const comment = require('./comment')(sequelize, Sequelize.DataTypes);
 
 // Relations entre les différents models
 user.hasMany(post, {
@@ -27,6 +28,7 @@ post.belongsTo(user, {
     noUpdate: true,
   },
 });
+
 post.hasMany(reaction, {
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
@@ -59,10 +61,33 @@ token.belongsTo(user, {
   },
 });
 
+user.hasMany(comment, {
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+comment.belongsTo(user, {
+  foreignKey: {
+    allowNull: false,
+    noUpdate: true,
+  },
+});
+
+post.hasMany(comment, {
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+comment.belongsTo(post, {
+  foreignKey: {
+    allowNull: false,
+    noUpdate: true,
+  },
+});
+
 sequelize.User = user;
 sequelize.Post = post;
 sequelize.Reaction = reaction;
 sequelize.Token = token;
+sequelize.Comment = comment;
 
 // Tentative d'authentification à la base de données
 
@@ -74,11 +99,11 @@ sequelize.authenticate()
     sequelize.sync()
       .then(() => {
         console.log('Tous les models ont été synchronisés avec succès.');
-      })
-
-      .catch(() => {
-        console.log('Impossible de synchroniser les models');
       });
+
+    /* .catch(() => {
+      console.log('Impossible de synchroniser les models');
+    }); */
   })
   .catch((error) => {
     console.log('❌ Connexion à MySQL invalide', error);

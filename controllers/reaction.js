@@ -84,7 +84,7 @@ exports.getOneReaction = async (req, res) => {
 
 // Modification d'une réaction en particulier
 exports.modifyReaction = async (req, res) => {
-  checkIfModerator();
+  checkIfModerator(req, res);
   const { PostId, type } = req.body;
   if (typeof type !== 'number' || Number.isNaN(type)) {
     return res.status(400).json({ message: 'Type must be a number' });
@@ -125,7 +125,7 @@ exports.modifyReaction = async (req, res) => {
 
 // Suppression d'une réaction en particulier
 exports.deleteReaction = async (req, res) => {
-  checkIfModerator();
+  checkIfModerator(req, res);
   await Reaction.findOne({ where: { id: req.params.ReactionId } })
     .catch(() => {
       res.status(404).json({ message: 'Reaction not found' });

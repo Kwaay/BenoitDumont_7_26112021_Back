@@ -1,15 +1,13 @@
-// Model des réactions
-module.exports = (Sequelize, DataTypes) => Sequelize.define('Reaction', {
+// Model des Comments
+module.exports = (Sequelize, DataTypes) => Sequelize.define('Comment', {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
-    noUpdate: {
-      readOnly: true,
-    },
+    noUpdate: true,
   },
-  type: {
+  content: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -26,6 +24,6 @@ module.exports = (Sequelize, DataTypes) => Sequelize.define('Reaction', {
     noUpdate: true,
   },
 }, {
-  tableName: 'Reactions',
+  tableName: 'comments',
   timestamps: true,
 });

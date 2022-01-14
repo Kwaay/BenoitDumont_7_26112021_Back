@@ -32,7 +32,7 @@ contents: >-
           },
           {
               "name": "reaction",
-              "description": "Used for the reactions"
+              "description": "Used for the Reactions"
           },
           {
               "name": "token",
@@ -1261,7 +1261,7 @@ contents: >-
                                   "schema": {
                                       "type": "array",
                                       "items": {
-                                          "$ref": "#/components/schemas/ReactionStructureNoRef"
+                                          "$ref": "#/components/schemas/ReactionstructureNoRef"
                                       }
                                   }
                               }
@@ -1406,7 +1406,7 @@ contents: >-
                                       "type": "object",
                                       "properties": {
                                           "reaction": {
-                                              "$ref": "#/components/schemas/ReactionStructure"
+                                              "$ref": "#/components/schemas/Reactionstructure"
                                           }
                                       }
                                   }
@@ -1632,7 +1632,7 @@ contents: >-
                                   "schema": {
                                       "type": "array",
                                       "items": {
-                                          "$ref": "#/components/schemas/ReactionStructureNoRef"
+                                          "$ref": "#/components/schemas/ReactionstructureNoRef"
                                       }
                                   }
                               }
@@ -2169,7 +2169,7 @@ contents: >-
                       "Reactions": {
                           "type": "array",
                           "items": {
-                              "$ref": "#/components/schemas/ReactionSpecial"
+                              "$ref": "#/components/schemas/Reactionspecial"
                           }
                       }
                   }
@@ -2249,7 +2249,7 @@ contents: >-
                       "type"
                   ]
               },
-              "ReactionStructure": {
+              "Reactionstructure": {
                   "type": "object",
                   "properties": {
                       "id": {
@@ -2280,7 +2280,7 @@ contents: >-
                       }
                   }
               },
-              "ReactionStructureNoRef": {
+              "ReactionstructureNoRef": {
                   "type": "object",
                   "properties": {
                       "id": {
@@ -2360,7 +2360,7 @@ contents: >-
                       }
                   }
               },
-              "ReactionSpecial": {
+              "Reactionspecial": {
                   "type": "object",
                   "properties": {
                       "id": {

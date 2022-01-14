@@ -333,8 +333,8 @@ exports.forgotModify = async (req, res) => {
 };
 
 // Récupération de tous les utilisateurs
-exports.getAllUsers = async (_req, res) => {
-  checkIfAdmin();
+exports.getAllUsers = async (req, res) => {
+  checkIfAdmin(req, res);
   try {
     const findAllUsers = await User.findAll({
       order: [
@@ -352,7 +352,7 @@ exports.getAllUsers = async (_req, res) => {
 
 // Création d'un utilisateur
 exports.createUser = async (req, res) => {
-  checkIfAdmin();
+  checkIfAdmin(req, res);
   // Vérification du format du contenu envoyé
   if (!regexName.test(req.body.name)) {
     return res.status(400).json({ message: 'Name doesn\'t have a correct format' });
@@ -481,7 +481,7 @@ exports.getOneUser = async (req, res) => {
 
 // Modification d'un utilisateur en particulier
 exports.modifyUser = async (req, res) => {
-  checkIfAdmin();
+  checkIfAdmin(req, res);
   delete req.body.rank;
   // Vérification du format du contenu envoyé
   if (req.body.name !== undefined && !regexName.test(req.body.name)) {
@@ -540,7 +540,7 @@ exports.modifyUser = async (req, res) => {
 
 // Suppression d'un utilisateur en particulier
 exports.deleteUser = async (req, res) => {
-  checkIfAdmin();
+  checkIfAdmin(req, res);
   const user = await User.findOne({ where: { id: req.params.UserId } })
     .catch(() => {
       res.status(404).json({ message: 'User not found' });

@@ -25,7 +25,7 @@
         },
         {
             "name": "reaction",
-            "description": "Used for the reactions"
+            "description": "Used for the Reactions"
         },
         {
             "name": "token",
@@ -1254,7 +1254,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/ReactionStructureNoRef"
+                                        "$ref": "#/components/schemas/ReactionstructureNoRef"
                                     }
                                 }
                             }
@@ -1399,7 +1399,7 @@
                                     "type": "object",
                                     "properties": {
                                         "reaction": {
-                                            "$ref": "#/components/schemas/ReactionStructure"
+                                            "$ref": "#/components/schemas/Reactionstructure"
                                         }
                                     }
                                 }
@@ -1625,7 +1625,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/ReactionStructureNoRef"
+                                        "$ref": "#/components/schemas/ReactionstructureNoRef"
                                     }
                                 }
                             }
@@ -2162,7 +2162,7 @@
                     "Reactions": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/ReactionSpecial"
+                            "$ref": "#/components/schemas/Reactionspecial"
                         }
                     }
                 }
@@ -2242,7 +2242,7 @@
                     "type"
                 ]
             },
-            "ReactionStructure": {
+            "Reactionstructure": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -2273,7 +2273,7 @@
                     }
                 }
             },
-            "ReactionStructureNoRef": {
+            "ReactionstructureNoRef": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -2353,7 +2353,7 @@
                     }
                 }
             },
-            "ReactionSpecial": {
+            "Reactionspecial": {
                 "type": "object",
                 "properties": {
                     "id": {

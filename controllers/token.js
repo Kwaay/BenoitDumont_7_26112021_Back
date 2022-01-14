@@ -8,8 +8,8 @@ async function checkIfAdmin(req, res) {
 }
 
 // Récupération de tous les tokens
-exports.getAllTokens = async (_req, res) => {
-  checkIfAdmin();
+exports.getAllTokens = async (req, res) => {
+  checkIfAdmin(req, res);
   try {
     const findAllTokens = await Token.findAll({
       order: [
@@ -27,7 +27,7 @@ exports.getAllTokens = async (_req, res) => {
 
 // Récupération d'un token en particulier
 exports.getOneToken = async (req, res) => {
-  checkIfAdmin();
+  checkIfAdmin(req, res);
   try {
     const findOneToken = await Token.findOne({
       where: {
@@ -48,7 +48,7 @@ exports.getOneToken = async (req, res) => {
 
 // Suppression d'un token
 exports.deleteToken = async (req, res) => {
-  checkIfAdmin();
+  checkIfAdmin(req, res);
   await Token.findOne({ where: { id: req.params.TokenId } })
     .catch(() => {
       res.status(404).json({ message: 'Token not found' });

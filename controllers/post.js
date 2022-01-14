@@ -1,9 +1,11 @@
 const fsp = require('fs/promises');
-const { User, Post, Reaction } = require('../models');
+const {
+  User, Post, Reaction, Comment,
+} = require('../models');
 require('dotenv').config();
 
 const regexTitle = /^[A-Z]{1}[a-z-_ ]{2,15}$/;
-const regexContent = /^[a-zA-Z0-9_-]{4,10}$/;
+const regexContent = /^[a-zA-Z0-9_-]{4,}$/;
 
 async function checkIfModerator(req, res) {
   if (!req.token.rank === 1 || !req.token.rank === 2) {
@@ -87,7 +89,11 @@ exports.getOnePost = async (req, res) => {
       {
         model: Reaction,
         attributes: ['id', 'UserId', 'type'],
-      }],
+      },
+      {
+        model: Comment,
+      },
+      ],
     });
     if (!findOnePost) {
       return res.status(404).json({ message: 'Post not found' });
@@ -101,7 +107,7 @@ exports.getOnePost = async (req, res) => {
 
 // Modification d'un post en particulier
 exports.modifyPost = async (req, res) => {
-  checkIfModerator();
+  checkIfModerator(req, res);
   if (req.body.title !== undefined && !regexTitle.test(req.body.title)) {
     return res.status(400).json({ message: 'Title doesn\'t have a correct format' });
   }
@@ -146,7 +152,7 @@ exports.modifyPost = async (req, res) => {
 
 // Suppression d'un post en particulier
 exports.deletePost = async (req, res) => {
-  checkIfModerator();
+  checkIfModerator(req, res);
   const post = await Post.findOne({ where: { id: req.params.PostId } });
   if (!post) {
     res.status(404).json({ message: 'Post not found' });
