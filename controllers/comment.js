@@ -1,14 +1,21 @@
 const { User, Post, Comment } = require('../models');
 require('dotenv').config();
 
+async function checkIfOwner(req, res) {
+  const comment = await Comment.findOne({ where: { id: req.params.CommentId } });
+  if (req.token.UserId !== comment.UserId) {
+    return res.status(401).json({ message: 'You are not the owner of this account' });
+  }
+  return true;
+}
 async function checkIfModerator(req, res) {
-  if (!req.token.rank === 1 || !req.token.rank === 2) {
+  if (req.token.rank !== 1 || req.token.rank !== 2) {
     return res.status(401).json({ message: 'Not Enough Permissions to do this action' });
   }
   return true;
 }
 
-const regexContent = /^[a-zA-Z0-9 _-]{4,}$/;
+const regexContent = /^[a-zA-Z0-9 _-]{4,255}$/;
 
 // Récupération de tous les commentaires orderBy date de création et trié de façon décroissante //
 exports.getAllComments = async (_req, res) => {
@@ -37,6 +44,14 @@ exports.createComment = async (req, res) => {
     return res.status(400).json({ message: 'PostId must be a number' });
   }
   try {
+    const searchComment = await Comment.findOne({
+      where: {
+        PostId, UserId: req.token.UserId,
+      },
+    });
+    if (searchComment) {
+      return res.status(409).json({ message: 'Comment already exists' });
+    }
     const CommentCreation = await Comment.create({
       content,
       PostId,
@@ -78,13 +93,13 @@ exports.getOneComment = async (req, res) => {
 
 // Modification d'un commentaire en particulier
 exports.modifyComment = async (req, res) => {
-  checkIfModerator(req, res);
-  if (!regexContent.test(req.body.content)) {
-    return res.status(400).json({ message: 'Content doesn\'t have a correct format' });
-  }
   const findComment = await Comment.findOne({ where: { id: req.params.CommentId } });
   if (!findComment) {
     return res.status(404).json({ message: 'Comment Not Found' });
+  }
+  if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) return false;
+  if (!regexContent.test(req.body.content)) {
+    return res.status(400).json({ message: 'Content doesn\'t have a correct format' });
   }
   delete req.body.PostId;
   let commentObject = {};
@@ -100,11 +115,11 @@ exports.modifyComment = async (req, res) => {
 
 // Suppression d'un commentaire en particulier
 exports.deleteComment = async (req, res) => {
-  checkIfModerator(req, res);
-  await Comment.findOne({ where: { id: req.params.CommentId } })
-    .catch(() => {
-      res.status(404).json({ message: 'Comment not found' });
-    });
+  const comment = await Comment.findOne({ where: { id: req.params.CommentId } });
+  if (!comment) {
+    res.status(404).json({ message: 'Comment not found' });
+  }
+  if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) return false;
   const deleteComment = await Comment.destroy({ where: { id: req.params.CommentId } });
   if (deleteComment) {
     return res.status(200).json({ message: 'Comment has been deleted' });

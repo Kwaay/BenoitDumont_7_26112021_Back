@@ -14,7 +14,7 @@ require('dotenv').config();
 const regexName = /^[A-Z]{1}[a-z]{2,15}$/;
 const regexFirstname = /^[A-Z]{1}[a-z]{2,15}$/;
 const regexUsername = /^[a-zA-Z0-9_-]{4,10}$/;
-const regexEmail = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+const regexEmail = /^([\w-]+(?:\.[\w-]+)*)@groupomania\.fr$/i;
 const regexPassword = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$/;
 const regexQuestion = /^[a-zA-Z0-9_-]{4,15}$/;
 const regexReponse = /^[a-zA-Z0-9_-]{4,15}$/;
@@ -37,9 +37,15 @@ async function autoPurge() {
     },
   });
 }
-async function checkIfAdmin(req, res) {
-  if (!req.token.rank === 1) {
+function checkIfAdmin(req, res) {
+  if (req.token.rank !== 1) {
     return res.status(401).json({ message: 'Not Enough Permissions to do this action' });
+  }
+  return true;
+}
+function checkIfOwner(req, res) {
+  if (req.token.UserId !== req.params.UserId) {
+    return res.status(401).json({ message: 'You are not the owner of this account' });
   }
   return true;
 }
@@ -70,6 +76,9 @@ exports.signup = async (req, res) => {
   }
   if (typeof req.body.rank !== 'number' || Number.isNaN(req.body.rank)) {
     return res.status(400).json({ message: 'Rank must be a number' });
+  }
+  if (typeof req.body.maxSecurity !== 'boolean') {
+    return res.status(400).json({ message: 'maxSecurity must be a boolean' });
   }
   delete req.body.avatar;
   // Vérification si l'email est déjà utilisée
@@ -302,8 +311,11 @@ exports.forgot = async (req, res) => {
 
 // Modification du mot de passe si la réponse à la question est good
 exports.forgotModify = async (req, res) => {
-  if (!regexQuestion.test(req.body.question)) {
-    return res.status(400).json({ message: 'Question doesn\'t have a correct format' });
+  if (!regexEmail.test(req.body.email)) {
+    return res.status(400).json({ message: 'Email doesn\'t have a correct format' });
+  }
+  if (!regexReponse.test(req.body.reponse)) {
+    return res.status(400).json({ message: 'Reponse doesn\'t have a correct format' });
   }
   if (!regexPassword.test(req.body.password)) {
     return res.status(400).json({ message: 'Password doesn\'t have a correct format' });
@@ -334,7 +346,7 @@ exports.forgotModify = async (req, res) => {
 
 // Récupération de tous les utilisateurs
 exports.getAllUsers = async (req, res) => {
-  checkIfAdmin(req, res);
+  if (checkIfAdmin(req, res) !== true) return false;
   try {
     const findAllUsers = await User.findAll({
       order: [
@@ -345,14 +357,14 @@ exports.getAllUsers = async (req, res) => {
       return res.status(200).json(findAllUsers);
     }
   } catch (error) {
-    res.status(400).json({ error });
+    res.status(500).json({ error });
   }
   return true;
 };
 
 // Création d'un utilisateur
 exports.createUser = async (req, res) => {
-  checkIfAdmin(req, res);
+  if (checkIfAdmin(req, res) !== true) return false;
   // Vérification du format du contenu envoyé
   if (!regexName.test(req.body.name)) {
     return res.status(400).json({ message: 'Name doesn\'t have a correct format' });
@@ -375,7 +387,7 @@ exports.createUser = async (req, res) => {
   if (!regexReponse.test(req.body.reponse)) {
     return res.status(400).json({ message: 'Reponse doesn\'t have a correct format' });
   }
-  if (typeof req.body.rank !== 'number' || Number.isNaN(req.body.rank)) {
+  if (Number.isNaN(+req.body.rank)) {
     return res.status(400).json({ message: 'Rank must be a number' });
   }
   delete req.body.avatar;
@@ -473,15 +485,16 @@ exports.getOneUser = async (req, res) => {
     if (findOneUser) {
       return res.status(200).json(findOneUser);
     }
+    return res.status(404).json({ message: 'User not found' });
   } catch (error) {
-    res.status(404).json({ error });
+    res.status(500).json({ error });
   }
   return true;
 };
 
 // Modification d'un utilisateur en particulier
 exports.modifyUser = async (req, res) => {
-  checkIfAdmin(req, res);
+  if (checkIfOwner(req, res) !== true) return false;
   delete req.body.rank;
   // Vérification du format du contenu envoyé
   if (req.body.name !== undefined && !regexName.test(req.body.name)) {
@@ -507,7 +520,7 @@ exports.modifyUser = async (req, res) => {
   }
   try {
     const userFind = await User.findOne({ where: { id: req.params.UserId } });
-    if (!req.body.email === null || !req.body.email === undefined) {
+    if (req.body.email !== null || req.body.email !== undefined) {
       const checkEmail = await User.findOne({ where: { email: req.body.email } });
       if (checkEmail) {
         return res.status(409).json({ message: 'Email has already been used' });
@@ -519,7 +532,7 @@ exports.modifyUser = async (req, res) => {
         ...JSON.stringify(req.body),
         avatar: `${req.protocol}://${req.get('host')}/images/${req.files.avatar[0].filename}`,
       };
-      if (!userFind.avatar === null || !userFind.avatar === undefined) {
+      if (userFind.avatar !== null && !userFind.avatar !== undefined) {
         const filename = userFind.avatar.split('/images/')[1];
         await fsp.unlink(`./images/${filename}`);
       }
@@ -540,13 +553,15 @@ exports.modifyUser = async (req, res) => {
 
 // Suppression d'un utilisateur en particulier
 exports.deleteUser = async (req, res) => {
-  checkIfAdmin(req, res);
-  const user = await User.findOne({ where: { id: req.params.UserId } })
-    .catch(() => {
-      res.status(404).json({ message: 'User not found' });
-    });
-  const filename = user.avatar.split('/images/')[1];
-  await fsp.unlink(`./images/${filename}`);
+  if (checkIfAdmin(req, res) !== true) return false;
+  const user = await User.findOne({ where: { id: req.params.UserId } });
+  if (!user) {
+    res.status(404).json({ message: 'User not found' });
+  }
+  if (user.image !== null && user.image !== undefined) {
+    const filename = user.image.split('/images/')[1];
+    await fsp.unlink(`./images/ + ${filename}`);
+  }
   const deleteUser = await User.destroy({ where: { id: req.params.UserId } });
   if (deleteUser) {
     return res.status(200).json({ message: 'User has been deleted' });

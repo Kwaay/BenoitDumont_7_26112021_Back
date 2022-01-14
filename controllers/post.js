@@ -5,11 +5,19 @@ const {
 require('dotenv').config();
 
 const regexTitle = /^[A-Z]{1}[a-z-_ ]{2,15}$/;
-const regexContent = /^[a-zA-Z0-9_-]{4,}$/;
+const regexContent = /^[a-zA-Z0-9 _-]{4,255}$/;
 
-async function checkIfModerator(req, res) {
-  if (!req.token.rank === 1 || !req.token.rank === 2) {
+function checkIfModerator(req, res) {
+  if (req.token.rank !== 1 || req.token.rank !== 2) {
     return res.status(401).json({ message: 'Not Enough Permissions to do this action' });
+  }
+  return true;
+}
+
+async function checkIfOwner(req, res) {
+  const post = await Post.findOne({ where: { id: req.params.PostId } });
+  if (req.token.UserId !== post.UserId) {
+    return res.status(401).json({ message: 'You are not the owner of this account' });
   }
   return true;
 }
@@ -75,7 +83,6 @@ exports.createPost = async (req, res) => {
 
 /* Récupération d'un post en particulier qui inclus l'id,
 l'username et l'avatar de l'user relié au post et les réactions du post récupéré */
-
 exports.getOnePost = async (req, res) => {
   try {
     const findOnePost = await Post.findOne({
@@ -95,10 +102,10 @@ exports.getOnePost = async (req, res) => {
       },
       ],
     });
-    if (!findOnePost) {
-      return res.status(404).json({ message: 'Post not found' });
+    if (findOnePost) {
+      return res.status(200).json(findOnePost);
     }
-    return res.status(200).json(findOnePost);
+    return res.status(404).json({ message: 'Post not found' });
   } catch (error) {
     res.status(500).json({ error });
   }
@@ -107,7 +114,13 @@ exports.getOnePost = async (req, res) => {
 
 // Modification d'un post en particulier
 exports.modifyPost = async (req, res) => {
-  checkIfModerator(req, res);
+  const post = await Post.findOne({ where: { id: req.params.PostId } });
+  if (!post) {
+    res.status(404).json({ message: 'Post not found' });
+  }
+  if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) {
+    return false;
+  }
   if (req.body.title !== undefined && !regexTitle.test(req.body.title)) {
     return res.status(400).json({ message: 'Title doesn\'t have a correct format' });
   }
@@ -116,7 +129,7 @@ exports.modifyPost = async (req, res) => {
   }
   delete req.body.image;
   try {
-    if (!req.body.title === null || !req.body.title === undefined) {
+    if (req.body.title !== null && req.body.title !== undefined) {
       const titleCompare = await Post.findOne({
         where: {
           title: req.body.title, UserId: req.token.UserId,
@@ -133,7 +146,7 @@ exports.modifyPost = async (req, res) => {
         image: `${req.protocol}://${req.get('host')}/images/${req.files.image[0].filename}`,
       };
       const postFind = await Post.findOne({ where: { id: req.params.PostId } });
-      if (!postFind.image === null || !postFind.image === undefined) {
+      if (postFind.image !== null || postFind.image !== undefined) {
         const filename = postFind.image.split('/images/')[1];
         await fsp.unlink(`./images/ + ${filename}`);
       }
@@ -152,13 +165,15 @@ exports.modifyPost = async (req, res) => {
 
 // Suppression d'un post en particulier
 exports.deletePost = async (req, res) => {
-  checkIfModerator(req, res);
+  if (checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) return false;
   const post = await Post.findOne({ where: { id: req.params.PostId } });
   if (!post) {
     res.status(404).json({ message: 'Post not found' });
   }
-  const filename = post.image.split('/images/')[1];
-  await fsp.unlink(`./images/ + ${filename}`);
+  if (post.image !== null && post.image !== undefined) {
+    const filename = post.image.split('/images/')[1];
+    await fsp.unlink(`./images/ + ${filename}`);
+  }
   const deletePost = await Post.destroy({ where: { id: req.params.PostId } });
   if (deletePost) {
     return res.status(200).json({ message: 'Post has been deleted' });

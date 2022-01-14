@@ -99,11 +99,10 @@ sequelize.authenticate()
     sequelize.sync()
       .then(() => {
         console.log('Tous les models ont été synchronisés avec succès.');
+      })
+      .catch(() => {
+        console.log('Impossible de synchroniser les models');
       });
-
-    /* .catch(() => {
-      console.log('Impossible de synchroniser les models');
-    }); */
   })
   .catch((error) => {
     console.log('❌ Connexion à MySQL invalide', error);
