@@ -17,7 +17,7 @@ function checkIfModerator(req, res) {
 async function checkIfOwner(req, res) {
   const post = await Post.findOne({ where: { id: req.params.PostId } });
   if (req.token.UserId !== post.UserId) {
-    return res.status(401).json({ message: 'You are not the owner of this account' });
+    return res.status(401).json({ message: 'You are not the owner of this resource' });
   }
   return true;
 }
@@ -34,7 +34,7 @@ exports.getAllPosts = async (_req, res) => {
       return res.status(200).json(findAllPosts);
     }
   } catch (error) {
-    res.status(400).json({ error });
+    res.status(500).json({ message: 'Cannot get Posts. Please try again.' });
   }
   return true;
 };
@@ -76,7 +76,7 @@ exports.createPost = async (req, res) => {
       return res.status(201).json({ message: 'Post Created' });
     }
   } catch (error) {
-    res.status(400).json({ error });
+    res.status(500).json({ message: 'Post Creation Failed. Please try again.' });
   }
   return true;
 };
@@ -107,16 +107,15 @@ exports.getOnePost = async (req, res) => {
     }
     return res.status(404).json({ message: 'Post not found' });
   } catch (error) {
-    res.status(500).json({ error });
+    return res.status(500).json({ message: 'Cannot get this post. Please try again.' });
   }
-  return true;
 };
 
 // Modification d'un post en particulier
 exports.modifyPost = async (req, res) => {
   const post = await Post.findOne({ where: { id: req.params.PostId } });
   if (!post) {
-    res.status(404).json({ message: 'Post not found' });
+    return res.status(404).json({ message: 'Post not found' });
   }
   if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) {
     return false;
@@ -158,25 +157,29 @@ exports.modifyPost = async (req, res) => {
       return res.status(200).json({ message: 'Post has been modified' });
     }
   } catch (error) {
-    res.status(400).json({ error });
+    return res.status(500).json({ message: 'Something went wrong. Please try again.' });
   }
   return true;
 };
 
 // Suppression d'un post en particulier
 exports.deletePost = async (req, res) => {
-  if (checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) return false;
-  const post = await Post.findOne({ where: { id: req.params.PostId } });
-  if (!post) {
-    res.status(404).json({ message: 'Post not found' });
+  try {
+    const post = await Post.findOne({ where: { id: req.params.PostId } });
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) return false;
+    if (post.image !== null && post.image !== undefined) {
+      const filename = post.image.split('/images/')[1];
+      await fsp.unlink(`./images/ + ${filename}`);
+    }
+    const deletePost = await Post.destroy({ where: { id: req.params.PostId } });
+    if (deletePost) {
+      return res.status(200).json({ message: 'Post has been deleted' });
+    }
+    return true;
+  } catch (error) {
+    return res.status(500).json({ message: 'Something went wrong. Please try again.' });
   }
-  if (post.image !== null && post.image !== undefined) {
-    const filename = post.image.split('/images/')[1];
-    await fsp.unlink(`./images/ + ${filename}`);
-  }
-  const deletePost = await Post.destroy({ where: { id: req.params.PostId } });
-  if (deletePost) {
-    return res.status(200).json({ message: 'Post has been deleted' });
-  }
-  return true;
 };

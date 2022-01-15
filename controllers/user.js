@@ -27,7 +27,6 @@ const regexReponse = /^[a-zA-Z0-9_-]{4,15}$/;
 async function autoPurge() {
   const datetime = new Date();
   datetime.setHours(datetime.getHours() - 23);
-  // Test : datetime.setSeconds(datetime.getSeconds() - 20);
   const format = datetime.toISOString().replace('Z', '').replace('T', ' ').slice(0, 19);
   await Token.destroy({
     where: {
@@ -45,7 +44,7 @@ function checkIfAdmin(req, res) {
 }
 function checkIfOwner(req, res) {
   if (req.token.UserId !== req.params.UserId) {
-    return res.status(401).json({ message: 'You are not the owner of this account' });
+    return res.status(401).json({ message: 'You are not the owner of this resource' });
   }
   return true;
 }
@@ -96,7 +95,7 @@ exports.signup = async (req, res) => {
     const hashPassword = await bcrypt.hash(req.body.password, 10);
     // Si le body contient un fichier
     if (req.files) {
-      User.create({
+      const userCreationUpload = await User.create({
         name: req.body.name,
         firstname: req.body.firstname,
         username: req.body.username,
@@ -108,7 +107,11 @@ exports.signup = async (req, res) => {
         question: req.body.question,
         reponse: req.body.reponse,
       });
+      if (userCreationUpload) {
+        return res.status(201).json({ message: 'User Created with a uploaded image' });
+      }
     } else {
+      // Si le body ne contient pas de fichier
       // Hash de l'email en MD5 pour pouvoir vérifier si un avatar est relié depuis Gravatar
       const hashEmail = cryptoJS.MD5(req.body.email).toString().toLowerCase();
       fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
@@ -116,7 +119,7 @@ exports.signup = async (req, res) => {
       })
         .then((value) => {
           const gravatarImage = value.url;
-          User.create({
+          const userCreationGravatar = User.create({
             name: req.body.name,
             firstname: req.body.firstname,
             username: req.body.username,
@@ -127,20 +130,18 @@ exports.signup = async (req, res) => {
             rank: 3,
             question: req.body.question,
             reponse: req.body.reponse,
-          }).then(() => {
-            res.status(201).json({ message: 'User Created' });
-          })
-            .catch((error) => {
-              res.status(500).json({ error });
-            });
+          });
+          if (userCreationGravatar) {
+            return res.status(201).json({ message: 'User Created with an Gravatar Image' });
+          }
+          return true;
         })
-        .catch((error) => {
-          res.status(500).json({ error });
+        .catch(() => {
+          res.status(500).json({ message: 'Fetch Gravatar Failed' });
         });
     }
-    // Si le body ne contient pas de fichier
   } catch (error) {
-    res.status(400).json({ error });
+    res.status(500).json({ message: 'Something went wrong. Please try again.' });
   }
   return true;
 };
@@ -215,7 +216,7 @@ exports.login = async (req, res) => {
         token,
       });
     } catch (error) {
-      res.status(500).json({ error });
+      return res.status(500).json({ message: 'Something went wrong. Please try again.' });
     }
   }
   // Cas ou l'utilisateur essaye de se connecter avec un email
@@ -227,7 +228,7 @@ exports.login = async (req, res) => {
       // Vérification si l'username existe
       const user = await User.findOne({ where: { email: req.body.email } });
       if (!user) {
-        return res.status(404).json({ error: 'User not found' });
+        return res.status(404).json({ error: 'Email not found' });
       }
       // Vérification si le mot de passe envoyé correspond à celui dans la base de données
       const valid = await bcrypt.compare(req.body.password, user.password);
@@ -284,7 +285,7 @@ exports.login = async (req, res) => {
         token,
       });
     } catch (error) {
-      res.status(500).json({ error });
+      return res.status(500).json({ message: 'Token Creation Failed. Please try again.' });
     }
   }
   return true;
@@ -295,18 +296,21 @@ exports.forgot = async (req, res) => {
   if (!regexEmail.test(req.body.email)) {
     return res.status(400).json({ message: 'Email doesn\'t have a correct format' });
   }
-  const user = await User.findOne({
-    where: {
-      email: req.body.email,
-    },
-  });
-  if (!user) {
-    return res.status(404).json({ message: 'User not found' });
+  try {
+    const user = await User.findOne({
+      where: {
+        email: req.body.email,
+      },
+    });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    return res.status(200).json(
+      user.question,
+    );
+  } catch (error) {
+    return res.status(500).json({ message: 'Something went wrong. Please try again' });
   }
-  res.status(200).json(
-    user.question,
-  );
-  return true;
 };
 
 // Modification du mot de passe si la réponse à la question est good
@@ -320,28 +324,32 @@ exports.forgotModify = async (req, res) => {
   if (!regexPassword.test(req.body.password)) {
     return res.status(400).json({ message: 'Password doesn\'t have a correct format' });
   }
-  const user = await User.findOne({
-    where: {
-      email: req.body.email,
-    },
-  });
-  if (!user) {
-    return res.status(404).json({ message: 'User not found' });
-  }
-  if (user.reponse !== req.body.reponse) {
-    return res.status(400).json({ message: 'Wrong Response' });
-  }
-  const valid = await bcrypt.compare(req.body.password, user.password);
-  if (valid) {
-    return res.status(401).json({ error: 'Your new password is the same than your current password' });
-  }
+  try {
+    const user = await User.findOne({
+      where: {
+        email: req.body.email,
+      },
+    });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (user.reponse !== req.body.reponse) {
+      return res.status(400).json({ message: 'Wrong Response' });
+    }
+    const valid = await bcrypt.compare(req.body.password, user.password);
+    if (valid) {
+      return res.status(401).json({ error: 'Your new password is the same than your current password' });
+    }
 
-  const hashPassword = await bcrypt.hash(req.body.password, 10);
-  const updatePassword = User.update({ ...hashPassword }, { where: { id: user.id } });
-  if (updatePassword) {
-    return res.status(200).json({ message: 'Password changed successfully' });
+    const hashPassword = await bcrypt.hash(req.body.password, 10);
+    const updatePassword = User.update({ ...hashPassword }, { where: { id: user.id } });
+    if (updatePassword) {
+      return res.status(200).json({ message: 'Password changed successfully' });
+    }
+    return true;
+  } catch (error) {
+    return res.status(500).json({ message: 'Something went wrong. Please try again' });
   }
-  return true;
 };
 
 // Récupération de tous les utilisateurs
@@ -357,7 +365,7 @@ exports.getAllUsers = async (req, res) => {
       return res.status(200).json(findAllUsers);
     }
   } catch (error) {
-    res.status(500).json({ error });
+    return res.status(500).json({ message: 'Cannot get Users. Please try again.' });
   }
   return true;
 };
@@ -390,6 +398,9 @@ exports.createUser = async (req, res) => {
   if (Number.isNaN(+req.body.rank)) {
     return res.status(400).json({ message: 'Rank must be a number' });
   }
+  if (typeof req.body.maxSecurity !== 'boolean') {
+    return res.status(400).json({ message: 'maxSecurity must be a boolean' });
+  }
   delete req.body.avatar;
   const emailExist = await User.findOne({
     where: {
@@ -410,7 +421,7 @@ exports.createUser = async (req, res) => {
   try {
     const hashPassword = await bcrypt.hash(req.body.password, 10);
     if (req.files) {
-      const userCreation = User.create({
+      const userCreationUpload = await User.create({
         name: req.body.name,
         firstname: req.body.firstname,
         username: req.body.username,
@@ -422,7 +433,7 @@ exports.createUser = async (req, res) => {
         question: req.body.question,
         reponse: req.body.reponse,
       });
-      if (userCreation) {
+      if (userCreationUpload) {
         return res.status(201).json({ message: 'User Created with an Image' });
       }
     } else {
@@ -432,7 +443,7 @@ exports.createUser = async (req, res) => {
       })
         .then((value) => {
           const gravatarImage = value.url;
-          User.create({
+          const userCreationGravatar = User.create({
             name: req.body.name,
             firstname: req.body.firstname,
             username: req.body.username,
@@ -443,33 +454,38 @@ exports.createUser = async (req, res) => {
             rank: 3,
             question: req.body.question,
             reponse: req.body.reponse,
-          })
-            .then(() => {
-              res.status(201).json({ message: 'User Created' });
-            })
-            .catch((error) => {
-              res.status(500).json({ error });
-            });
+          });
+          if (userCreationGravatar) {
+            return res.status(201).json({ message: 'User Created with an Gravatar Image' });
+          }
+          return true;
         })
-        .catch((error) => {
-          res.status(500).json({ error });
+        .catch(() => {
+          res.status(500).json({ message: 'Fetch Gravatar Failed. Please try again.' });
         });
     }
   } catch (error) {
-    res.status(400).json({ error });
+    res.status(500).json({ message: 'Something went wrong. Please try again.' });
   }
   return true;
 };
 
 // Récupération de l'utilisateur actuel
 exports.myUser = async (req, res) => {
-  const user = await User.findOne({ where: { id: req.token.UserId } });
-  if (user.id === req.token.UserId) {
-    return res.status(200).json({
-      user,
-    });
+  try {
+    const user = await User.findOne({ where: { id: req.token.UserId } });
+    if (!user) {
+      return res.status(404).json({ message: 'User Not Found' });
+    }
+    if (user.id === req.token.UserId) {
+      return res.status(200).json({
+        user,
+      });
+    }
+    return true;
+  } catch (error) {
+    return res.status(500).json({ message: 'Someting went wrong. Please try again.' });
   }
-  return true;
 };
 // Récupération d'un utilisateur en particulier
 exports.getOneUser = async (req, res) => {
@@ -487,13 +503,17 @@ exports.getOneUser = async (req, res) => {
     }
     return res.status(404).json({ message: 'User not found' });
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json({ message: 'Cannot get this User' });
   }
   return true;
 };
 
 // Modification d'un utilisateur en particulier
 exports.modifyUser = async (req, res) => {
+  const userFind = await User.findOne({ where: { id: req.params.UserId } });
+  if (!userFind) {
+    return res.status(404).json({ message: 'User not found' });
+  }
   if (checkIfOwner(req, res) !== true) return false;
   delete req.body.rank;
   // Vérification du format du contenu envoyé
@@ -519,7 +539,6 @@ exports.modifyUser = async (req, res) => {
     return res.status(400).json({ message: 'Reponse doesn\'t have a correct format' });
   }
   try {
-    const userFind = await User.findOne({ where: { id: req.params.UserId } });
     if (req.body.email !== null || req.body.email !== undefined) {
       const checkEmail = await User.findOne({ where: { email: req.body.email } });
       if (checkEmail) {
@@ -546,25 +565,29 @@ exports.modifyUser = async (req, res) => {
       return res.status(200).json({ message: 'User has been modified' });
     }
   } catch (error) {
-    res.status(400).json({ error });
+    return res.status(500).json({ message: 'Something went wrong. Please try again.' });
   }
   return true;
 };
 
 // Suppression d'un utilisateur en particulier
 exports.deleteUser = async (req, res) => {
-  if (checkIfAdmin(req, res) !== true) return false;
-  const user = await User.findOne({ where: { id: req.params.UserId } });
-  if (!user) {
-    res.status(404).json({ message: 'User not found' });
+  try {
+    const user = await User.findOne({ where: { id: req.params.UserId } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (checkIfAdmin(req, res) !== true) return false;
+    if (user.image !== null && user.image !== undefined) {
+      const filename = user.image.split('/images/')[1];
+      await fsp.unlink(`./images/ + ${filename}`);
+    }
+    const deleteUser = await User.destroy({ where: { id: req.params.UserId } });
+    if (deleteUser) {
+      return res.status(200).json({ message: 'User has been deleted' });
+    }
+    return true;
+  } catch (error) {
+    return res.status(500).json({ message: 'Something went wrong. Please try again.' });
   }
-  if (user.image !== null && user.image !== undefined) {
-    const filename = user.image.split('/images/')[1];
-    await fsp.unlink(`./images/ + ${filename}`);
-  }
-  const deleteUser = await User.destroy({ where: { id: req.params.UserId } });
-  if (deleteUser) {
-    return res.status(200).json({ message: 'User has been deleted' });
-  }
-  return true;
 };

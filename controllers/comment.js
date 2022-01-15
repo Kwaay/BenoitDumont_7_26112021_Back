@@ -4,7 +4,7 @@ require('dotenv').config();
 async function checkIfOwner(req, res) {
   const comment = await Comment.findOne({ where: { id: req.params.CommentId } });
   if (req.token.UserId !== comment.UserId) {
-    return res.status(401).json({ message: 'You are not the owner of this account' });
+    return res.status(401).json({ message: 'You are not the owner of this resource' });
   }
   return true;
 }
@@ -29,13 +29,21 @@ exports.getAllComments = async (_req, res) => {
       return res.status(200).json(findAllComments);
     }
   } catch (error) {
-    res.status(400).json({ error });
+    res.status(500).json({ message: 'Cannot get Comments. Please try again.' });
   }
   return true;
 };
 
 // Création d'un commentaire
 exports.createComment = async (req, res) => {
+  const searchPost = await Post.findOne({ where: { id: req.body.PostId } });
+  if (!searchPost) {
+    return res.status(404).json({ message: 'Post not found' });
+  }
+  const searchUser = await User.findOne({ where: { id: req.token.UserId } });
+  if (!searchUser) {
+    return res.status(404).json({ message: 'User not found' });
+  }
   if (!regexContent.test(req.body.content)) {
     return res.status(400).json({ message: 'Content doesn\'t have a correct format' });
   }
@@ -61,7 +69,7 @@ exports.createComment = async (req, res) => {
       return res.status(201).json({ message: 'Comment Created' });
     }
   } catch (error) {
-    res.status(400).json({ error });
+    return res.status(500).json({ message: 'Something went wrong. Please try again.' });
   }
   return true;
 };
@@ -85,44 +93,53 @@ exports.getOneComment = async (req, res) => {
     if (findOneComment) {
       return res.status(200).json(findOneComment);
     }
+    return res.status(404).json({ message: 'Comment not found' });
   } catch (error) {
-    res.status(404).json({ error });
+    res.status(500).json({ message: 'Something went wrong. Please try again' });
   }
   return true;
 };
 
 // Modification d'un commentaire en particulier
 exports.modifyComment = async (req, res) => {
-  const findComment = await Comment.findOne({ where: { id: req.params.CommentId } });
-  if (!findComment) {
-    return res.status(404).json({ message: 'Comment Not Found' });
+  try {
+    const findComment = await Comment.findOne({ where: { id: req.params.CommentId } });
+    if (!findComment) {
+      return res.status(404).json({ message: 'Comment Not Found' });
+    }
+    if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) return false;
+    if (!regexContent.test(req.body.content)) {
+      return res.status(400).json({ message: 'Content doesn\'t have a correct format' });
+    }
+    delete req.body.PostId;
+    let commentObject = {};
+    commentObject = { ...req.body };
+    const updateComment = await Comment.update({
+      ...commentObject,
+    }, { where: { id: req.params.CommentId } });
+    if (updateComment) {
+      return res.status(200).json({ message: 'Comment successfully updated' });
+    }
+    return true;
+  } catch (error) {
+    return res.status(500).json({ message: 'Something went wrong. Please try again' });
   }
-  if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) return false;
-  if (!regexContent.test(req.body.content)) {
-    return res.status(400).json({ message: 'Content doesn\'t have a correct format' });
-  }
-  delete req.body.PostId;
-  let commentObject = {};
-  commentObject = { ...req.body };
-  const updateComment = await Comment.update({
-    ...commentObject,
-  }, { where: { id: req.params.CommentId } });
-  if (updateComment) {
-    return res.status(200).json({ message: 'Comment successfully updated' });
-  }
-  return true;
 };
 
 // Suppression d'un commentaire en particulier
 exports.deleteComment = async (req, res) => {
-  const comment = await Comment.findOne({ where: { id: req.params.CommentId } });
-  if (!comment) {
-    res.status(404).json({ message: 'Comment not found' });
+  try {
+    const comment = await Comment.findOne({ where: { id: req.params.CommentId } });
+    if (!comment) {
+      res.status(404).json({ message: 'Comment not found' });
+    }
+    if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) return false;
+    const deleteComment = await Comment.destroy({ where: { id: req.params.CommentId } });
+    if (deleteComment) {
+      return res.status(200).json({ message: 'Comment has been deleted' });
+    }
+    return true;
+  } catch (error) {
+    return res.status(500).json({ message: 'Something went wrong. Please try again.' });
   }
-  if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) return false;
-  const deleteComment = await Comment.destroy({ where: { id: req.params.CommentId } });
-  if (deleteComment) {
-    return res.status(200).json({ message: 'Comment has been deleted' });
-  }
-  return true;
 };

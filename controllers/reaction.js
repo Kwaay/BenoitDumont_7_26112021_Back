@@ -11,7 +11,7 @@ async function checkIfModerator(req, res) {
 async function checkIfOwner(req, res) {
   const reaction = await Reaction.findOne({ where: { id: req.params.ReactionId } });
   if (req.token.UserId !== reaction.UserId) {
-    return res.status(401).json({ message: 'You are not the owner of this account' });
+    return res.status(401).json({ message: 'You are not the owner of this resource' });
   }
   return true;
 }
@@ -28,13 +28,17 @@ exports.getAllReactions = async (_req, res) => {
       return res.status(200).json(findAllReactions);
     }
   } catch (error) {
-    res.status(400).json({ error });
+    return res.status(500).json({ message: 'Cannot get Reactions. Please try again' });
   }
   return true;
 };
 
 // Création d'une réaction
 exports.createReaction = async (req, res) => {
+  const postSearch = await Post.findOne({ where: { id: req.body.PostId } });
+  if (!postSearch) {
+    return res.status(404).json({ message: 'Post Not Found' });
+  }
   const { PostId, type } = req.body;
   if (typeof type !== 'number' || Number.isNaN(type)) {
     return res.status(400).json({ message: 'Type must be a number' });
@@ -60,7 +64,7 @@ exports.createReaction = async (req, res) => {
       return res.status(201).json({ message: 'Reaction Created' });
     }
   } catch (error) {
-    res.status(400).json({ error });
+    return res.status(500).json({ message: 'Something went wrong. Please try again.' });
   }
   return true;
 };
@@ -84,15 +88,25 @@ exports.getOneReaction = async (req, res) => {
     if (findOneReaction) {
       return res.status(200).json(findOneReaction);
     }
+    return res.status(404).json({ message: 'Reaction not found' });
   } catch (error) {
-    res.status(404).json({ error });
+    return res.status(500).json({ message: 'Cannot get this reaction. Please try again.' });
   }
-  return true;
 };
 
 // Modification d'une réaction en particulier
 exports.modifyReaction = async (req, res) => {
-  if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) return false;
+  const reactionFind = await Reaction.findOne({ where: { id: req.params.ReactionId } });
+  if (!reactionFind) {
+    return res.status(404).json({ message: 'Reaction not found' });
+  }
+  const searchPost = await Post.findOne({ where: { id: req.body.PostId } });
+  if (!searchPost) {
+    return res.status(404).json({ message: 'Post not found' });
+  }
+  if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) {
+    return false;
+  }
   const { PostId, type } = req.body;
   if (typeof type !== 'number' || Number.isNaN(type)) {
     return res.status(400).json({ message: 'Type must be a number' });
@@ -109,14 +123,6 @@ exports.modifyReaction = async (req, res) => {
     if (searchReaction) {
       return res.status(409).json({ message: 'Reaction already exists' });
     }
-    const searchPost = await Post.findOne({
-      where: {
-        id: PostId,
-      },
-    });
-    if (searchPost === null || searchPost === undefined) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
     let reactionObject = {};
     reactionObject = { ...req.body };
     const updateReaction = await Reaction.update({
@@ -126,21 +132,25 @@ exports.modifyReaction = async (req, res) => {
       return res.status(200).json({ message: 'Reaction successfully updated' });
     }
   } catch (error) {
-    res.status(400).json({ error });
+    return res.status(400).json({ message: 'Something went wrong. Please try again.' });
   }
   return true;
 };
 
 // Suppression d'une réaction en particulier
 exports.deleteReaction = async (req, res) => {
-  if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) return false;
-  await Reaction.findOne({ where: { id: req.params.ReactionId } })
-    .catch(() => {
-      res.status(404).json({ message: 'Reaction not found' });
-    });
-  const deleteReaction = await Reaction.destroy({ where: { id: req.params.ReactionId } });
-  if (deleteReaction) {
-    return res.status(200).json({ message: 'Reaction has been deleted' });
+  try {
+    const reactionFind = await Reaction.findOne({ where: { id: req.params.ReactionId } });
+    if (!reactionFind) {
+      return res.status(404).json({ message: 'Reaction not found' });
+    }
+    if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) return false;
+    const deleteReaction = await Reaction.destroy({ where: { id: req.params.ReactionId } });
+    if (deleteReaction) {
+      return res.status(200).json({ message: 'Reaction has been deleted' });
+    }
+    return true;
+  } catch (error) {
+    return res.status(500).json({ message: 'Something went wrong. Please try again.' });
   }
-  return true;
 };
