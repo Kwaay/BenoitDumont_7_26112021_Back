@@ -54,7 +54,7 @@ exports.createComment = async (req, res) => {
   try {
     const searchComment = await Comment.findOne({
       where: {
-        PostId, UserId: req.token.UserId,
+        PostId, UserId: req.token.UserId, content,
       },
     });
     if (searchComment) {
@@ -95,7 +95,7 @@ exports.getOneComment = async (req, res) => {
     }
     return res.status(404).json({ message: 'Comment not found' });
   } catch (error) {
-    res.status(500).json({ message: 'Something went wrong. Please try again' });
+    res.status(500).json({ message: 'Cannot get this comment. Please try again' });
   }
   return true;
 };

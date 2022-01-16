@@ -434,7 +434,7 @@ exports.createUser = async (req, res) => {
         reponse: req.body.reponse,
       });
       if (userCreationUpload) {
-        return res.status(201).json({ message: 'User Created with an Image' });
+        return res.status(201).json({ message: 'User Created with an Uploaded Image' });
       }
     } else {
       const hashEmail = cryptoJS.MD5(req.body.email).toString().toLowerCase();
@@ -503,7 +503,7 @@ exports.getOneUser = async (req, res) => {
     }
     return res.status(404).json({ message: 'User not found' });
   } catch (error) {
-    res.status(500).json({ message: 'Cannot get this User' });
+    res.status(500).json({ message: 'Cannot get this User. Please try again.' });
   }
   return true;
 };

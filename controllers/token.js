@@ -46,11 +46,10 @@ exports.getOneToken = async (req, res) => {
     });
     if (findOneToken) {
       return res.status(200).json(findOneToken);
-    }
+    } return res.status(404).json({ message: 'Token not found' });
   } catch (error) {
-    res.status(500).json({ message: 'Cannot get this Token. Please try again.' });
+    return res.status(500).json({ message: 'Cannot get this Token. Please try again.' });
   }
-  return true;
 };
 
 // Suppression d'un token

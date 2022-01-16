@@ -73,7 +73,7 @@ exports.createPost = async (req, res) => {
       UserId: req.token.UserId,
     });
     if (postCreation) {
-      return res.status(201).json({ message: 'Post Created' });
+      return res.status(201).json({ message: 'Post Created without image' });
     }
   } catch (error) {
     res.status(500).json({ message: 'Post Creation Failed. Please try again.' });
