@@ -11,13 +11,13 @@ const {
 
 require('dotenv').config();
 
-const regexName = /^[A-Z]{1}[a-z]{2,15}$/;
-const regexFirstname = /^[A-Z]{1}[a-z]{2,15}$/;
-const regexUsername = /^[a-zA-Z0-9_-]{4,10}$/;
+const regexName = /^[A-ZÀÈÌÒÙÁÉÍÓÚÝÂÊÎÔÛÃÑÕÄËÏÖÜŸÇßØÅÆ]{1}[a-zàèìòùáéíóúýâêîôûãñõäëïöüÿçøåæœ]{2,15}$/;
+const regexFirstname = /^[A-ZÀÈÌÒÙÁÉÍÓÚÝÂÊÎÔÛÃÑÕÄËÏÖÜŸÇßØÅÆ]{1}[a-zàèìòùáéíóúýâêîôûãñõäëïöüÿçøåæœ]{2,15}$/;
+const regexUsername = /^[a-zA-Z0-9àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ_-]{4,20}$/;
 const regexEmail = /^([\w-]+(?:\.[\w-]+)*)@groupomania\.fr$/i;
 const regexPassword = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,16}$/;
-const regexQuestion = /^[a-zA-Z0-9_-]{4,15}$/;
-const regexReponse = /^[a-zA-Z0-9_-]{4,15}$/;
+const regexQuestion = /^[a-zA-Z0-9àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ,.?"'/ _-]{4,15}$/;
+const regexReponse = /^[a-zA-Z0-9àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ,.'"/ _-]{4,15}$/;
 
 /* password must contain 1 number (0-9),
 1 uppercase letters, 1 lowercase letters,
@@ -31,7 +31,7 @@ async function autoPurge() {
   await Token.destroy({
     where: {
       createdAt: {
-        [Op.gt]: format,
+        [Op.lt]: format,
       },
     },
   });
@@ -61,14 +61,15 @@ exports.signup = async (req, res) => {
   if (!regexReponse.test(req.body.reponse)) {
     return res.status(400).json({ message: 'Reponse doesn\'t have a correct format' });
   }
-  if (Number.isNaN(+req.body.rank)) {
-    return res.status(400).json({ message: 'Rank must be a number' });
-  }
-  const maxSecurityModified = await JSON.parse(req.body.maxSecurity);
-  if (typeof maxSecurityModified !== 'boolean') {
+  if (req.files) {
+    if (!['true', 'false'].includes(req.body.maxSecurity)) {
+      return res.status(400).json({ message: 'maxSecurity must be a boolean' });
+    }
+  } else if (typeof req.body.maxSecurity !== 'boolean') {
     return res.status(400).json({ message: 'maxSecurity must be a boolean' });
   }
   delete req.body.avatar;
+  delete req.body.rank;
   // Vérification si l'email est déjà utilisée
   const emailExist = await User.findOne({ where: { email: req.body.email } });
   if (emailExist) {
@@ -103,31 +104,29 @@ exports.signup = async (req, res) => {
       // Si le body ne contient pas de fichier
       // Hash de l'email en MD5 pour pouvoir vérifier si un avatar est relié depuis Gravatar
       const hashEmail = cryptoJS.MD5(req.body.email).toString().toLowerCase();
-      fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
+      const gravatar = await fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
         method: 'GET',
-      })
-        .then((value) => {
-          const gravatarImage = value.url;
-          const userCreationGravatar = User.create({
-            name: req.body.name,
-            firstname: req.body.firstname,
-            username: req.body.username,
-            email: req.body.email,
-            password: hashPassword,
-            avatar: gravatarImage,
-            maxSecurity: true,
-            rank: 3,
-            question: req.body.question,
-            reponse: req.body.reponse,
-          });
-          if (userCreationGravatar) {
-            return res.status(201).json({ message: 'User Created with an Gravatar Image' });
-          }
-          return true;
-        })
-        .catch(() => {
-          res.status(500).json({ message: 'Fetch Gravatar Failed' });
-        });
+      });
+      if (!gravatar.url) {
+        return res.status(500).json({ message: 'Fetch Gravatar Failed' });
+      }
+      const gravatarImage = gravatar.url;
+      const userCreationGravatar = User.create({
+        name: req.body.name,
+        firstname: req.body.firstname,
+        username: req.body.username,
+        email: req.body.email,
+        password: hashPassword,
+        avatar: gravatarImage,
+        maxSecurity: true,
+        rank: 3,
+        question: req.body.question,
+        reponse: req.body.reponse,
+      });
+      if (userCreationGravatar) {
+        return res.status(201).json({ message: 'User Created with an Gravatar Image' });
+      }
+      return true;
     }
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong. Please try again.' });
@@ -274,7 +273,7 @@ exports.login = async (req, res) => {
         token,
       });
     } catch (error) {
-      return res.status(500).json({ message: 'Token Creation Failed. Please try again.' });
+      return res.status(500).json({ message: 'Something went wrong. Please try again.' });
     }
   }
   return true;
@@ -381,11 +380,12 @@ exports.createUser = async (req, res) => {
   if (!regexReponse.test(req.body.reponse)) {
     return res.status(400).json({ message: 'Reponse doesn\'t have a correct format' });
   }
-  if (Number.isNaN(+req.body.rank)) {
-    return res.status(400).json({ message: 'Rank must be a number' });
-  }
-  const maxSecurityModified = await JSON.parse(req.body.maxSecurity);
-  if (typeof maxSecurityModified !== 'boolean') {
+  delete req.body.rank;
+  if (req.files) {
+    if (!['true', 'false'].includes(req.body.maxSecurity)) {
+      return res.status(400).json({ message: 'maxSecurity must be a boolean' });
+    }
+  } else if (typeof req.body.maxSecurity !== 'boolean') {
     return res.status(400).json({ message: 'maxSecurity must be a boolean' });
   }
   const emailExist = await User.findOne({
@@ -415,7 +415,7 @@ exports.createUser = async (req, res) => {
         password: hashPassword,
         avatar: `${req.protocol}://${req.get('host')}/images/${req.files.avatar[0].filename}`,
         maxSecurity: true,
-        rank: 3,
+        rank: req.body.rank,
         question: req.body.question,
         reponse: req.body.reponse,
       });
@@ -424,34 +424,32 @@ exports.createUser = async (req, res) => {
       }
     } else {
       const hashEmail = cryptoJS.MD5(req.body.email).toString().toLowerCase();
-      fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
+      const gravatar = await fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
         method: 'GET',
-      })
-        .then((value) => {
-          const gravatarImage = value.url;
-          const userCreationGravatar = User.create({
-            name: req.body.name,
-            firstname: req.body.firstname,
-            username: req.body.username,
-            email: req.body.email,
-            password: hashPassword,
-            avatar: gravatarImage,
-            maxSecurity: true,
-            rank: 3,
-            question: req.body.question,
-            reponse: req.body.reponse,
-          });
-          if (userCreationGravatar) {
-            return res.status(201).json({ message: 'User Created with an Gravatar Image' });
-          }
-          return true;
-        })
-        .catch(() => {
-          res.status(500).json({ message: 'Fetch Gravatar Failed. Please try again.' });
-        });
+      });
+      if (!gravatar.url) {
+        return res.status(500).json({ message: 'Fetch Gravatar Failed' });
+      }
+      const gravatarImage = gravatar.url;
+      const userCreationGravatar = User.create({
+        name: req.body.name,
+        firstname: req.body.firstname,
+        username: req.body.username,
+        email: req.body.email,
+        password: hashPassword,
+        avatar: gravatarImage,
+        maxSecurity: true,
+        rank: req.body.rank,
+        question: req.body.question,
+        reponse: req.body.reponse,
+      });
+      if (userCreationGravatar) {
+        return res.status(201).json({ message: 'User Created with an Gravatar Image' });
+      }
+      return true;
     }
   } catch (error) {
-    res.status(500).json({ message: 'Something went wrong. Please try again.' });
+    return res.status(500).json({ message: 'Something went wrong. Please try again.' });
   }
   return true;
 };
@@ -496,7 +494,6 @@ exports.getOneUser = async (req, res) => {
 
 // Modification d'un utilisateur en particulier
 exports.modifyUser = async (req, res) => {
-  console.log(req.token);
   const userFind = await User.findOne({ where: { id: req.params.UserId } });
   if (!userFind) {
     return res.status(404).json({ message: 'User not found' });
@@ -524,8 +521,17 @@ exports.modifyUser = async (req, res) => {
   if (req.body.reponse !== undefined && !regexReponse.test(req.body.reponse)) {
     return res.status(400).json({ message: 'Reponse doesn\'t have a correct format' });
   }
+  if (req.files) {
+    if (!['true', 'false'].includes(req.body.maxSecurity)) {
+      return res.status(400).json({ message: 'maxSecurity must be a boolean' });
+    }
+  } else if (Object.prototype.hasOwnProperty.call(req.body, 'maxSecurity')) {
+    if (typeof req.body.maxSecurity !== 'boolean') {
+      return res.status(400).json({ message: 'maxSecurity must be a boolean' });
+    }
+  }
   try {
-    if (req.body.email !== null || req.body.email !== undefined) {
+    if (req.body.email !== null && req.body.email !== undefined) {
       const checkEmail = await User.findOne({ where: { email: req.body.email } });
       if (checkEmail) {
         return res.status(409).json({ message: 'Email has already been used' });

@@ -1,7 +1,7 @@
 const { User, Post, Comment } = require('../models');
 require('dotenv').config();
 
-const regexContent = /^[a-zA-Z0-9 _-]{4,255}$/;
+const regexContent = /^[a-zA-Z0-9àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ _-]{4,25}$/;
 
 // Récupération de tous les commentaires orderBy date de création et trié de façon décroissante //
 exports.getAllComments = async (_req, res) => {

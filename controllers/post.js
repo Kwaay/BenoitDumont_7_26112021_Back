@@ -4,8 +4,8 @@ const {
 } = require('../models');
 require('dotenv').config();
 
-const regexTitle = /^[A-Z]{1}[a-z-_ ]{2,15}$/;
-const regexContent = /^[a-zA-Z0-9 _-]{4,255}$/;
+const regexTitle = /^[A-ZÀÈÌÒÙÁÉÍÓÚÝÂÊÎÔÛÃÑÕÄËÏÖÜŸÇßØÅÆ]{1}[a-z0-9àèìòùáéíóúýâêîôûãñõäëïöüÿçøåæœ?'"! _-]{2,15}$/;
+const regexContent = /^[a-zA-Z0-9àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ'"?!., _-]{4,255}$/;
 
 // Récupération de tous les posts orderBy date de création et trié de façon décroissante //
 exports.getAllPosts = async (_req, res) => {
@@ -32,8 +32,11 @@ exports.createPost = async (req, res) => {
   if (!regexContent.test(req.body.content)) {
     return res.status(400).json({ message: 'Content doesn\'t have a correct format' });
   }
-  delete req.body.image;
   try {
+    const user = await User.findOne({ where: { id: req.token.UserId } });
+    if (!user) {
+      return res.status(404).json({ message: 'User Not Found' });
+    }
     const searchTitle = await Post.findOne({
       where: {
         title: req.body.title, UserId: req.token.UserId,
@@ -41,8 +44,9 @@ exports.createPost = async (req, res) => {
     });
     if (searchTitle) {
       return res.status(409).json({ message: 'Title already exists' });
-    } if (req.files) {
-      const postCreation = await Post.create({
+    }
+    if (req.files) {
+      const postCreation = Post.create({
         title: req.body.title,
         content: req.body.content,
         image: `${req.protocol}://${req.get('host')}/images/${req.files.image[0].filename}`,
@@ -52,7 +56,7 @@ exports.createPost = async (req, res) => {
         return res.status(201).json({ message: 'Post Created with an image' });
       }
     }
-    const postCreation = await Post.create({
+    const postCreation = Post.create({
       title: req.body.title,
       content: req.body.content,
       UserId: req.token.UserId,
@@ -146,21 +150,23 @@ exports.modifyPost = async (req, res) => {
 
 // Suppression d'un post en particulier
 exports.deletePost = async (req, res) => {
-  try {
-    const post = await Post.findOne({ where: { id: req.params.PostId } });
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-    if (post.image !== null && post.image !== undefined) {
-      const filename = post.image.split('/images/')[1];
-      await fsp.unlink(`./images/ + ${filename}`);
-    }
-    const deletePost = await Post.destroy({ where: { id: req.params.PostId } });
-    if (deletePost) {
-      return res.status(200).json({ message: 'Post has been deleted' });
-    }
-    return true;
-  } catch (error) {
-    return res.status(500).json({ message: 'Something went wrong. Please try again.' });
+  // try {
+  const post = await Post.findOne({ where: { id: req.params.PostId } });
+  if (!post) {
+    return res.status(404).json({ message: 'Post not found' });
   }
+  if (post.image !== null && post.image !== undefined) {
+    console.log(post.image);
+    const filename = post.image.split('/images/')[1];
+    console.log(`/images/${filename}`);
+    await fsp.unlink(`/images/${filename}`);
+  }
+  const deletePost = await Post.destroy({ where: { id: req.params.PostId } });
+  if (deletePost) {
+    return res.status(200).json({ message: 'Post has been deleted' });
+  }
+  return true;
+  /* } catch (error) {
+    return res.status(500).json({ message: 'Something went wrong. Please try again.' });
+  } */
 };

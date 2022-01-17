@@ -30,7 +30,8 @@ exports.getOneToken = async (req, res) => {
     });
     if (findOneToken) {
       return res.status(200).json(findOneToken);
-    } return res.status(404).json({ message: 'Token not found' });
+    }
+    return res.status(404).json({ message: 'Token not found' });
   } catch (error) {
     return res.status(500).json({ message: 'Cannot get this Token. Please try again.' });
   }
@@ -39,10 +40,10 @@ exports.getOneToken = async (req, res) => {
 // Suppression d'un token
 exports.deleteToken = async (req, res) => {
   try {
-    await Token.findOne({ where: { id: req.params.TokenId } })
-      .catch(() => {
-        res.status(404).json({ message: 'Token not found' });
-      });
+    const token = await Token.findOne({ where: { id: req.params.TokenId } });
+    if (!token) {
+      res.status(404).json({ message: 'Token not found' });
+    }
     const deleteToken = await Token.destroy({ where: { id: req.params.TokenId } });
     if (deleteToken) {
       return res.status(200).json({ message: 'Token has been deleted' });

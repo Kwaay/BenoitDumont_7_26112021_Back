@@ -26,6 +26,6 @@ module.exports = (Sequelize, DataTypes) => Sequelize.define('Reaction', {
     noUpdate: true,
   },
 }, {
-  tableName: 'Reactions',
+  tableName: 'reactions',
   timestamps: true,
 });
