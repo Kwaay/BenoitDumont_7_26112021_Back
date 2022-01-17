@@ -1373,7 +1373,7 @@
               }
             }
           },
-		  "404": {
+          "404": {
             "description": "Not Found",
             "content": {
               "application/json": {
