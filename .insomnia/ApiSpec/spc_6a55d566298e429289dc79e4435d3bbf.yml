@@ -1,7 +1,7 @@
 _id: spc_6a55d566298e429289dc79e4435d3bbf
 type: ApiSpec
 parentId: wrk_c21fd164110f450abd188beb4ae6b072
-modified: 1642350860726
+modified: 1642456067527
 created: 1637929337991
 fileName: groupomania-doc.json
 contents: >-
@@ -130,10 +130,6 @@ contents: >-
                           "reponse": {
                             "type": "string",
                             "example": "Reponse doesn't have a correct format"
-                          },
-                          "rank": {
-                            "type": "string",
-                            "example": "Rank must be a number"
                           },
                           "maxSecurity": {
                             "type": "string",
@@ -493,7 +489,7 @@ contents: >-
                     "properties": {
                       "error": {
                         "type": "string",
-                        "example": "Your new password is the same thean your current password"
+                        "example": "Your new password is the same than your current password"
                       }
                     }
                   }
@@ -589,7 +585,7 @@ contents: >-
                       },
                       {
                         "type": "string",
-                        "example": "You are not the owner of this resource"
+                        "example": "Not Enough Permissions to perform this action"
                       }
                     ]
                   }
@@ -733,7 +729,7 @@ contents: >-
                       },
                       {
                         "type": "string",
-                        "example": "You are not the owner of this resource"
+                        "example": "Not Enough Permissions to perform this action"
                       }
                     ]
                   }
@@ -1080,7 +1076,7 @@ contents: >-
                       },
                       {
                         "type": "string",
-                        "example": "You are not the owner of this resource"
+                        "example": "Not Enough Permissions to perform this action"
                       }
                     ]
                   }
@@ -1189,7 +1185,7 @@ contents: >-
                       },
                       {
                         "type": "string",
-                        "example": "You are not the owner of this resource"
+                        "example": "Not Enough Permissions to perform this action"
                       }
                     ]
                   }
@@ -1378,6 +1374,22 @@ contents: >-
                       "error": {
                         "type": "string",
                         "example": "You're not logged in"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "example": "User not found"
                       }
                     }
                   }
@@ -1600,11 +1612,7 @@ contents: >-
                       },
                       {
                         "type": "string",
-                        "example": "You are not the owner of this resource"
-                      },
-                      {
-                        "type": "string",
-                        "example": "Not Enough Permissions to do that action"
+                        "example": "Not Enough Permissions to perform this action"
                       }
                     ]
                   }
@@ -2120,11 +2128,7 @@ contents: >-
                       },
                       {
                         "type": "string",
-                        "example": "You are not the owner of this resource"
-                      },
-                      {
-                        "type": "string",
-                        "example": "Not Enough Permissions to do that action"
+                        "example": "Not Enough Permissions to perform this action"
                       }
                     ]
                   }
@@ -2247,11 +2251,7 @@ contents: >-
                       },
                       {
                         "type": "string",
-                        "example": "You are not the owner of this resource"
-                      },
-                      {
-                        "type": "string",
-                        "example": "Not Enough Permissions to do that action"
+                        "example": "Not Enough Permissions to perform this action"
                       }
                     ]
                   }
@@ -2331,11 +2331,7 @@ contents: >-
                       },
                       {
                         "type": "string",
-                        "example": "You are not the owner of this resource"
-                      },
-                      {
-                        "type": "string",
-                        "example": "Not Enough Permissions to do that action"
+                        "example": "Not Enough Permissions to perform this action"
                       }
                     ]
                   }
@@ -2413,11 +2409,7 @@ contents: >-
                       },
                       {
                         "type": "string",
-                        "example": "You are not the owner of this resource"
-                      },
-                      {
-                        "type": "string",
-                        "example": "Not Enough Permissions to do that action"
+                        "example": "Not Enough Permissions to perform this action"
                       }
                     ]
                   }
@@ -2510,11 +2502,7 @@ contents: >-
                       },
                       {
                         "type": "string",
-                        "example": "You are not the owner of this resource"
-                      },
-                      {
-                        "type": "string",
-                        "example": "Not Enough Permissions to do that action"
+                        "example": "Not Enough Permissions to perform this action"
                       }
                     ]
                   }
@@ -2925,11 +2913,7 @@ contents: >-
                       },
                       {
                         "type": "string",
-                        "example": "You are not the owner of this resource"
-                      },
-                      {
-                        "type": "string",
-                        "example": "Not Enough Permissions to do that action"
+                        "example": "Not Enough Permissions to perform this action"
                       }
                     ]
                   }
@@ -3022,11 +3006,7 @@ contents: >-
                       },
                       {
                         "type": "string",
-                        "example": "You are not the owner of this resource"
-                      },
-                      {
-                        "type": "string",
-                        "example": "Not Enough Permissions to do that action"
+                        "example": "Not Enough Permissions to perform this action"
                       }
                     ]
                   }
