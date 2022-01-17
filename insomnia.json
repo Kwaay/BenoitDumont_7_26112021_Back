@@ -486,7 +486,7 @@
                   "properties": {
                     "error": {
                       "type": "string",
-                      "example": "Your new password is the same thean your current password"
+                      "example": "Your new password is the same than your current password"
                     }
                   }
                 }
@@ -582,7 +582,7 @@
                     },
                     {
                       "type": "string",
-                      "example": "You are not the owner of this resource"
+                      "example": "Not Enough Permissions to perform this action"
                     }
                   ]
                 }
@@ -726,7 +726,7 @@
                     },
                     {
                       "type": "string",
-                      "example": "You are not the owner of this resource"
+                      "example": "Not Enough Permissions to perform this action"
                     }
                   ]
                 }
@@ -1073,7 +1073,7 @@
                     },
                     {
                       "type": "string",
-                      "example": "You are not the owner of this resource"
+                      "example": "Not Enough Permissions to perform this action"
                     }
                   ]
                 }
@@ -1182,7 +1182,7 @@
                     },
                     {
                       "type": "string",
-                      "example": "You are not the owner of this resource"
+                      "example": "Not Enough Permissions to perform this action"
                     }
                   ]
                 }
@@ -1597,7 +1597,7 @@
                     },
                     {
                       "type": "string",
-                      "example": "Not Enough Permissions to do that action"
+                      "example": "Not Enough Permissions to perform this action"
                     }
                   ]
                 }
@@ -2117,7 +2117,7 @@
                     },
                     {
                       "type": "string",
-                      "example": "Not Enough Permissions to do that action"
+                      "example": "Not Enough Permissions to perform this action"
                     }
                   ]
                 }
@@ -2244,7 +2244,7 @@
                     },
                     {
                       "type": "string",
-                      "example": "Not Enough Permissions to do that action"
+                      "example": "Not Enough Permissions to perform this action"
                     }
                   ]
                 }
@@ -2328,7 +2328,7 @@
                     },
                     {
                       "type": "string",
-                      "example": "Not Enough Permissions to do that action"
+                      "example": "Not Enough Permissions to perform this action"
                     }
                   ]
                 }
@@ -2410,7 +2410,7 @@
                     },
                     {
                       "type": "string",
-                      "example": "Not Enough Permissions to do that action"
+                      "example": "Not Enough Permissions to perform this action"
                     }
                   ]
                 }
@@ -2507,7 +2507,7 @@
                     },
                     {
                       "type": "string",
-                      "example": "Not Enough Permissions to do that action"
+                      "example": "Not Enough Permissions to perform this action"
                     }
                   ]
                 }
@@ -2922,7 +2922,7 @@
                     },
                     {
                       "type": "string",
-                      "example": "Not Enough Permissions to do that action"
+                      "example": "Not Enough Permissions to perform this action"
                     }
                   ]
                 }
@@ -3019,7 +3019,7 @@
                     },
                     {
                       "type": "string",
-                      "example": "Not Enough Permissions to do that action"
+                      "example": "Not Enough Permissions to perform this action"
                     }
                   ]
                 }
