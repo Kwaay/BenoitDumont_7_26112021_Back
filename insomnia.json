@@ -124,10 +124,6 @@
                           "type": "string",
                           "example": "Reponse doesn't have a correct format"
                         },
-                        "rank": {
-                          "type": "string",
-                          "example": "Rank must be a number"
-                        },
                         "maxSecurity": {
                           "type": "string",
                           "example": "maxSecurity must be a boolean"
@@ -1377,6 +1373,22 @@
               }
             }
           },
+		  "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "User not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "409": {
             "description": "Conflict",
             "content": {
@@ -1590,10 +1602,6 @@
                     {
                       "type": "string",
                       "example": "You're not logged in"
-                    },
-                    {
-                      "type": "string",
-                      "example": "You are not the owner of this resource"
                     },
                     {
                       "type": "string",
@@ -2113,10 +2121,6 @@
                     },
                     {
                       "type": "string",
-                      "example": "You are not the owner of this resource"
-                    },
-                    {
-                      "type": "string",
                       "example": "Not Enough Permissions to perform this action"
                     }
                   ]
@@ -2240,10 +2244,6 @@
                     },
                     {
                       "type": "string",
-                      "example": "You are not the owner of this resource"
-                    },
-                    {
-                      "type": "string",
                       "example": "Not Enough Permissions to perform this action"
                     }
                   ]
@@ -2324,10 +2324,6 @@
                     },
                     {
                       "type": "string",
-                      "example": "You are not the owner of this resource"
-                    },
-                    {
-                      "type": "string",
                       "example": "Not Enough Permissions to perform this action"
                     }
                   ]
@@ -2403,10 +2399,6 @@
                     {
                       "type": "string",
                       "example": "You're not logged in"
-                    },
-                    {
-                      "type": "string",
-                      "example": "You are not the owner of this resource"
                     },
                     {
                       "type": "string",
@@ -2500,10 +2492,6 @@
                     {
                       "type": "string",
                       "example": "You're not logged in"
-                    },
-                    {
-                      "type": "string",
-                      "example": "You are not the owner of this resource"
                     },
                     {
                       "type": "string",
@@ -2918,10 +2906,6 @@
                     },
                     {
                       "type": "string",
-                      "example": "You are not the owner of this resource"
-                    },
-                    {
-                      "type": "string",
                       "example": "Not Enough Permissions to perform this action"
                     }
                   ]
@@ -3012,10 +2996,6 @@
                     {
                       "type": "string",
                       "example": "You're not logged in"
-                    },
-                    {
-                      "type": "string",
-                      "example": "You are not the owner of this resource"
                     },
                     {
                       "type": "string",
