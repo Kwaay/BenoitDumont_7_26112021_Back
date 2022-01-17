@@ -1,20 +1,6 @@
 const { User, Post, Comment } = require('../models');
 require('dotenv').config();
 
-async function checkIfOwner(req, res) {
-  const comment = await Comment.findOne({ where: { id: req.params.CommentId } });
-  if (req.token.UserId !== comment.UserId) {
-    return res.status(401).json({ message: 'You are not the owner of this resource' });
-  }
-  return true;
-}
-async function checkIfModerator(req, res) {
-  if (req.token.rank !== 1 || req.token.rank !== 2) {
-    return res.status(401).json({ message: 'Not Enough Permissions to do this action' });
-  }
-  return true;
-}
-
 const regexContent = /^[a-zA-Z0-9 _-]{4,255}$/;
 
 // Récupération de tous les commentaires orderBy date de création et trié de façon décroissante //
@@ -107,7 +93,6 @@ exports.modifyComment = async (req, res) => {
     if (!findComment) {
       return res.status(404).json({ message: 'Comment Not Found' });
     }
-    if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) return false;
     if (!regexContent.test(req.body.content)) {
       return res.status(400).json({ message: 'Content doesn\'t have a correct format' });
     }
@@ -133,7 +118,6 @@ exports.deleteComment = async (req, res) => {
     if (!comment) {
       res.status(404).json({ message: 'Comment not found' });
     }
-    if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) return false;
     const deleteComment = await Comment.destroy({ where: { id: req.params.CommentId } });
     if (deleteComment) {
       return res.status(200).json({ message: 'Comment has been deleted' });

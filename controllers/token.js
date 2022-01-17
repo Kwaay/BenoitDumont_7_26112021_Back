@@ -1,22 +1,7 @@
 const { User, Token } = require('../models');
 
-async function checkIfAdmin(req, res) {
-  if (req.token.rank !== 1) {
-    return res.status(401).json({ message: 'Not Enough Permissions to do this action' });
-  }
-  return true;
-}
-async function checkIfOwner(req, res) {
-  const token = await Token.findOne({ where: { id: req.params.TokenId } });
-  if (req.token.UserId !== token.UserId) {
-    return res.status(401).json({ message: 'You are not the owner of this resource' });
-  }
-  return true;
-}
-
 // Récupération de tous les tokens
 exports.getAllTokens = async (req, res) => {
-  if (await checkIfOwner(req, res) !== true && checkIfAdmin(req, res) !== true) return false;
   try {
     const findAllTokens = await Token.findAll({
       order: [
@@ -34,7 +19,6 @@ exports.getAllTokens = async (req, res) => {
 
 // Récupération d'un token en particulier
 exports.getOneToken = async (req, res) => {
-  if (await checkIfOwner(req, res) !== true && checkIfAdmin(req, res) !== true) return false;
   try {
     const findOneToken = await Token.findOne({
       where: {
@@ -55,7 +39,6 @@ exports.getOneToken = async (req, res) => {
 // Suppression d'un token
 exports.deleteToken = async (req, res) => {
   try {
-    if (await checkIfOwner(req, res) !== true && checkIfAdmin(req, res) !== true) return false;
     await Token.findOne({ where: { id: req.params.TokenId } })
       .catch(() => {
         res.status(404).json({ message: 'Token not found' });

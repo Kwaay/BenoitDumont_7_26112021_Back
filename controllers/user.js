@@ -36,18 +36,6 @@ async function autoPurge() {
     },
   });
 }
-function checkIfAdmin(req, res) {
-  if (req.token.rank !== 1) {
-    return res.status(401).json({ message: 'Not Enough Permissions to do this action' });
-  }
-  return true;
-}
-function checkIfOwner(req, res) {
-  if (req.token.UserId !== req.params.UserId) {
-    return res.status(401).json({ message: 'You are not the owner of this resource' });
-  }
-  return true;
-}
 
 // Partie 'S'inscrire'
 exports.signup = async (req, res) => {
@@ -73,10 +61,11 @@ exports.signup = async (req, res) => {
   if (!regexReponse.test(req.body.reponse)) {
     return res.status(400).json({ message: 'Reponse doesn\'t have a correct format' });
   }
-  if (typeof req.body.rank !== 'number' || Number.isNaN(req.body.rank)) {
+  if (Number.isNaN(+req.body.rank)) {
     return res.status(400).json({ message: 'Rank must be a number' });
   }
-  if (typeof req.body.maxSecurity !== 'boolean') {
+  const maxSecurityModified = await JSON.parse(req.body.maxSecurity);
+  if (typeof maxSecurityModified !== 'boolean') {
     return res.status(400).json({ message: 'maxSecurity must be a boolean' });
   }
   delete req.body.avatar;
@@ -340,9 +329,8 @@ exports.forgotModify = async (req, res) => {
     if (valid) {
       return res.status(401).json({ error: 'Your new password is the same than your current password' });
     }
-
     const hashPassword = await bcrypt.hash(req.body.password, 10);
-    const updatePassword = User.update({ ...hashPassword }, { where: { id: user.id } });
+    const updatePassword = User.update({ password: hashPassword }, { where: { id: user.id } });
     if (updatePassword) {
       return res.status(200).json({ message: 'Password changed successfully' });
     }
@@ -354,7 +342,6 @@ exports.forgotModify = async (req, res) => {
 
 // Récupération de tous les utilisateurs
 exports.getAllUsers = async (req, res) => {
-  if (checkIfAdmin(req, res) !== true) return false;
   try {
     const findAllUsers = await User.findAll({
       order: [
@@ -372,7 +359,6 @@ exports.getAllUsers = async (req, res) => {
 
 // Création d'un utilisateur
 exports.createUser = async (req, res) => {
-  if (checkIfAdmin(req, res) !== true) return false;
   // Vérification du format du contenu envoyé
   if (!regexName.test(req.body.name)) {
     return res.status(400).json({ message: 'Name doesn\'t have a correct format' });
@@ -398,10 +384,10 @@ exports.createUser = async (req, res) => {
   if (Number.isNaN(+req.body.rank)) {
     return res.status(400).json({ message: 'Rank must be a number' });
   }
-  if (typeof req.body.maxSecurity !== 'boolean') {
+  const maxSecurityModified = await JSON.parse(req.body.maxSecurity);
+  if (typeof maxSecurityModified !== 'boolean') {
     return res.status(400).json({ message: 'maxSecurity must be a boolean' });
   }
-  delete req.body.avatar;
   const emailExist = await User.findOne({
     where: {
       email: req.body.email,
@@ -484,7 +470,7 @@ exports.myUser = async (req, res) => {
     }
     return true;
   } catch (error) {
-    return res.status(500).json({ message: 'Someting went wrong. Please try again.' });
+    return res.status(500).json({ message: 'Something went wrong. Please try again.' });
   }
 };
 // Récupération d'un utilisateur en particulier
@@ -510,11 +496,11 @@ exports.getOneUser = async (req, res) => {
 
 // Modification d'un utilisateur en particulier
 exports.modifyUser = async (req, res) => {
+  console.log(req.token);
   const userFind = await User.findOne({ where: { id: req.params.UserId } });
   if (!userFind) {
     return res.status(404).json({ message: 'User not found' });
   }
-  if (checkIfOwner(req, res) !== true) return false;
   delete req.body.rank;
   // Vérification du format du contenu envoyé
   if (req.body.name !== undefined && !regexName.test(req.body.name)) {
@@ -577,7 +563,6 @@ exports.deleteUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    if (checkIfAdmin(req, res) !== true) return false;
     if (user.image !== null && user.image !== undefined) {
       const filename = user.image.split('/images/')[1];
       await fsp.unlink(`./images/ + ${filename}`);

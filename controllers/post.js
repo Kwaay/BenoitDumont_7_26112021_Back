@@ -7,21 +7,6 @@ require('dotenv').config();
 const regexTitle = /^[A-Z]{1}[a-z-_ ]{2,15}$/;
 const regexContent = /^[a-zA-Z0-9 _-]{4,255}$/;
 
-function checkIfModerator(req, res) {
-  if (req.token.rank !== 1 || req.token.rank !== 2) {
-    return res.status(401).json({ message: 'Not Enough Permissions to do this action' });
-  }
-  return true;
-}
-
-async function checkIfOwner(req, res) {
-  const post = await Post.findOne({ where: { id: req.params.PostId } });
-  if (req.token.UserId !== post.UserId) {
-    return res.status(401).json({ message: 'You are not the owner of this resource' });
-  }
-  return true;
-}
-
 // Récupération de tous les posts orderBy date de création et trié de façon décroissante //
 exports.getAllPosts = async (_req, res) => {
   try {
@@ -117,9 +102,6 @@ exports.modifyPost = async (req, res) => {
   if (!post) {
     return res.status(404).json({ message: 'Post not found' });
   }
-  if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) {
-    return false;
-  }
   if (req.body.title !== undefined && !regexTitle.test(req.body.title)) {
     return res.status(400).json({ message: 'Title doesn\'t have a correct format' });
   }
@@ -169,7 +151,6 @@ exports.deletePost = async (req, res) => {
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
-    if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) return false;
     if (post.image !== null && post.image !== undefined) {
       const filename = post.image.split('/images/')[1];
       await fsp.unlink(`./images/ + ${filename}`);

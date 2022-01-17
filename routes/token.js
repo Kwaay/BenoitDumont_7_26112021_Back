@@ -3,9 +3,10 @@ const express = require('express');
 const router = express.Router();
 const tokenCtrl = require('../controllers/token');
 const auth = require('../middleware/auth');
+const checkRights = require('../middleware/checkRights');
 
-router.get('/', auth, tokenCtrl.getAllTokens);
-router.get('/:TokenId', auth, tokenCtrl.getOneToken);
-router.delete('/:TokenId', auth, tokenCtrl.deleteToken);
+router.get('/', auth, checkRights({ role: 1 }), tokenCtrl.getAllTokens);
+router.get('/:TokenId', auth, checkRights({ role: 1, owner: true, model: 'Token' }), tokenCtrl.getOneToken);
+router.delete('/:TokenId', auth, checkRights({ role: 1, owner: true, model: 'Token' }), tokenCtrl.deleteToken);
 
 module.exports = router;

@@ -1,21 +1,6 @@
 const { User, Post, Reaction } = require('../models');
 require('dotenv').config();
 
-async function checkIfModerator(req, res) {
-  if (req.token.rank !== 1 || req.token.rank !== 2) {
-    return res.status(401).json({ message: 'Not Enough Permissions to do this action' });
-  }
-  return true;
-}
-
-async function checkIfOwner(req, res) {
-  const reaction = await Reaction.findOne({ where: { id: req.params.ReactionId } });
-  if (req.token.UserId !== reaction.UserId) {
-    return res.status(401).json({ message: 'You are not the owner of this resource' });
-  }
-  return true;
-}
-
 // Récupération de tous les posts orberBy date de création et trié de façon décroissante //
 exports.getAllReactions = async (_req, res) => {
   try {
@@ -104,9 +89,6 @@ exports.modifyReaction = async (req, res) => {
   if (!searchPost) {
     return res.status(404).json({ message: 'Post not found' });
   }
-  if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) {
-    return false;
-  }
   const { PostId, type } = req.body;
   if (typeof type !== 'number' || Number.isNaN(type)) {
     return res.status(400).json({ message: 'Type must be a number' });
@@ -144,7 +126,6 @@ exports.deleteReaction = async (req, res) => {
     if (!reactionFind) {
       return res.status(404).json({ message: 'Reaction not found' });
     }
-    if (await checkIfOwner(req, res) !== true && checkIfModerator(req, res) !== true) return false;
     const deleteReaction = await Reaction.destroy({ where: { id: req.params.ReactionId } });
     if (deleteReaction) {
       return res.status(200).json({ message: 'Reaction has been deleted' });
