@@ -1,7 +1,7 @@
 _id: spc_6a55d566298e429289dc79e4435d3bbf
 type: ApiSpec
 parentId: wrk_c21fd164110f450abd188beb4ae6b072
-modified: 1642456067527
+modified: 1643059954576
 created: 1637929337991
 fileName: groupomania-doc.json
 contents: >-
@@ -1306,7 +1306,7 @@ contents: >-
               },
               "multipart/form-data": {
                 "schema": {
-                  "$ref": "#/components/schemas/PostWithImage"
+                  "$ref": "#/components/schemas/PostWithMedia"
                 }
               }
             }
@@ -1321,7 +1321,7 @@ contents: >-
                     "properties": {
                       "message": {
                         "type": "string",
-                        "example": "Post Created without Image"
+                        "example": "Post Created without Media"
                       }
                     }
                   }
@@ -1332,7 +1332,7 @@ contents: >-
                     "properties": {
                       "message": {
                         "type": "string",
-                        "example": "Post Created with an Image"
+                        "example": "Post Created with a Media"
                       }
                     }
                   }
@@ -1552,7 +1552,7 @@ contents: >-
               },
               "multipart/form-data": {
                 "schema": {
-                  "$ref": "#/components/schemas/PostWithImage"
+                  "$ref": "#/components/schemas/PostWithMedia"
                 }
               }
             }
@@ -3397,7 +3397,7 @@ contents: >-
             "content": {
               "type": "string"
             },
-            "image": {
+            "media": {
               "type": "string",
               "format": "binary"
             },
@@ -3438,7 +3438,7 @@ contents: >-
             "content": {
               "type": "string"
             },
-            "image": {
+            "media": {
               "type": "string",
               "format": "binary"
             },
@@ -3455,7 +3455,7 @@ contents: >-
             }
           }
         },
-        "PostWithImage": {
+        "PostWithMedia": {
           "type": "object",
           "properties": {
             "title": {
@@ -3464,7 +3464,7 @@ contents: >-
             "content": {
               "type": "string"
             },
-            "image": {
+            "media": {
               "type": "string",
               "format": "binary"
             }
@@ -3472,7 +3472,7 @@ contents: >-
           "required": [
             "title",
             "content",
-            "image"
+            "media"
           ]
         },
         "PostSpecial": {
