@@ -156,9 +156,7 @@ exports.deletePost = async (req, res) => {
     return res.status(404).json({ message: 'Post not found' });
   }
   if (post.image !== null && post.image !== undefined) {
-    console.log(post.image);
     const filename = post.image.split('/images/')[1];
-    console.log(`/images/${filename}`);
     await fsp.unlink(`/images/${filename}`);
   }
   const deletePost = await Post.destroy({ where: { id: req.params.PostId } });
