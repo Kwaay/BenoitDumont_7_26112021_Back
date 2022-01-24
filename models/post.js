@@ -15,7 +15,7 @@ module.exports = (Sequelize, DataTypes) => Sequelize.define('Post', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  image: {
+  media: {
     type: DataTypes.STRING.BINARY,
     allowNull: true,
   },

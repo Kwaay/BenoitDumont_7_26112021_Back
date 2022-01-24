@@ -1299,7 +1299,7 @@
             },
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/PostWithImage"
+                "$ref": "#/components/schemas/PostWithMedia"
               }
             }
           }
@@ -1314,7 +1314,7 @@
                   "properties": {
                     "message": {
                       "type": "string",
-                      "example": "Post Created without Image"
+                      "example": "Post Created without Media"
                     }
                   }
                 }
@@ -1325,7 +1325,7 @@
                   "properties": {
                     "message": {
                       "type": "string",
-                      "example": "Post Created with an Image"
+                      "example": "Post Created with a Media"
                     }
                   }
                 }
@@ -1545,7 +1545,7 @@
             },
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/PostWithImage"
+                "$ref": "#/components/schemas/PostWithMedia"
               }
             }
           }
@@ -3390,7 +3390,7 @@
           "content": {
             "type": "string"
           },
-          "image": {
+          "media": {
             "type": "string",
             "format": "binary"
           },
@@ -3431,7 +3431,7 @@
           "content": {
             "type": "string"
           },
-          "image": {
+          "media": {
             "type": "string",
             "format": "binary"
           },
@@ -3448,7 +3448,7 @@
           }
         }
       },
-      "PostWithImage": {
+      "PostWithMedia": {
         "type": "object",
         "properties": {
           "title": {
@@ -3457,7 +3457,7 @@
           "content": {
             "type": "string"
           },
-          "image": {
+          "media": {
             "type": "string",
             "format": "binary"
           }
@@ -3465,7 +3465,7 @@
         "required": [
           "title",
           "content",
-          "image"
+          "media"
         ]
       },
       "PostSpecial": {

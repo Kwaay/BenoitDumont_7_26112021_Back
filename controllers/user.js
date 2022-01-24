@@ -61,13 +61,6 @@ exports.signup = async (req, res) => {
   if (!regexReponse.test(req.body.reponse)) {
     return res.status(400).json({ message: 'Reponse doesn\'t have a correct format' });
   }
-  if (req.files) {
-    if (!['true', 'false'].includes(req.body.maxSecurity)) {
-      return res.status(400).json({ message: 'maxSecurity must be a boolean' });
-    }
-  } else if (typeof req.body.maxSecurity !== 'boolean') {
-    return res.status(400).json({ message: 'maxSecurity must be a boolean' });
-  }
   delete req.body.avatar;
   delete req.body.rank;
   // Vérification si l'email est déjà utilisée
@@ -569,8 +562,8 @@ exports.deleteUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    if (user.image !== null && user.image !== undefined) {
-      const filename = user.image.split('/images/')[1];
+    if (user.avatar !== null && user.avatar !== undefined) {
+      const filename = user.avatar.split('/images/')[1];
       await fsp.unlink(`./images/ + ${filename}`);
     }
     const deleteUser = await User.destroy({ where: { id: req.params.UserId } });

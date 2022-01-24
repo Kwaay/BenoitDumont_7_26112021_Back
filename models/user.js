@@ -37,7 +37,7 @@ module.exports = (Sequelize, DataTypes) => Sequelize.define('User', {
   },
   maxSecurity: {
     type: DataTypes.BOOLEAN,
-    allowNull: false,
+    allowNull: true,
   },
   rank: {
     type: DataTypes.INTEGER,

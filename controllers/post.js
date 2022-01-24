@@ -14,6 +14,14 @@ exports.getAllPosts = async (_req, res) => {
       order: [
         ['createdAt', 'DESC'],
       ],
+      include: [{
+        model: User,
+        attributes: ['id', 'username', 'avatar', 'name', 'firstname'],
+      },
+      {
+        model: Reaction,
+        attributes: ['id', 'UserId', 'type'],
+      }],
     });
     if (findAllPosts) {
       return res.status(200).json(findAllPosts);
@@ -49,11 +57,11 @@ exports.createPost = async (req, res) => {
       const postCreation = Post.create({
         title: req.body.title,
         content: req.body.content,
-        image: `${req.protocol}://${req.get('host')}/images/${req.files.image[0].filename}`,
+        media: `${req.protocol}://${req.get('host')}/images/${req.files.media[0].filename}`,
         UserId: req.token.UserId,
       });
       if (postCreation) {
-        return res.status(201).json({ message: 'Post Created with an image' });
+        return res.status(201).json({ message: 'Post Created with a media' });
       }
     }
     const postCreation = Post.create({
@@ -62,7 +70,7 @@ exports.createPost = async (req, res) => {
       UserId: req.token.UserId,
     });
     if (postCreation) {
-      return res.status(201).json({ message: 'Post Created without image' });
+      return res.status(201).json({ message: 'Post Created without media' });
     }
   } catch (error) {
     res.status(500).json({ message: 'Post Creation Failed. Please try again.' });
@@ -112,7 +120,7 @@ exports.modifyPost = async (req, res) => {
   if (req.body.content !== undefined && !regexContent.test(req.body.content)) {
     return res.status(400).json({ message: 'Content doesn\'t have a correct format' });
   }
-  delete req.body.image;
+  delete req.body.media;
   try {
     if (req.body.title !== null && req.body.title !== undefined) {
       const titleCompare = await Post.findOne({
@@ -128,11 +136,11 @@ exports.modifyPost = async (req, res) => {
     if (req.files) {
       postObject = {
         ...JSON.stringify(req.body),
-        image: `${req.protocol}://${req.get('host')}/images/${req.files.image[0].filename}`,
+        media: `${req.protocol}://${req.get('host')}/images/${req.files.media[0].filename}`,
       };
       const postFind = await Post.findOne({ where: { id: req.params.PostId } });
-      if (postFind.image !== null || postFind.image !== undefined) {
-        const filename = postFind.image.split('/images/')[1];
+      if (postFind.media !== null || postFind.media !== undefined) {
+        const filename = postFind.media.split('/images/')[1];
         await fsp.unlink(`./images/ + ${filename}`);
       }
     } else {
@@ -155,8 +163,8 @@ exports.deletePost = async (req, res) => {
   if (!post) {
     return res.status(404).json({ message: 'Post not found' });
   }
-  if (post.image !== null && post.image !== undefined) {
-    const filename = post.image.split('/images/')[1];
+  if (post.media !== null && post.media !== undefined) {
+    const filename = post.media.split('/images/')[1];
     await fsp.unlink(`/images/${filename}`);
   }
   const deletePost = await Post.destroy({ where: { id: req.params.PostId } });
