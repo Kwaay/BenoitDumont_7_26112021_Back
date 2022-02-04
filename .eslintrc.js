@@ -9,9 +9,12 @@ module.exports = {
   parserOptions: {
     parser: 'babel-eslint',
   },
-  extends: ['airbnb-base'],
+  extends: ['airbnb-base', 'plugin:jsdoc/recommended'],
+  plugins: ['prettier', 'jsdoc'],
   // add your custom rules here
-  rules: {},
+  rules: {
+    'jsdoc/tag-lines': 'off',
+  },
   settings: {
     'import/resolver': {
       alias: {

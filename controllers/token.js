@@ -1,7 +1,14 @@
 const { User, Token } = require('../models');
 
-// Récupération de tous les tokens
-exports.getAllTokens = async (req, res) => {
+/**
+ * @function getAllTokens Get all tokens from the database and return them to the user.
+ *
+ * @param {object} _req - The request object
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
+exports.getAllTokens = async (_req, res) => {
   try {
     const findAllTokens = await Token.findAll({
       order: [
@@ -17,7 +24,16 @@ exports.getAllTokens = async (req, res) => {
   return true;
 };
 
-// Récupération d'un token en particulier
+/**
+ * @function getOneToken Find a token by its ID
+ *
+ * @param {object} req - The request object
+ * @param {object} req.params - The params in the URL
+ * @param {number} req.params.TokenId - The ID of the token in the URL
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
 exports.getOneToken = async (req, res) => {
   try {
     const findOneToken = await Token.findOne({
@@ -37,7 +53,19 @@ exports.getOneToken = async (req, res) => {
   }
 };
 
-// Suppression d'un token
+/**
+ * @function deleteToken Find a token by its ID.
+ * If the token is found, delete it.
+ * If the token is not found, return a 404 error.
+ * If an error occurs, return a 500 error.
+ *
+ * @param {object} req - The request object
+ * @param {object} req.params - The params in the URL
+ * @param {number} req.params.TokenId - The ID of the token in the URL
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
 exports.deleteToken = async (req, res) => {
   try {
     const token = await Token.findOne({ where: { id: req.params.TokenId } });

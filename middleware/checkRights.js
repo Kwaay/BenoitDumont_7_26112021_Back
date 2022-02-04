@@ -2,11 +2,11 @@ const Models = require('../models');
 
 /**
  * @function checkRights Check Authorization Middleware
- * @param {Object} config Objet de configuration
- * @param {String} config.model Ressource à vérifier
- * @param {Boolean} config.owner Vérification du propriétaire
- * @param {Number} config.role Niveau de permissions (1 = Admin, 2 = Admin / Modo, 3 = All)
-*/
+ * @param {object} config Objet de configuration
+ * @param {string} config.model Ressource à vérifier
+ * @param {boolean} config.owner Vérification du propriétaire
+ * @param {number} config.role Niveau de permissions (1 = Admin, 2 = Admin / Modo, 3 = All)
+ */
 
 module.exports = (config) => async (req, res, next) => {
   if (config.owner === true && typeof config.role === 'undefined') {

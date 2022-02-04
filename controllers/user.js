@@ -24,6 +24,11 @@ const regexReponse = /^[a-zA-Z0-9àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâ�
 1 non-alpha numeric number, 8-16 characters with no space
 */
 
+/**
+ * @function autoPurge It deletes all tokens created before the current time minus 23 hours
+ *
+ * @returns {void}
+ */
 async function autoPurge() {
   const datetime = new Date();
   datetime.setHours(datetime.getHours() - 23);
@@ -37,7 +42,27 @@ async function autoPurge() {
   });
 }
 
-// Partie 'S'inscrire'
+/**
+ * @function signup  We check if the user has uploaded an image,
+ * if so, we create a user with the image. If not, we
+ * create a user with the Gravatar image.
+ *
+ * @param {object} req - The request object
+ * @param {'http' | 'https'} req.protocol - The protocol of the request
+ * @param {object} req.files - The files object
+ * @param {object} req.body - The request body
+ * @param {string} req.body.name - The name of the user
+ * @param {string} req.body.firstname - The first name of the user
+ * @param {string} req.body.lastname - The last name of the user
+ * @param {string} req.body.email - The email address of the user
+ * @param {string} req.body.password - The password of the user
+ * @param {object | string} req.body.avatar - The avatar of the user
+ * @param {string} req.body.question - The question of the user
+ * @param {string} req.body.reponse - The reponse of the user
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
 exports.signup = async (req, res) => {
   // Vérification du format du contenu envoyé
   if (!regexName.test(req.body.name)) {
@@ -127,7 +152,26 @@ exports.signup = async (req, res) => {
   return true;
 };
 
-// Partie 'Se connecter'
+/**
+ * @function login We check if the user is trying to login with a username or an email.
+ * If it's a username, we check ID the username exists in the database.
+ * If it does, we check if the password is correct.
+ * If it is, we create a token with the userId and the rank.
+ * If it's an email, we check if the email exists in the database.
+ * If it does, we check if the password is correct.
+ * If it is, we create a token with the userId and the rank.
+ *
+ * @param {object} req - The request object
+ * @param {string} req.useragent - The user agent
+ * @param {string} req.ip - The IP address
+ * @param {object} req.body - The request body
+ * @param {string} req.body.username - The username of the user
+ * @param {string} req.body.email - The email address of the user
+ * @param {string} req.body.password - The password of the user
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
 exports.login = async (req, res) => {
   if (!regexPassword.test(req.body.password)) {
     return res.status(400).json({ error: 'Password doesn\'t have a correct format' });
@@ -138,7 +182,7 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: 'Username doesn\'t have a correct format' });
     }
     try {
-      // Vérification si l'username existe
+    // Vérification si l'username existe
       const user = await User.findOne({ where: { username: req.body.username } });
       if (!user) {
         return res.status(404).json({ error: 'Username not found' });
@@ -272,7 +316,18 @@ exports.login = async (req, res) => {
   return true;
 };
 
-// Récupération de l'email pour savoir quel compte modifier
+/**
+ * @function forgot Find the user with the given email address.
+ * If the user is not found, return a 404 error.
+ * Return the user's security question.
+ *
+ * @param {object} req - The request object
+ * @param {object} req.body - The request body
+ * @param {string} req.body.email - The email address of the user
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
 exports.forgot = async (req, res) => {
   if (!regexEmail.test(req.body.email)) {
     return res.status(400).json({ message: 'Email doesn\'t have a correct format' });
@@ -294,7 +349,20 @@ exports.forgot = async (req, res) => {
   }
 };
 
-// Modification du mot de passe si la réponse à la question est good
+/**
+ * @function forgotModify The user enters his email and a response to a security question.
+ * If the email and response are correct, the user is asked to enter a new password.
+ * If the new password is different from the current password, the password is updated.
+ *
+ * @param {object} req - The request object
+ * @param {object} req.body - The request body
+ * @param {string} req.body.email - The email address of the user
+ * @param {string} req.body.reponse - The reponse of the user
+ * @param {string} req.body.password - The password of the user
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
 exports.forgotModify = async (req, res) => {
   if (!regexEmail.test(req.body.email)) {
     return res.status(400).json({ message: 'Email doesn\'t have a correct format' });
@@ -332,8 +400,14 @@ exports.forgotModify = async (req, res) => {
   }
 };
 
-// Récupération de tous les utilisateurs
-exports.getAllUsers = async (req, res) => {
+/* Get all users from the database and return them in a JSON format. */
+/**
+ * @param {object} _req - The request object
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
+exports.getAllUsers = async (_req, res) => {
   try {
     const findAllUsers = await User.findAll({
       order: [
@@ -349,7 +423,28 @@ exports.getAllUsers = async (req, res) => {
   return true;
 };
 
-// Création d'un utilisateur
+/**
+ * @function createUser We check if the user has uploaded an image,
+ * if so, we create a user with an uploaded image.
+ * If not, we create a user with a gravatar image.
+ *
+ * @param {object} req - The request object
+ * @param {'http' | 'https'} req.protocol - The protocol of the request
+ * @param {object} req.files - The files object
+ * @param {object} req.body - The request body
+ * @param {string} req.body.name - The name of the user
+ * @param {string} req.body.firstname - The first name of the user
+ * @param {string} req.body.lastname - The last name of the user
+ * @param {string} req.body.email - The email address of the user
+ * @param {string} req.body.password - The password of the user
+ * @param {object | string} req.body.avatar - The avatar of the user
+ * @param {boolean} req.body.maxSecurity - The maximum security level
+ * @param {string} req.body.question - The question of the user
+ * @param {string} req.body.reponse - The reponse of the user
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
 exports.createUser = async (req, res) => {
   // Vérification du format du contenu envoyé
   if (!regexName.test(req.body.name)) {
@@ -375,7 +470,8 @@ exports.createUser = async (req, res) => {
   }
   delete req.body.rank;
   if (req.files) {
-    if (!['true', 'false'].includes(req.body.maxSecurity)) {
+    if (!['true', 'false'].includes(req.body.maxSecurity)
+    ) {
       return res.status(400).json({ message: 'maxSecurity must be a boolean' });
     }
   } else if (typeof req.body.maxSecurity !== 'boolean') {
@@ -408,7 +504,7 @@ exports.createUser = async (req, res) => {
         password: hashPassword,
         avatar: `${req.protocol}://${req.get('host')}/images/${req.files.avatar[0].filename}`,
         maxSecurity: true,
-        rank: req.body.rank,
+        rank: 3,
         question: req.body.question,
         reponse: req.body.reponse,
       });
@@ -432,7 +528,7 @@ exports.createUser = async (req, res) => {
         password: hashPassword,
         avatar: gravatarImage,
         maxSecurity: true,
-        rank: req.body.rank,
+        rank: 3,
         question: req.body.question,
         reponse: req.body.reponse,
       });
@@ -447,7 +543,17 @@ exports.createUser = async (req, res) => {
   return true;
 };
 
-// Récupération de l'utilisateur actuel
+/**
+ * @function myUser Find a user by their ID and return it
+ * if the user is the same as the user in the token.
+ *
+ * @param {object} req - The request object
+ * @param {object} req.token - The token generated by connecting
+ * @param {number} req.token.UserId - The ID of the user in the token
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
 exports.myUser = async (req, res) => {
   try {
     const user = await User.findOne({ where: { id: req.token.UserId } });
@@ -464,7 +570,19 @@ exports.myUser = async (req, res) => {
     return res.status(500).json({ message: 'Something went wrong. Please try again.' });
   }
 };
-// Récupération d'un utilisateur en particulier
+
+/**
+ * @function getOneUser The findOneUser function is used to find a user by their ID.
+ * If the user is found, the function returns the user.
+ * If the user is not found, the function returns a 404 error.
+ *
+ * @param {object} req - The request object
+ * @param {object} req.params - The params in the URL
+ * @param {number} req.params.UserId - The ID of a user in the URL
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
 exports.getOneUser = async (req, res) => {
   try {
     const findOneUser = await User.findOne({
@@ -485,7 +603,31 @@ exports.getOneUser = async (req, res) => {
   return true;
 };
 
-// Modification d'un utilisateur en particulier
+/**
+ * @function modifyUser The modifyUser function is used to modify a user,
+ * the function checks if the user exists, or returns a 404 error.
+ * It checks if the format of the data is correct or returns a 400 error if not.
+ * If a image is send in the req.files, it delete the old and remplace it by the new image.
+ *
+ * @param {object} req - The request object
+ * @param {'http' | 'https'} req.protocol - The protocol of the request
+ * @param {object} req.files - The files object
+ * @param {object} req.body - The request body
+ * @param {string} req.params - The params in the URL
+ * @param {string} req.params.UserId - The ID of a user in the URL
+ * @param {string} req.body.name - The name of the user
+ * @param {string} req.body.firstname - The first name of the user
+ * @param {string} req.body.lastname - The last name of the user
+ * @param {string} req.body.email - The email address of the user
+ * @param {string} req.body.password - The password of the user
+ * @param {object | string} req.body.avatar - The avatar of the user
+ * @param {boolean} req.body.maxSecurity - The maximum security
+ * @param {string} req.body.question - The question of the user
+ * @param {string} req.body.reponse - The reponse of the user
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
 exports.modifyUser = async (req, res) => {
   const userFind = await User.findOne({ where: { id: req.params.UserId } });
   if (!userFind) {
@@ -515,7 +657,7 @@ exports.modifyUser = async (req, res) => {
     return res.status(400).json({ message: 'Reponse doesn\'t have a correct format' });
   }
   if (req.files) {
-    if (!['true', 'false'].includes(req.body.maxSecurity)) {
+    if (req.body.maxSecurity && !['true', 'false'].includes(req.body.maxSecurity)) {
       return res.status(400).json({ message: 'maxSecurity must be a boolean' });
     }
   } else if (Object.prototype.hasOwnProperty.call(req.body, 'maxSecurity')) {
@@ -536,7 +678,7 @@ exports.modifyUser = async (req, res) => {
         ...JSON.stringify(req.body),
         avatar: `${req.protocol}://${req.get('host')}/images/${req.files.avatar[0].filename}`,
       };
-      if (userFind.avatar !== null && !userFind.avatar !== undefined) {
+      if (userFind.avatar !== null && userFind.avatar !== undefined && !userFind.avatar.includes('gravatar')) {
         const filename = userFind.avatar.split('/images/')[1];
         await fsp.unlink(`./images/${filename}`);
       }
@@ -544,7 +686,7 @@ exports.modifyUser = async (req, res) => {
       userObject = { ...req.body };
     }
     /* si le lien dans la table contient gravatar.? > empty
-     si l'image est dans le dossier images fs.unlink */
+      si l'image est dans le dossier images fs.unlink */
     const updateUser = await User.update({ ...userObject }, { where: { id: req.params.UserId } });
     if (updateUser) {
       return res.status(200).json({ message: 'User has been modified' });
@@ -555,7 +697,16 @@ exports.modifyUser = async (req, res) => {
   return true;
 };
 
-// Suppression d'un utilisateur en particulier
+/**
+ * @function deleteUser Find a user by ID, delete the user, and return a success message.
+ *
+ * @param {object} req - The request object
+ * @param {object} req.params - The params in the URL
+ * @param {string} req.params.UserId - The ID of the user in the URL
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
 exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findOne({ where: { id: req.params.UserId } });
@@ -564,7 +715,7 @@ exports.deleteUser = async (req, res) => {
     }
     if (user.avatar !== null && user.avatar !== undefined) {
       const filename = user.avatar.split('/images/')[1];
-      await fsp.unlink(`./images/ + ${filename}`);
+      await fsp.unlink(`./images/${filename}`);
     }
     const deleteUser = await User.destroy({ where: { id: req.params.UserId } });
     if (deleteUser) {

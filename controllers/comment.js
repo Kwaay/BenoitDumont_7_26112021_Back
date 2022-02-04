@@ -3,7 +3,14 @@ require('dotenv').config();
 
 const regexContent = /^[a-zA-Z0-9àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ _-]{4,25}$/;
 
-// Récupération de tous les commentaires orderBy date de création et trié de façon décroissante //
+/**
+ * @function getAllComments  Get all comments from the database and return them as a JSON object.
+ *
+ * @param {object} _req - The request object
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
 exports.getAllComments = async (_req, res) => {
   try {
     const findAllComments = await Comment.findAll({
@@ -20,7 +27,20 @@ exports.getAllComments = async (_req, res) => {
   return true;
 };
 
-// Création d'un commentaire
+/**
+ * @function createComment The function checks if the post who the comment is related exists
+ * and if the user who created it exists too, if not it send a 404 error.
+ * After that, it checks the format of the send data and
+ * it checks if the comment don't already exists'
+ *
+ * @param {object} req - the request object
+ * @param {object} req.body - the request body
+ * @param {string} req.body.content - the content of the comment
+ * @param {number} req.body.PostId - The ID of the post
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
 exports.createComment = async (req, res) => {
   const searchPost = await Post.findOne({ where: { id: req.body.PostId } });
   if (!searchPost) {
@@ -60,7 +80,17 @@ exports.createComment = async (req, res) => {
   return true;
 };
 
-// Récupération d'un commentaire : include: titre, contenu du Post : l'username et l'avatar
+/**
+ * @function getOneComment Find a comment by its ID,
+ * and include the post and user associated with it.
+ *
+ * @param {object} req - The request object
+ * @param {object} req.params - The params in the URL
+ * @param {number} req.params.CommentId - The ID of the comment in the URL
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
 exports.getOneComment = async (req, res) => {
   try {
     const findOneComment = await Comment.findOne({
@@ -86,7 +116,20 @@ exports.getOneComment = async (req, res) => {
   return true;
 };
 
-// Modification d'un commentaire en particulier
+/**
+ * @function modifyComment The modifyComment function is used to modify a comment,
+ * the function checks if the comment exists, or returns a 404 error.
+ * It checks if the format of the data is correct or returns a 400 error if not.
+ *
+ * @param {object} req - The request object
+ * @param {object} req.params - The params in the URL
+ * @param {number} req.params.CommentId - The ID of the comment in the URL
+ * @param {string} req.body - The request body
+ * @param {string} req.body.content - The content of the comment
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
 exports.modifyComment = async (req, res) => {
   try {
     const findComment = await Comment.findOne({ where: { id: req.params.CommentId } });
@@ -111,7 +154,16 @@ exports.modifyComment = async (req, res) => {
   }
 };
 
-// Suppression d'un commentaire en particulier
+/**
+ * @function deleteComment Find a comment by its ID, and delete it.
+ *
+ * @param {object} req - The request object
+ * @param {object} req.params - The params in the URL
+ * @param {number} req.params.CommentId - The ID of the comment in the URL
+ * @param {object} res - The response object
+ *
+ * @returns {object} - response
+ */
 exports.deleteComment = async (req, res) => {
   try {
     const comment = await Comment.findOne({ where: { id: req.params.CommentId } });
