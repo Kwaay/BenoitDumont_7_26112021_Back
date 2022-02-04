@@ -4,7 +4,7 @@ require('dotenv').config();
 // Function pour décoder le token
 /* */
 /**
- * @function getToken We try to get the token from the request headers.
+ * @function auth We try to get the token from the request headers.
  * If we can't find it, we send a 401 response.
  * If we can find it, we try to verify it using the secret key.
  * If it's valid, we add the decoded token to the request object.
@@ -17,7 +17,7 @@ require('dotenv').config();
  * @param {object} res - The response object
  * @param {object} next - The Next middleware function
  *
- * @returns {object} - response
+ * @returns {void}
  */
 module.exports = (req, res, next) => {
   try {

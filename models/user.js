@@ -4,7 +4,7 @@
  * @param {object} Sequelize - The Sequelize instance
  * @param {object} DataTypes - The Data Types of Sequelize
  *
- * @returns {void}
+ * @returns {object} - User Model Instance
  */
 module.exports = (Sequelize, DataTypes) => Sequelize.define(
   'User',
