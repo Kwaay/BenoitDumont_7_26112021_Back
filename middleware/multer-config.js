@@ -11,7 +11,15 @@ const MIME_TYPES = {
   'video/avi': 'avi',
   'image/gif': 'gif',
 };
-
+/**
+ * @function multer This function indicates where the image should be saved,
+ * and format the filename according to if the file already contains a extension or not
+ * @param {object} req - The request object
+ * @param {object} file - The file object containing the image
+ * @param {object} callback - The callback function
+ *
+ * @returns {void}
+ */
 const storage = multer.diskStorage({
   // Indication de l'endroit où stocker les fichiers récuperés
   destination: (req, file, callback) => {
