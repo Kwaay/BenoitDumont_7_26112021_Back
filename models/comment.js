@@ -1,4 +1,11 @@
-// Model des Comments
+/**
+ * @function CommentModel The `Comment` model is defined as a Sequelize model
+ *
+ * @param {object} Sequelize - The Sequelize instance
+ * @param {object} DataTypes - The Data Types of Sequelize
+ *
+ * @returns {void}
+ */
 module.exports = (Sequelize, DataTypes) => Sequelize.define('Comment', {
   id: {
     type: DataTypes.INTEGER,
