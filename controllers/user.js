@@ -98,57 +98,57 @@ exports.signup = async (req, res) => {
   if (usernameExist) {
     return res.status(409).json({ message: 'Username has already been used' });
   }
-  try {
-    // Hash du Mot de passe avec 10 tours de SALT
-    const hashPassword = await bcrypt.hash(req.body.password, 10);
-    // Si le body contient un fichier
-    if (req.files) {
-      const userCreationUpload = await User.create({
-        name: req.body.name,
-        firstname: req.body.firstname,
-        username: req.body.username,
-        email: req.body.email,
-        password: hashPassword,
-        avatar: `${req.protocol}://${req.get('host')}/images/${req.files.avatar[0].filename}`,
-        maxSecurity: true,
-        rank: 3,
-        question: req.body.question,
-        reponse: req.body.reponse,
-      });
-      if (userCreationUpload) {
-        return res.status(201).json({ message: 'User Created with a uploaded image' });
-      }
-    } else {
-      // Si le body ne contient pas de fichier
-      // Hash de l'email en MD5 pour pouvoir vérifier si un avatar est relié depuis Gravatar
-      const hashEmail = cryptoJS.MD5(req.body.email).toString().toLowerCase();
-      const gravatar = await fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
-        method: 'GET',
-      });
-      if (!gravatar.url) {
-        return res.status(500).json({ message: 'Fetch Gravatar Failed' });
-      }
-      const gravatarImage = gravatar.url;
-      const userCreationGravatar = User.create({
-        name: req.body.name,
-        firstname: req.body.firstname,
-        username: req.body.username,
-        email: req.body.email,
-        password: hashPassword,
-        avatar: gravatarImage,
-        maxSecurity: true,
-        rank: 3,
-        question: req.body.question,
-        reponse: req.body.reponse,
-      });
-      if (userCreationGravatar) {
-        return res.status(201).json({ message: 'User Created with an Gravatar Image' });
-      }
-      return true;
+  // try {
+  // Hash du Mot de passe avec 10 tours de SALT
+  const hashPassword = await bcrypt.hash(req.body.password, 10);
+  // Si le body contient un fichier
+  if (req.files) {
+    const userCreationUpload = await User.create({
+      name: req.body.name,
+      firstname: req.body.firstname,
+      username: req.body.username,
+      email: req.body.email,
+      password: hashPassword,
+      avatar: `${req.protocol}://${req.get('host')}/images/${req.files.avatar[0].filename}`,
+      maxSecurity: true,
+      rank: 3,
+      question: req.body.question,
+      reponse: req.body.reponse,
+    });
+    if (userCreationUpload) {
+      return res.status(201).json({ message: 'User Created with a uploaded image' });
     }
-  } catch (error) {
-    res.status(500).json({ message: 'Something went wrong. Please try again.' });
+  } else {
+    // Si le body ne contient pas de fichier
+    // Hash de l'email en MD5 pour pouvoir vérifier si un avatar est relié depuis Gravatar
+    const hashEmail = cryptoJS.MD5(req.body.email).toString().toLowerCase();
+    const gravatar = await fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
+      method: 'GET',
+    });
+    if (!gravatar.url) {
+      return res.status(500).json({ message: 'Fetch Gravatar Failed' });
+    }
+    const gravatarImage = gravatar.url;
+    const userCreationGravatar = User.create({
+      name: req.body.name,
+      firstname: req.body.firstname,
+      username: req.body.username,
+      email: req.body.email,
+      password: hashPassword,
+      avatar: gravatarImage,
+      maxSecurity: true,
+      rank: 3,
+      question: req.body.question,
+      reponse: req.body.reponse,
+    });
+    if (userCreationGravatar) {
+      return res.status(201).json({ message: 'User Created with an Gravatar Image' });
+    }
+    return true;
   }
+  /* } catch (error) {
+    res.status(500).json({ message: 'Something went wrong. Please try again.' });
+  } */
   return true;
 };
 

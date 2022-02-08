@@ -34,14 +34,16 @@
     {
       "name": "comment",
       "description": "Used for comments"
+    },
+    {
+      "name": "config",
+      "description": "Used for config"
     }
   ],
   "paths": {
     "/api/user/signup": {
       "post": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "description": "",
         "requestBody": {
           "required": true,
@@ -200,9 +202,7 @@
     },
     "/api/user/login": {
       "post": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "description": "",
         "requestBody": {
           "required": true,
@@ -326,9 +326,7 @@
     },
     "/api/user/forgot": {
       "post": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "description": "",
         "requestBody": {
           "required": true,
@@ -409,9 +407,7 @@
     },
     "/api/user/forgot/modify": {
       "post": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "description": "",
         "requestBody": {
           "required": true,
@@ -542,9 +538,7 @@
     },
     "/api/user": {
       "get": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "description": "",
         "security": [
           {
@@ -604,9 +598,7 @@
         }
       },
       "post": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "description": "",
         "security": [
           {
@@ -784,9 +776,7 @@
     },
     "/api/user/me": {
       "get": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "description": "",
         "security": [
           {
@@ -862,9 +852,7 @@
     },
     "/api/user/{UserId}": {
       "get": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "description": "",
         "parameters": [
           {
@@ -950,9 +938,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "description": "",
         "parameters": [
           {
@@ -1127,9 +1113,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "description": "",
         "parameters": [
           {
@@ -1222,9 +1206,7 @@
     },
     "/api/post": {
       "get": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "description": "",
         "security": [
           {
@@ -1280,9 +1262,7 @@
         }
       },
       "post": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "description": "",
         "security": [
           {
@@ -1426,9 +1406,7 @@
     },
     "/api/post/{PostId}": {
       "get": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "description": "",
         "parameters": [
           {
@@ -1514,9 +1492,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "description": "",
         "parameters": [
           {
@@ -1663,9 +1639,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "post"
-        ],
+        "tags": ["post"],
         "description": "",
         "parameters": [
           {
@@ -1754,9 +1728,7 @@
     },
     "/api/reaction": {
       "get": {
-        "tags": [
-          "reaction"
-        ],
+        "tags": ["reaction"],
         "description": "",
         "security": [
           {
@@ -1812,9 +1784,7 @@
         }
       },
       "post": {
-        "tags": [
-          "reaction"
-        ],
+        "tags": ["reaction"],
         "description": "",
         "security": [
           {
@@ -1942,9 +1912,7 @@
     },
     "/api/reaction/{ReactionId}": {
       "get": {
-        "tags": [
-          "reaction"
-        ],
+        "tags": ["reaction"],
         "description": "",
         "parameters": [
           {
@@ -2030,9 +1998,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "reaction"
-        ],
+        "tags": ["reaction"],
         "description": "",
         "parameters": [
           {
@@ -2193,9 +2159,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "reaction"
-        ],
+        "tags": ["reaction"],
         "description": "",
         "parameters": [
           {
@@ -2288,9 +2252,7 @@
     },
     "/api/token": {
       "get": {
-        "tags": [
-          "token"
-        ],
+        "tags": ["token"],
         "description": "",
         "security": [
           {
@@ -2352,9 +2314,7 @@
     },
     "/api/token/{TokenId}": {
       "get": {
-        "tags": [
-          "token"
-        ],
+        "tags": ["token"],
         "description": "",
         "parameters": [
           {
@@ -2444,9 +2404,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "token"
-        ],
+        "tags": ["token"],
         "description": "",
         "parameters": [
           {
@@ -2539,9 +2497,7 @@
     },
     "/api/comment": {
       "get": {
-        "tags": [
-          "comment"
-        ],
+        "tags": ["comment"],
         "description": "",
         "security": [
           {
@@ -2597,9 +2553,7 @@
         }
       },
       "post": {
-        "tags": [
-          "comment"
-        ],
+        "tags": ["comment"],
         "description": "",
         "security": [
           {
@@ -2731,9 +2685,7 @@
     },
     "/api/comment/{CommentId}": {
       "get": {
-        "tags": [
-          "comment"
-        ],
+        "tags": ["comment"],
         "description": "",
         "parameters": [
           {
@@ -2819,9 +2771,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "comment"
-        ],
+        "tags": ["comment"],
         "description": "",
         "parameters": [
           {
@@ -2948,9 +2898,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "comment"
-        ],
+        "tags": ["comment"],
         "description": "",
         "parameters": [
           {
@@ -3034,6 +2982,52 @@
                       "example": "Something went wrong. Please try again"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/config/dependencies": {
+      "get": {
+        "tags": ["config"],
+        "description": "List all project's dependencies with their corresponding version using the semver syntax",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigDependencies"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/config/devDependencies": {
+      "get": {
+        "tags": ["config"],
+        "description": "List all project's development dependencies with their corresponding version using the semver syntax",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigDevDependencies"
                 }
               }
             }
@@ -3306,10 +3300,7 @@
             "minLength": 8
           }
         },
-        "required": [
-          "username",
-          "password"
-        ]
+        "required": ["username", "password"]
       },
       "LoginWithEmail": {
         "type": "object",
@@ -3325,10 +3316,7 @@
             "minLength": 8
           }
         },
-        "required": [
-          "email",
-          "password"
-        ]
+        "required": ["email", "password"]
       },
       "Forgot": {
         "type": "object",
@@ -3338,9 +3326,7 @@
             "format": "email"
           }
         },
-        "required": [
-          "email"
-        ]
+        "required": ["email"]
       },
       "ModifyPassword": {
         "type": "object",
@@ -3357,11 +3343,7 @@
             "format": "password"
           }
         },
-        "required": [
-          "email",
-          "reponse",
-          "password"
-        ]
+        "required": ["email", "reponse", "password"]
       },
       "Post": {
         "type": "object",
@@ -3373,10 +3355,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "title",
-          "content"
-        ]
+        "required": ["title", "content"]
       },
       "PostStructure": {
         "type": "object",
@@ -3462,11 +3441,7 @@
             "format": "binary"
           }
         },
-        "required": [
-          "title",
-          "content",
-          "media"
-        ]
+        "required": ["title", "content", "media"]
       },
       "PostSpecial": {
         "type": "object",
@@ -3489,10 +3464,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "PostId",
-          "type"
-        ]
+        "required": ["PostId", "type"]
       },
       "ReactionStructure": {
         "type": "object",
@@ -3691,6 +3663,24 @@
           "PostId": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "ConfigDependencies": {
+        "type": "object",
+        "properties": {
+          "packageName": {
+            "type": "string",
+            "example": "X.Y.Z"
+          }
+        }
+      },
+      "ConfigDevDependencies": {
+        "type": "object",
+        "properties": {
+          "packageName": {
+            "type": "string",
+            "example": "X.Y.Z"
           }
         }
       }

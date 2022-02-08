@@ -9,6 +9,7 @@ const postRoutes = require('./routes/post');
 const reactionRoutes = require('./routes/reaction');
 const tokenRoutes = require('./routes/token');
 const commentRoutes = require('./routes/comment');
+const configRoutes = require('./routes/config');
 
 const app = express();
 
@@ -21,7 +22,7 @@ app.use((_req, res, next) => {
 });
 
 app.use(useragent.express());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 
 // Chemin pour le stockage des images
 app.use('/images', express.static(path.join(__dirname, 'images')));
@@ -32,5 +33,6 @@ app.use('/api/post', postRoutes);
 app.use('/api/reaction', reactionRoutes);
 app.use('/api/token', tokenRoutes);
 app.use('/api/comment', commentRoutes);
+app.use('/api/config', configRoutes);
 
 module.exports = app;
