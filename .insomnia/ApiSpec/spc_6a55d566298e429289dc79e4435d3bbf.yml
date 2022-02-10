@@ -1,7 +1,7 @@
 _id: spc_6a55d566298e429289dc79e4435d3bbf
 type: ApiSpec
 parentId: wrk_c21fd164110f450abd188beb4ae6b072
-modified: 1643059954576
+modified: 1644340870670
 created: 1637929337991
 fileName: groupomania-doc.json
 contents: >-
@@ -41,7 +41,11 @@ contents: >-
       {
         "name": "comment",
         "description": "Used for comments"
-      }
+      },
+  		{
+  			"name": "config",
+  			"description": "Used for config"
+  		}
     ],
     "paths": {
       "/api/user/signup": {
@@ -3047,7 +3051,57 @@ contents: >-
             }
           }
         }
-      }
+      },
+  		"/api/config/dependencies": {
+  			 "get": {
+          "tags": [
+            "config"
+          ],
+          "description": "List all project's dependencies with their corresponding version using the semver syntax",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                      "$ref": "#/components/schemas/ConfigDependencies"
+                  }
+                }
+              }
+            }
+          }
+        }
+  		},
+  		"/api/config/devDependencies": {
+  			 "get": {
+          "tags": [
+            "config"
+          ],
+          "description": "List all project's development dependencies with their corresponding version using the semver syntax",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                      "$ref": "#/components/schemas/ConfigDevDependencies"
+                  }
+                }
+              }
+            }
+          }
+        }
+  		}
     },
     "components": {
       "schemas": {
@@ -3700,7 +3754,25 @@ contents: >-
               "format": "int32"
             }
           }
-        }
+        },
+  			"ConfigDependencies": {
+  				"type": "object",
+  				"properties": {
+  					"packageName": {
+  						"type": "string",
+  						"example": "X.Y.Z"
+  					}
+  				}
+  			},
+  			"ConfigDevDependencies": {
+  				"type": "object",
+  				"properties": {
+  					"packageName": {
+  						"type": "string",
+  						"example": "X.Y.Z"
+  					}
+  				}
+  			}
       },
       "securitySchemes": {
         "bearerAuth": {
