@@ -1,8 +1,7 @@
 const { User, Post, Comment } = require('../models');
 require('dotenv').config();
 
-const regexContent = /^[a-zA-Z0-9àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ _-]{4,25}$/;
-
+const regexContent = /^[a-zA-Z0-9àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ'"?!., _-]{4,255}$/;
 /**
  * @function getAllComments  Get all comments from the database and return them as a JSON object.
  *
@@ -17,6 +16,10 @@ exports.getAllComments = async (_req, res) => {
       order: [
         ['createdAt', 'DESC'],
       ],
+      include: [{
+        model: User,
+        attributes: ['id', 'username', 'avatar', 'name', 'firstname'],
+      }],
     });
     if (findAllComments) {
       return res.status(200).json(findAllComments);

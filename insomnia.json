@@ -3034,6 +3034,45 @@
           }
         }
       }
+    },
+    "/api/config/checkUpdatesDependencies": {
+      "post": {
+        "tags": ["config"],
+        "description": "Returns an array that contains available packages updates. Each available package update in this array is an array itself, where the first element is the package name, the second is the actual version, and the third is the available version",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfigDependenciesToUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3681,6 +3720,19 @@
           "packageName": {
             "type": "string",
             "example": "X.Y.Z"
+          }
+        }
+      },
+      "ConfigDependenciesToUpdate": {
+        "type": "object",
+        "properties": {
+          "dependencies": {
+            "type": "string",
+            "example": "packageName: X.Y.Z"
+          },
+          "devDependencies": {
+            "type": "string",
+            "example": "packageName: X.Y.Z"
           }
         }
       }
