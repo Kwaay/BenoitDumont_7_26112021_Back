@@ -1,7 +1,7 @@
 _id: spc_6a55d566298e429289dc79e4435d3bbf
 type: ApiSpec
 parentId: wrk_c21fd164110f450abd188beb4ae6b072
-modified: 1644340870670
+modified: 1644500395058
 created: 1637929337991
 fileName: groupomania-doc.json
 contents: >-
@@ -3101,6 +3101,47 @@ contents: >-
             }
           }
         }
+  		},
+  		"/api/config/checkUpdatesDependencies": {
+  			 "post": {
+          "tags": [
+            "config"
+          ],
+          "description": "Returns an array that contains available packages updates. Each available package update in this array is an array itself, where the first element is the package name, the second is the actual version, and the third is the available version",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+  				"requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigDependenciesToUpdate"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                     "type": "array",
+  									 "items": {
+  									 	"type": "array",
+  										"items": {
+  											"type": "string"
+  										}
+  									}
+                  }
+                }
+              }
+            }
+          }
+        }
   		}
     },
     "components": {
@@ -3770,6 +3811,19 @@ contents: >-
   					"packageName": {
   						"type": "string",
   						"example": "X.Y.Z"
+  					}
+  				}
+  			},
+  			"ConfigDependenciesToUpdate": {
+  				"type": "object",
+  				"properties": {
+  					"dependencies": {
+  						"type": "string",
+  						"example": "packageName: X.Y.Z"
+  					},
+  					"devDependencies": {
+  						"type": "string",
+  						"example": "packageName: X.Y.Z"
   					}
   				}
   			}
