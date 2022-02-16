@@ -53,6 +53,28 @@ exports.getOneToken = async (req, res) => {
   }
 };
 
+exports.getAllTokensForAnUser = async (req, res) => {
+  try {
+    console.log(req.params.UserId);
+    const findAllTokensForAnUser = await Token.findAll({
+      where: {
+        UserId: req.params.UserId,
+      },
+      include: [
+        {
+          model: User,
+        },
+      ],
+    });
+    if (findAllTokensForAnUser) {
+      return res.status(200).json(findAllTokensForAnUser);
+    }
+    return res.status(402).json({ message: 'Token not found' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Cannot get this Token. Please try again.' });
+  }
+};
+
 /**
  * @function deleteToken Find a token by its ID.
  * If the token is found, delete it.

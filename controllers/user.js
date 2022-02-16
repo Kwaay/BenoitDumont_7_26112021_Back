@@ -43,16 +43,6 @@ async function autoPurge() {
 }
 
 /**
- * @function saltTurns This function returns a random number between 10 and 20
- *
- * @returns {number} The number of salt turns.
- */
-function saltTurns() {
-  console.log(Math.floor(Math.random() * (20 - 10 + 1)) + 10);
-  return Math.floor(Math.random() * (20 - 10 + 1)) + 10;
-}
-
-/**
  * @function signup  We check if the user has uploaded an image,
  * if so, we create a user with the image. If not, we
  * create a user with the Gravatar image.
@@ -109,10 +99,8 @@ exports.signup = async (req, res) => {
     return res.status(409).json({ message: 'Username has already been used' });
   }
   // try {
-  const hashPassword = await bcrypt.hash(
-    req.body.password,
-    saltTurns(),
-  );
+  const salt = await bcrypt.genSalt(10);
+  const hashPassword = await bcrypt.hash(req.body.password, salt);
   // Si le body contient un fichier
   if (req.files) {
     const userCreationUpload = await User.create({
@@ -137,7 +125,7 @@ exports.signup = async (req, res) => {
       .MD5(req.body.email)
       .toString()
       .toLowerCase();
-    if (typeof hashEmail !== 'string' || hashEmail.length < 0) return false;
+    if (typeof hashEmail !== 'string' || hashEmail.length < 0 || hashEmail.length > 32) return false;
     const gravatar = await fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
       method: 'GET',
     });
@@ -405,10 +393,8 @@ exports.forgotModify = async (req, res) => {
     if (valid) {
       return res.status(401).json({ error: 'Your new password is the same than your current password' });
     }
-    const hashPassword = await bcrypt.hash(
-      req.body.password,
-      process.env.NBSALTTURNS,
-    );
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(req.body.password, salt);
     const updatePassword = User.update({ password: hashPassword }, { where: { id: user.id } });
     if (updatePassword) {
       return res.status(200).json({ message: 'Password changed successfully' });
@@ -513,10 +499,8 @@ exports.createUser = async (req, res) => {
     return res.status(409).json({ message: 'Username has already been used' });
   }
   try {
-    const hashPassword = await bcrypt.hash(
-      req.body.password,
-      process.env.NBSALTTURNS,
-    );
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(req.body.password, salt);
     if (req.files) {
       const userCreationUpload = await User.create({
         name: req.body.name,
@@ -535,7 +519,7 @@ exports.createUser = async (req, res) => {
       }
     } else {
       const hashEmail = cryptoJS.MD5(req.body.email).toString().toLowerCase();
-      if (typeof hashEmail !== 'string' || hashEmail.length < 0) return false;
+      if (typeof hashEmail !== 'string' || hashEmail.length < 0 || hashEmail.length > 32) return false;
       const gravatar = await fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
         method: 'GET',
       });
