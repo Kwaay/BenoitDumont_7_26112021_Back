@@ -1,7 +1,6 @@
 const express = require('express');
 const path = require('path');
 const useragent = require('express-useragent');
-const helmet = require('helmet');
 require('dotenv').config();
 
 // Récupération des routes
@@ -24,7 +23,6 @@ app.use((_req, res, next) => {
 
 app.use(useragent.express());
 app.use(express.json({ limit: '50mb' }));
-app.use(helmet());
 
 // Chemin pour le stockage des images
 app.use('/images', express.static(path.join(__dirname, 'images')));
