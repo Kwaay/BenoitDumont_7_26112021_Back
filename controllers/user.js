@@ -125,7 +125,6 @@ exports.signup = async (req, res) => {
       .MD5(req.body.email)
       .toString()
       .toLowerCase();
-    if (typeof hashEmail !== 'string' || hashEmail.length < 0 || hashEmail.length > 32) return false;
     const gravatar = await fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
       method: 'GET',
     });
@@ -519,7 +518,6 @@ exports.createUser = async (req, res) => {
       }
     } else {
       const hashEmail = cryptoJS.MD5(req.body.email).toString().toLowerCase();
-      if (typeof hashEmail !== 'string' || hashEmail.length < 0 || hashEmail.length > 32) return false;
       const gravatar = await fetch(`https://www.gravatar.com/avatar/${hashEmail}`, {
         method: 'GET',
       });

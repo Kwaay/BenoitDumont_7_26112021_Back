@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const useragent = require('express-useragent');
+const helmet = require('helmet');
 require('dotenv').config();
 
 // Récupération des routes
@@ -15,7 +16,7 @@ const app = express();
 
 // Mise en place des headers
 app.use((_req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', '127.0.0.1', 'localhost', 'www.groupomania.fr');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
   next();
@@ -23,6 +24,7 @@ app.use((_req, res, next) => {
 
 app.use(useragent.express());
 app.use(express.json({ limit: '50mb' }));
+app.use(helmet);
 
 // Chemin pour le stockage des images
 app.use('/images', express.static(path.join(__dirname, 'images')));
