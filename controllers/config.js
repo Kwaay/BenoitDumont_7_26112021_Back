@@ -53,6 +53,7 @@ exports.getDependenciesUpdate = async (req, res) => {
     dependencies: req.body.dependencies,
     devDependencies: req.body.devDependencies,
   }).split('\'').join(' ');
+  if (typeof data !== 'object' || data.length < 0) return false;
   const execPromise = new Promise((resolve) => {
     exec(`ncu --packageData '${data}'`, (error, stdout, stderr) => {
       resolve({ error, stdout, stderr });
