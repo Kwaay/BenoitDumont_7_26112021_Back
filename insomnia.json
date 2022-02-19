@@ -1221,7 +1221,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/PostStructureNoRef"
+                    "$ref": "#/components/schemas/PostStructure"
                   }
                 }
               }
@@ -2267,7 +2267,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ReactionStructureNoRef"
+                    "$ref": "#/components/schemas/TokenStructureNoRef"
                   }
                 }
               }
@@ -2341,7 +2341,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "reaction": {
+                    "token": {
                       "$ref": "#/components/schemas/TokenStructure"
                     }
                   }
@@ -2495,6 +2495,98 @@
         }
       }
     },
+    "/api/token/user/{UserId}": {
+      "get": {
+        "tags": ["token"],
+        "description": "",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "UserId",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "required": true,
+            "description": "ID of user"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "reaction": {
+                      "$ref": "#/components/schemas/TokenStructure"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "example": "You're not logged in"
+                    },
+                    {
+                      "type": "string",
+                      "example": "Not Enough Permissions to perform this action"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Token not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Cannot get this Token. Please try again"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/comment": {
       "get": {
         "tags": ["comment"],
@@ -2512,7 +2604,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CommentStructureNoRef"
+                    "$ref": "#/components/schemas/CommentStructureAll"
                   }
                 }
               }
@@ -3103,13 +3195,6 @@
             "type": "string",
             "format": "url"
           },
-          "maxSecurity": {
-            "type": "boolean"
-          },
-          "rank": {
-            "type": "integer",
-            "format": "int32"
-          },
           "question": {
             "type": "string"
           },
@@ -3208,13 +3293,6 @@
             "type": "string",
             "format": "binary"
           },
-          "maxSecurity": {
-            "type": "boolean"
-          },
-          "rank": {
-            "type": "integer",
-            "format": "int32"
-          },
           "question": {
             "type": "string"
           },
@@ -3299,6 +3377,28 @@
           "updatedAt"
         ]
       },
+      "UserSpecialAllPosts": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "username": {
+            "type": "string"
+          },
+          "avatar": {
+            "type": "string",
+            "format": "binary"
+          },
+          "name": {
+            "type": "string"
+          },
+          "firstname": {
+            "type": "string"
+          }
+        }
+      },
       "UserSpecialGetOne": {
         "type": "object",
         "properties": {
@@ -3335,8 +3435,7 @@
           },
           "password": {
             "type": "string",
-            "format": "password",
-            "minLength": 8
+            "format": "password"
           }
         },
         "required": ["username", "password"]
@@ -3346,8 +3445,7 @@
         "properties": {
           "email": {
             "type": "string",
-            "format": "email",
-            "pattern": "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,64}$"
+            "format": "email"
           },
           "password": {
             "type": "string",
@@ -3426,7 +3524,7 @@
           "User": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/UserSpecialGetOne"
+              "$ref": "#/components/schemas/UserSpecialAllPosts"
             }
           },
           "Reactions": {
@@ -3702,6 +3800,36 @@
           "PostId": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "CommentStructureAll": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "content": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "UserId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PostId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "User": {
+            "$ref": "#/components/schemas/UserSpecialAllPosts"
           }
         }
       },
