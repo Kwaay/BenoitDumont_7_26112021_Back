@@ -1,7 +1,7 @@
 _id: spc_6a55d566298e429289dc79e4435d3bbf
 type: ApiSpec
 parentId: wrk_c21fd164110f450abd188beb4ae6b072
-modified: 1645287056116
+modified: 1645390852033
 created: 1637929337991
 fileName: groupomania-doc.json
 contents: >
@@ -1441,7 +1441,7 @@ contents: >
                     "type": "object",
                     "properties": {
                       "post": {
-                        "$ref": "#/components/schemas/PostStructure"
+                        "$ref": "#/components/schemas/PostStructurePostPage"
                       }
                     }
                   }
@@ -3539,6 +3539,59 @@ contents: >
               "items": {
                 "$ref": "#/components/schemas/ReactionSpecial"
               }
+            },
+            "Comment": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/CommentForPosts"
+              }
+            }
+          }
+        },
+        "PostStructurePostPage": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "title": {
+              "type": "string"
+            },
+            "content": {
+              "type": "string"
+            },
+            "media": {
+              "type": "string",
+              "format": "binary"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updatedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "UserId": {
+              "type": "integer"
+            },
+            "User": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/UserSpecialAllPosts"
+              }
+            },
+            "Reactions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ReactionSpecial"
+              }
+            },
+            "Comment": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/CommentForPostPage"
+              }
             }
           }
         },
@@ -3837,6 +3890,47 @@ contents: >
             },
             "User": {
               "$ref": "#/components/schemas/UserSpecialAllPosts"
+            }
+          }
+        },
+        "CommentForPosts": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "content": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "UserId": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        },
+        "CommentForPostPage": {
+          "type": "object",
+          "properties": {
+            "User": {
+              "$ref": "#/components/schemas/UserStructure"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "content": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "UserId": {
+              "type": "integer",
+              "format": "int32"
             }
           }
         },
