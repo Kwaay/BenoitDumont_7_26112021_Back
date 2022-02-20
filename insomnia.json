@@ -1434,7 +1434,7 @@
                   "type": "object",
                   "properties": {
                     "post": {
-                      "$ref": "#/components/schemas/PostStructure"
+                      "$ref": "#/components/schemas/PostStructurePostPage"
                     }
                   }
                 }
@@ -3532,6 +3532,59 @@
             "items": {
               "$ref": "#/components/schemas/ReactionSpecial"
             }
+          },
+          "Comment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommentForPosts"
+            }
+          }
+        }
+      },
+      "PostStructurePostPage": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "media": {
+            "type": "string",
+            "format": "binary"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "UserId": {
+            "type": "integer"
+          },
+          "User": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserSpecialAllPosts"
+            }
+          },
+          "Reactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReactionSpecial"
+            }
+          },
+          "Comment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommentForPostPage"
+            }
           }
         }
       },
@@ -3830,6 +3883,47 @@
           },
           "User": {
             "$ref": "#/components/schemas/UserSpecialAllPosts"
+          }
+        }
+      },
+      "CommentForPosts": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "content": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "UserId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CommentForPostPage": {
+        "type": "object",
+        "properties": {
+          "User": {
+            "$ref": "#/components/schemas/UserStructure"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "content": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "UserId": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
