@@ -28,7 +28,12 @@ exports.getAllPosts = async (_req, res) => {
       {
         model: Reaction,
         attributes: ['id', 'UserId', 'type'],
-      }],
+      },
+      {
+        model: Comment,
+        attributes: ['id', 'UserId', 'content', 'createdAt'],
+      },
+      ],
     });
     if (findAllPosts) {
       return res.status(200).json(findAllPosts);
@@ -120,7 +125,7 @@ exports.getOnePost = async (req, res) => {
       },
       include: [{
         model: User,
-        attributes: ['id', 'username', 'avatar'],
+        attributes: ['id', 'username', 'avatar', 'name', 'firstname'],
       },
       {
         model: Reaction,
@@ -128,6 +133,8 @@ exports.getOnePost = async (req, res) => {
       },
       {
         model: Comment,
+        attributes: ['id', 'UserId', 'content', 'createdAt'],
+        include: [User],
       },
       ],
     });
