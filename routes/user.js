@@ -14,7 +14,7 @@ router.get('/', auth, checkRights({ role: 1 }), userCtrl.getAllUsers);
 router.post('/', auth, checkRights({ role: 1 }), multer, userCtrl.createUser);
 router.get('/me', auth, userCtrl.myUser);
 router.get('/:UserId', auth, userCtrl.getOneUser);
-router.patch('/:UserId', auth, checkRights({ role: 1, owner: true, model: 'User' }), multer, userCtrl.modifyUser);
-router.delete('/:UserId', auth, checkRights({ role: 1, owner: true, model: 'User' }), userCtrl.deleteUser);
+router.patch('/:UserId', auth, checkRights({ role: 3, owner: true, model: 'User' }), multer, userCtrl.modifyUser);
+router.delete('/:UserId', auth, checkRights({ role: 3, owner: true, model: 'User' }), userCtrl.deleteUser);
 
 module.exports = router;

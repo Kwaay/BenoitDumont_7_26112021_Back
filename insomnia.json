@@ -880,7 +880,7 @@
                   "type": "object",
                   "properties": {
                     "user": {
-                      "$ref": "#/components/schemas/UserStructure"
+                      "$ref": "#/components/schemas/UserStructureWithPosts&Comments"
                     }
                   }
                 }
@@ -3213,6 +3213,71 @@
           "question",
           "reponse"
         ]
+      },
+      "UserStructureWithPosts&Comments": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "firstname": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "pattern": "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,64}$"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "minLength": 8
+          },
+          "avatar": {
+            "type": "string",
+            "format": "binary"
+          },
+          "maxSecurity": {
+            "type": "boolean"
+          },
+          "rank": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "question": {
+            "type": "string"
+          },
+          "reponse": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Reactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReactionStructureNoRef"
+            }
+          },
+          "Comments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommentStructureNoRef"
+            }
+          }
+        }
       },
       "UserStructure": {
         "type": "object",

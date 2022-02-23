@@ -9,7 +9,7 @@ const checkRights = require('../middleware/checkRights');
 router.get('/', auth, postCtrl.getAllPosts);
 router.post('/', auth, multer, postCtrl.createPost);
 router.get('/:PostId', auth, multer, postCtrl.getOnePost);
-router.patch('/:PostId', auth, checkRights({ role: 2, owner: true, model: 'Post' }), multer, postCtrl.modifyPost);
-router.delete('/:PostId', auth, checkRights({ role: 2, owner: true, model: 'Post' }), postCtrl.deletePost);
+router.patch('/:PostId', auth, checkRights({ role: 3, owner: true, model: 'Post' }), multer, postCtrl.modifyPost);
+router.delete('/:PostId', auth, checkRights({ role: 3, owner: true, model: 'Post' }), postCtrl.deletePost);
 
 module.exports = router;

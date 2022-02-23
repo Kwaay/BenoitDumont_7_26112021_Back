@@ -9,7 +9,7 @@ const checkRights = require('../middleware/checkRights');
 router.get('/', auth, commentCtrl.getAllComments);
 router.post('/', auth, multer, commentCtrl.createComment);
 router.get('/:CommentId', auth, multer, commentCtrl.getOneComment);
-router.patch('/:CommentId', auth, checkRights({ role: 1, owner: true, model: 'Comment' }), multer, commentCtrl.modifyComment);
-router.delete('/:CommentId', auth, checkRights({ role: 1, owner: true, model: 'Comment' }), commentCtrl.deleteComment);
+router.patch('/:CommentId', auth, checkRights({ role: 2, owner: true, model: 'Comment' }), multer, commentCtrl.modifyComment);
+router.delete('/:CommentId', auth, checkRights({ role: 2, owner: true, model: 'Comment' }), commentCtrl.deleteComment);
 
 module.exports = router;

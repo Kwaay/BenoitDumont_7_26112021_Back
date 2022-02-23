@@ -179,39 +179,40 @@ exports.modifyPost = async (req, res) => {
   if (req.body.content !== undefined && !regexContent.test(req.body.content)) {
     return res.status(400).json({ message: 'Content doesn\'t have a correct format' });
   }
-  delete req.body.media;
-  try {
-    if (req.body.title !== null && req.body.title !== undefined) {
-      const titleCompare = await Post.findOne({
-        where: {
-          title: req.body.title, UserId: req.token.UserId,
-        },
-      });
-      if (titleCompare) {
-        return res.status(409).json({ message: 'Title already exists' });
-      }
+  // try {
+  if (req.body.title !== null && req.body.title !== undefined) {
+    const titleCompare = await Post.findOne({
+      where: {
+        title: req.body.title, UserId: req.token.UserId,
+      },
+    });
+    if (titleCompare) {
+      return res.status(409).json({ message: 'Title already exists' });
     }
-    let postObject = {};
-    if (req.files) {
-      postObject = {
-        ...JSON.stringify(req.body),
-        media: `${req.protocol}://${req.get('host')}/images/${req.files.media[0].filename}`,
-      };
-      const postFind = await Post.findOne({ where: { id: req.params.PostId } });
-      if (postFind.media !== null || postFind.media !== undefined) {
-        const filename = postFind.media.split('/images/')[1];
-        await fsp.unlink(`./images/${filename}`);
-      }
-    } else {
-      postObject = { ...req.body };
-    }
-    const updatePost = await Post.update({ ...postObject }, { where: { id: req.params.PostId } });
-    if (updatePost) {
-      return res.status(200).json({ message: 'Post has been modified' });
-    }
-  } catch (error) {
-    return res.status(500).json({ message: 'Something went wrong. Please try again.' });
   }
+  let postObject = {};
+  if (req.files) {
+    postObject = {
+      ...JSON.stringify(req.body),
+      media: `${req.protocol}://${req.get('host')}/images/${req.files.media[0].filename}`,
+    };
+    const postFind = await Post.findOne({ where: { id: req.params.PostId } });
+    console.log(postFind);
+    console.log(postFind.media);
+    if (postFind.media !== null && postFind.media !== undefined) {
+      const filename = postFind.media.split('/images/')[1];
+      await fsp.unlink(`./images/${filename}`);
+    }
+  } else {
+    postObject = { ...req.body };
+  }
+  const updatePost = await Post.update({ ...postObject }, { where: { id: req.params.PostId } });
+  if (updatePost) {
+    return res.status(200).json({ message: 'Post has been modified' });
+  }
+  /* } catch (error) {
+    return res.status(500).json({ message: 'Something went wrong. Please try again.' });
+  } */
   return true;
 };
 

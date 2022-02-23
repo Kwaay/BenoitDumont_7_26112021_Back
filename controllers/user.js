@@ -6,7 +6,7 @@ const { Op } = require('sequelize');
 const maskdata = require('maskdata');
 const fsp = require('fs/promises');
 const {
-  User, Post, Reaction, Token,
+  User, Post, Reaction, Token, Comment,
 } = require('../models');
 
 require('dotenv').config();
@@ -595,7 +595,8 @@ exports.getOneUser = async (req, res) => {
         id: req.params.UserId,
       },
       include: [{
-        model: Post, Reaction,
+        model: Post,
+        include: [Reaction, Comment],
       }],
     });
     if (findOneUser) {
@@ -718,7 +719,7 @@ exports.deleteUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    if (user.avatar !== null && user.avatar !== undefined) {
+    if (user.avatar !== null && user.avatar !== undefined && !user.avatar.includes('gravatar')) {
       const filename = user.avatar.split('/images/')[1];
       await fsp.unlink(`./images/${filename}`);
     }

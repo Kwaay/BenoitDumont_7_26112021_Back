@@ -16,21 +16,23 @@ const Models = require('../models');
  */
 
 module.exports = (config) => async (req, res, next) => {
+  console.log(config.role);
   if (config.owner === true && typeof config.role === 'undefined') {
     const resource = await Models[config.model].findOne({ where: { id: req.params[`${config.model}Id`] } });
     if (resource === null) return next();
     if (req.token.UserId !== resource.UserId) {
-      return res.status(401).json({ message: 'Not Enough Permissions to perform this action' });
+      return res.status(401).json({ message: 'Not Enough Permissions to perform this action 1' });
     }
   } else if (typeof config.owner === 'undefined' && typeof config.role === 'number') {
     if (req.token.rank > config.role) {
-      return res.status(401).json({ message: 'Not Enough Permissions to perform this action' });
+      return res.status(401).json({ message: 'Not Enough Permissions to perform this action 2' });
     }
   } else if (config.owner === true && typeof config.role === 'number') {
     const resource = await Models[config.model].findOne({ where: { id: req.params[`${config.model}Id`] } });
+    console.log(resource);
     if (resource === null) return next();
     if (req.token.UserId !== resource.UserId && req.token.rank > config.role) {
-      return res.status(401).json({ message: 'Not Enough Permissions to perform this action' });
+      return res.status(401).json({ message: 'Not Enough Permissions to perform this action 3' });
     }
   }
   return next();
