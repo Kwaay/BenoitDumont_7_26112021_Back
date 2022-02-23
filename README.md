@@ -30,3 +30,5 @@ or, if you have nodemon, you can use :
 ```bash
 nodemon server
 ```
+## Time passed on this project
+[![wakatime](https://wakatime.com/badge/user/f067c756-5e92-4525-bfec-ef84155913fd/project/4fda6ab4-61d1-4cb0-9095-2dc4eaa0daa7.svg)](https://wakatime.com/badge/user/f067c756-5e92-4525-bfec-ef84155913fd/project/4fda6ab4-61d1-4cb0-9095-2dc4eaa0daa7)
