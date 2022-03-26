@@ -1,5 +1,4 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-// const ncu = require('npm-package-update');
 const { exec } = require('child_process');
 /* Importing the package.json file from the root directory. */
 const config = require('../package.json');
@@ -52,7 +51,9 @@ exports.getDependenciesUpdate = async (req, res) => {
   const data = JSON.stringify({
     dependencies: req.body.dependencies,
     devDependencies: req.body.devDependencies,
-  }).split('\'').join(' ');
+  })
+    .split("'")
+    .join(' ');
   if (typeof data !== 'string' || data.length < 0) return false;
   const execPromise = new Promise((resolve) => {
     exec(`ncu --packageData '${data}'`, (error, stdout, stderr) => {
@@ -61,7 +62,9 @@ exports.getDependenciesUpdate = async (req, res) => {
   });
   const results = await execPromise;
   if (results.error !== null) {
-    return res.status(500).json({ message: 'Error when attempting to update dependencies' });
+    return res
+      .status(500)
+      .json({ message: 'Error when attempting to update dependencies' });
   }
   const splitDependenciesUpdate = results.stdout.split('\n');
   const trimmedDependenciesUpdate = splitDependenciesUpdate.map((line) => {
